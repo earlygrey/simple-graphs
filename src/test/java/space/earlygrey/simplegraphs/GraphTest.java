@@ -77,9 +77,6 @@ public class GraphTest {
         assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());
         assertEquals(expectedDirected, diGraph.getEdgeCount());
 
-        System.out.println(undirectedGraph.getEdgeCount());
-        System.out.println(diGraph.getEdgeCount());
-
         undirectedGraph.removeEdge(new Vector2(0,0), new Vector2(1,0));
         undirectedGraph.removeEdge(new Vector2(0,0), new Vector2(0,1));
         diGraph.removeEdge(new Vector2(0,0), new Vector2(1,0));

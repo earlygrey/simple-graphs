@@ -15,6 +15,7 @@ public class Graph<V extends Object> {
     //================================================================================
 
     private final boolean directed;
+
     private final Collection<V> objects;
     private final Collection<Node<V>> vertices;
     private final Map<V, Node> vertexMap;
@@ -69,10 +70,11 @@ public class Graph<V extends Object> {
         }
     }
 
-    public void removeVertex(V v) {
+    public boolean removeVertex(V v) {
         Node existing = getNode(v);
-        if (existing==null) return;
-        else removeVertex(existing);
+        if (existing==null) return false;
+        removeVertex(existing);
+        return true;
     }
 
     public void removeVertices(Collection<V> vertices) {
@@ -134,6 +136,7 @@ public class Graph<V extends Object> {
         node.disconnectAll();
         vertices.remove(node);
         objects.remove(node.object);
+        vertexMap.remove(node.object);
     }
 
     Connection<V> justConnect(Node v, Node w, float weight) {

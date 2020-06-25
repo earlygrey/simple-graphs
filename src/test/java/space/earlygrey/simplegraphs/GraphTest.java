@@ -12,7 +12,7 @@ public class GraphTest {
 
 
     @Test
-    public void verticesCanBeAdded() {
+    public void verticesCanBeAddedAndRemoved() {
         Graph<Integer> graph = new Graph<>();
         int n = 10;
 
@@ -28,10 +28,18 @@ public class GraphTest {
             assertTrue(graph.contains(v));
         }
 
+        for (int j = 0; j < n/2; j++) {
+            boolean wasInGraph = graph.removeVertex(j);
+            assertTrue(wasInGraph);
+            assertTrue(!graph.contains(j));
+        }
+
+        assertEquals(n - n/2, graph.size());
+
     }
 
     @Test
-    public void edgesCanBeAdded() {
+    public void edgesCanBeAddedAndRemoved() {
         Graph<Vector2> graph = new Graph<>();
         int n = 5;
 

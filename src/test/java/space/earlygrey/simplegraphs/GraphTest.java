@@ -53,11 +53,13 @@ public class GraphTest {
                 if (i<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i+1,j);
                     graph.addEdge(v1, v2, v1.dst(v2));
+                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
                     e++;
                 }
                 if (j<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i,j+1);
                     graph.addEdge(v1, v2, v1.dst(v2));
+                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
                     e++;
                 }
             }
@@ -69,16 +71,22 @@ public class GraphTest {
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
         AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
+        AbstractGraph<Vector2> diGraph = createGridGraph(n, true);
 
-        assertEquals(2*n*(n-1), undirectedGraph.getEdgeCount());
+        int expectedUndirected = 2*n*(n-1), expectedDirected = 2 * 2*n*(n-1);
+        assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());
+        assertEquals(expectedDirected, diGraph.getEdgeCount());
 
-        for (int i = 0; i < n/2; i++) {
-            for (int j = 0; j < n/2; j++) {
+        System.out.println(undirectedGraph.getEdgeCount());
+        System.out.println(diGraph.getEdgeCount());
 
-            }
-        }
+        undirectedGraph.removeEdge(new Vector2(0,0), new Vector2(1,0));
+        undirectedGraph.removeEdge(new Vector2(0,0), new Vector2(0,1));
+        diGraph.removeEdge(new Vector2(0,0), new Vector2(1,0));
+        diGraph.removeEdge(new Vector2(0,0), new Vector2(0,1));
 
-
+        assertEquals(expectedUndirected-2, undirectedGraph.getEdgeCount());
+        assertEquals(expectedDirected-2, diGraph.getEdgeCount());
 
     }
 
@@ -86,8 +94,12 @@ public class GraphTest {
     public void shortestPathShouldBeCorrectLength() {
         int n = 5;
         AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
-        List<Vector2> path = undirectedGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
+        AbstractGraph<Vector2> diGraph = createGridGraph(n, true);
 
+        List<Vector2> path = undirectedGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
+        assertEquals(2*(n-1) + 1, path.size());
+
+        path = diGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
         assertEquals(2*(n-1) + 1, path.size());
     }
 

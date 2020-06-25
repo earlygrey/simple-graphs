@@ -38,10 +38,8 @@ public class GraphTest {
 
     }
 
-    @Test
-    public void edgesCanBeAddedAndRemoved() {
+    private static Graph<Vector2> createGridGraph(int n) {
         Graph<Vector2> graph = new Graph<>();
-        int n = 5;
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -65,9 +63,25 @@ public class GraphTest {
                 }
             }
         }
+        return graph;
+    }
 
-        assertEquals(e, graph.getEdgeCount());
+    @Test
+    public void edgesCanBeAddedAndRemoved() {
+        int n = 5;
+        Graph<Vector2> graph = createGridGraph(n);
 
+        assertEquals(2*n*(n-1), graph.getEdgeCount());
+
+    }
+
+    @Test
+    public void shortestPathShouldBeCorrectLength() {
+        int n = 5;
+        Graph<Vector2> graph = createGridGraph(n);
+        List<Vector2> path = graph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
+
+        assertEquals(2*(n-1) + 1, path.size());
     }
 
 }

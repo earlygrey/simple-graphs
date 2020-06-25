@@ -12,7 +12,7 @@ public class GraphTest {
 
     @Test
     public void verticesCanBeAddedAndRemoved() {
-        Graph<Integer> graph = new Graph<>();
+        UndirectedGraph<Integer> graph = new UndirectedGraph<>();
         int n = 10;
 
         for (int i = 0; i < n; i++) {
@@ -37,8 +37,8 @@ public class GraphTest {
 
     }
 
-    private static AbstractGraph<Vector2> createGridGraph(int n, boolean directed) {
-        AbstractGraph<Vector2> graph = directed ? new DirectedGraph<>() : new Graph<>();
+    private static Graph<Vector2> createGridGraph(int n, boolean directed) {
+        Graph<Vector2> graph = directed ? new DirectedGraph<>() : new UndirectedGraph<>();
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -70,8 +70,8 @@ public class GraphTest {
     @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
-        AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
-        AbstractGraph<Vector2> diGraph = createGridGraph(n, true);
+        Graph<Vector2> undirectedGraph = createGridGraph(n, false);
+        Graph<Vector2> diGraph = createGridGraph(n, true);
 
         int expectedUndirected = 2*n*(n-1), expectedDirected = 2 * 2*n*(n-1);
         assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());
@@ -93,8 +93,8 @@ public class GraphTest {
     @Test
     public void shortestPathShouldBeCorrectLength() {
         int n = 5;
-        AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
-        AbstractGraph<Vector2> diGraph = createGridGraph(n, true);
+        Graph<Vector2> undirectedGraph = createGridGraph(n, false);
+        Graph<Vector2> diGraph = createGridGraph(n, true);
 
         List<Vector2> path = undirectedGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
         assertEquals(2*(n-1) + 1, path.size());

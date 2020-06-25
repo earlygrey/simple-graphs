@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
-public class DirectedGraph<V> extends AbstractGraph<V> {
+public class DirectedGraph<V> extends Graph<V> {
 
     public DirectedGraph () {
         super();

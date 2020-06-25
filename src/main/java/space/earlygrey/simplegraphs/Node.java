@@ -6,12 +6,12 @@ import java.util.Map;
 
 class Node<T extends Object> {
 
-    final AbstractGraph graph;
+    final Graph graph;
     public final T object;
     Map<Edge<T>, Connection<T>> connections = new LinkedHashMap<>();
     Map<Node<T>, Connection<T>> neighbours = new LinkedHashMap<>();
 
-    Node (T object, AbstractGraph<T> graph) {
+    Node (T object, Graph<T> graph) {
         this.object = object;
         this.graph = graph;
     }

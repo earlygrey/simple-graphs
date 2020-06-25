@@ -10,12 +10,12 @@ import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
 
 class Algorithms<V> {
 
-    private final AbstractGraph<V> graph;
+    private final Graph<V> graph;
     private final PriorityQueue<Node> priorityQueue;
     private final HashSet<Node<V>> isReset;
     final Heuristic<V> defaultHeuristic = new DefaultHeuristic<>();
 
-    public Algorithms(AbstractGraph<V> graph) {
+    public Algorithms(Graph<V> graph) {
         this.graph = graph;
         priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
         isReset = new HashSet<>();

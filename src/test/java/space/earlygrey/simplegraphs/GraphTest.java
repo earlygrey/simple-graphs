@@ -52,12 +52,12 @@ public class GraphTest {
             for (int j = 0; j < n; j++) {
                 if (i<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i+1,j);
-                    graph.connect(v1, v2, v1.dst(v2));
+                    graph.addEdge(v1, v2, v1.dst(v2));
                     e++;
                 }
                 if (j<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i,j+1);
-                    graph.connect(v1, v2, v1.dst(v2));
+                    graph.addEdge(v1, v2, v1.dst(v2));
                     e++;
                 }
             }
@@ -74,7 +74,7 @@ public class GraphTest {
 
         for (int i = 0; i < n/2; i++) {
             for (int j = 0; j < n/2; j++) {
-                
+
             }
         }
 

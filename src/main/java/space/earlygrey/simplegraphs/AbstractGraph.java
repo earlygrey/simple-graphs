@@ -81,24 +81,24 @@ public abstract class AbstractGraph<V> {
         }
     }
 
-    public Edge<V> connect(V v, V w) {
-        return connect(v, w, Connection.DEFAULT_WEIGHT);
+    public Edge<V> addEdge(V v, V w) {
+        return addEdge(v, w, Connection.DEFAULT_WEIGHT);
     }
-    public Edge<V> connect(V v, V w, float weight) {
+    public Edge<V> addEdge(V v, V w, float weight) {
         if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
         if ( v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
         Node a = getNode(v);
         Node b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return justConnect(a, b, weight).edge;
+        return addEdge(a, b, weight).edge;
     }
 
-    public Edge<V> disconnect(V v, V w) {
+    public Edge<V> removeEdge(V v, V w) {
         if (!contains(v) || !contains(w))  return null;
         if (!isConnected(v,w)) return null;
         Node a = getNode(v);
         Node b = getNode(w);
-        return justDisonnect(a, b).edge;
+        return removeEdge(a, b).edge;
     }
 
     public void disconnectAll() {
@@ -132,7 +132,7 @@ public abstract class AbstractGraph<V> {
         vertexMap.remove(node.object);
     }
 
-    Connection<V> justConnect(Node v, Node w, float weight) {
+    Connection<V> addEdge(Node v, Node w, float weight) {
         Connection<V> e = v.connect(w, weight);
         if (e!=null) {
             connections.add(e);
@@ -143,13 +143,13 @@ public abstract class AbstractGraph<V> {
         }
     }
 
-    Connection<V> disconnect(Connection<V> connection) {
+    Connection<V> removeEdge(Connection<V> connection) {
         Node a = connection.a;
         Node b = connection.b;
-        return justDisonnect(a, b);
+        return removeEdge(a, b);
     }
 
-    Connection<V> justDisonnect(Node v, Node w) {
+    Connection<V> removeEdge(Node v, Node w) {
         Connection<V> e = v.disconnect(w);
         connections.remove(e);
         edges.remove(e.edge);

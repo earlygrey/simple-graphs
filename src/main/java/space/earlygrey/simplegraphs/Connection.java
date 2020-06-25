@@ -3,33 +3,33 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Objects;
 
-public class Connection<T extends Object> {
+public class Connection<V> {
 
     static final float DEFAULT_WEIGHT = 1;
 
-    protected final Node<T> a, b;
+    protected final Node<V> a, b;
     protected float weight = DEFAULT_WEIGHT;
     protected final Edge edge = new Edge(this);
 
-    protected Connection(Node<T> a, Node<T> b) {
+    protected Connection(Node<V> a, Node<V> b) {
         this.a = a;
         this.b = b;
     }
-    protected Connection(Node<T> a, Node<T> b, float weight) {
+    protected Connection(Node<V> a, Node<V> b, float weight) {
         this.a = a;
         this.b = b;
         this.weight = weight;
     }
 
-    public T getA() {
+    public V getA() {
         return a.object;
     }
 
-    public T getB() {
+    public V getB() {
         return b.object;
     }
 
-    public boolean isIncident(Node<T> v) {
+    public boolean isIncident(Node<V> v) {
         return a.equals(v) || b.equals(v);
     }
 

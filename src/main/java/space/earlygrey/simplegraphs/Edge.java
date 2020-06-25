@@ -2,19 +2,19 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Objects;
 
-public class Edge<T> {
+public class Edge<V> {
 
-    private final Connection<T> connection;
+    private final Connection<V> connection;
 
-    Edge(Connection<T> connection){
+    Edge(Connection<V> connection){
         this.connection = connection;
     }
 
-    public T getA() {
+    public V getA() {
         return connection.a.object;
     }
 
-    public T getB() {
+    public V getB() {
         return connection.b.object;
     }
 

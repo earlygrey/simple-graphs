@@ -53,19 +53,16 @@ class Node<T extends Object> {
     }
 
     //util fields for algorithms, don't store data in them
-    boolean visited, queued;
+    boolean visited;
     float distance;
     float estimate;
-    int i;
     Node prev;
 
     void resetAlgorithmAttribs() {
         visited = false;
         prev = null;
         distance = Float.MAX_VALUE;
-        i = -1;
         estimate = 0;
-        queued = false;
     }
 
     @Override
@@ -79,7 +76,7 @@ class Node<T extends Object> {
 
     @Override
     public int hashCode() {
-        return System.identityHashCode(this);
         //return Objects.hashCode(object);
+        return System.identityHashCode(this);
     }
 }

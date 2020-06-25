@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-public class Graph<V extends Object> {
+public class Graph<V> {
 
     //================================================================================
     // Members

@@ -8,14 +8,14 @@ import java.util.PriorityQueue;
 
 import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
 
-class Algorithms<T> {
+class Algorithms<V> {
 
-    private final Graph<T> graph;
+    private final Graph<V> graph;
     private final PriorityQueue<Node> priorityQueue;
-    private final HashSet<Node<T>> isReset;
-    final Heuristic<T> defaultHeuristic = new DefaultHeuristic<>();
+    private final HashSet<Node<V>> isReset;
+    final Heuristic<V> defaultHeuristic = new DefaultHeuristic<>();
 
-    public Algorithms(Graph<T> graph) {
+    public Algorithms(Graph<V> graph) {
         this.graph = graph;
         priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
         isReset = new HashSet<>();
@@ -26,41 +26,41 @@ class Algorithms<T> {
         priorityQueue.clear();
     }
 
-    boolean isReachable(Node<T> start, Node<T> target) {
+    boolean isReachable(Node<V> start, Node<V> target) {
         return findShortestPath(start, target, new ArrayList<>());
     }
 
-    float findMinimumDistance(Node<T> start, Node<T> target) {
-        Node<T> end = performShortestPathSearch(start, target, defaultHeuristic);
+    float findMinimumDistance(Node<V> start, Node<V> target) {
+        Node<V> end = performShortestPathSearch(start, target, defaultHeuristic);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
     }
 
-    List<Node<T>> findShortestPath(Node<T> start, Node<T> target) {
-        ArrayList<Node<T>> nodeList = new ArrayList<>();
+    List<Node<V>> findShortestPath(Node<V> start, Node<V> target) {
+        ArrayList<Node<V>> nodeList = new ArrayList<>();
         findShortestPath(start, target, nodeList);
         return nodeList;
     }
 
-    boolean findShortestPath(Node<T> start, Node<T> target, List<Node<T>> path) {
+    boolean findShortestPath(Node<V> start, Node<V> target, List<Node<V>> path) {
         return findShortestPath(start, target, path, defaultHeuristic);
     }
 
-    List<Node<T>> findShortestPath(Node<T> start, Node<T> target, Heuristic<T> heuristic) {
-        ArrayList<Node<T>> nodeList = new ArrayList<>();
+    List<Node<V>> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        ArrayList<Node<V>> nodeList = new ArrayList<>();
         findShortestPath(start, target, nodeList, heuristic);
         return nodeList;
     }
 
-    boolean findShortestPath(Node<T> start, Node<T> target, List<Node<T>> path, Heuristic<T> heuristic) {
-        Node<T> end = performShortestPathSearch(start, target, heuristic);
+    boolean findShortestPath(Node<V> start, Node<V> target, List<Node<V>> path, Heuristic<V> heuristic) {
+        Node<V> end = performShortestPathSearch(start, target, heuristic);
         path.clear();
         if (end==null) {
             priorityQueue.clear();
             return false;
         }
 
-        Node<T> v = end;
+        Node<V> v = end;
         while(v.prev!=null) {
             path.add(v);
             v = v.prev;
@@ -84,7 +84,7 @@ class Algorithms<T> {
         return distances;
     }*/
 
-    private Node<T> performShortestPathSearch(Node<T> start, Node<T> target, Heuristic<T> heuristic) {
+    private Node<V> performShortestPathSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
 
         clear();
 
@@ -95,7 +95,7 @@ class Algorithms<T> {
         isReset.add(start);
 
         while(!priorityQueue.isEmpty()) {
-            Node<T> u = priorityQueue.poll();
+            Node<V> u = priorityQueue.poll();
             if (u == target) {
                 clear();
                 return u;
@@ -103,7 +103,7 @@ class Algorithms<T> {
             if (u.visited) continue;
             u.visited = true;
             for (Connection e : u.connections.values()) {
-                Node<T> v = e.b;
+                Node<V> v = e.b;
                 resetAttribs(v);
                 if (!v.visited) {
                     float newDistance = u.distance + e.getWeight();
@@ -201,7 +201,7 @@ class Algorithms<T> {
         return false;
     }*/
 
-    private void resetAttribs(Node<T> v) {
+    private void resetAttribs(Node<V> v) {
         boolean needsReset = isReset.add(v);
         if (needsReset) {
             v.resetAlgorithmAttribs();

@@ -3,41 +3,34 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Objects;
 
-public class Connection<V> {
+public abstract class Connection<V> {
 
     static final float DEFAULT_WEIGHT = 1;
 
-    protected final Node<V> a, b;
-    protected float weight = DEFAULT_WEIGHT;
-    protected final Edge edge = new Edge(this);
+    final Node<V> a, b;
+    float weight = DEFAULT_WEIGHT;
+    final Edge edge = new Edge(this);
 
-    protected Connection(Node<V> a, Node<V> b) {
+    Connection(Node<V> a, Node<V> b) {
         this.a = a;
         this.b = b;
     }
-    protected Connection(Node<V> a, Node<V> b, float weight) {
+    Connection(Node<V> a, Node<V> b, float weight) {
         this.a = a;
         this.b = b;
         this.weight = weight;
     }
 
-    public V getA() {
-        return a.object;
-    }
 
-    public V getB() {
-        return b.object;
-    }
-
-    public boolean isIncident(Node<V> v) {
+    boolean isIncident(Node<V> v) {
         return a.equals(v) || b.equals(v);
     }
 
-    public float getWeight() {
+    float getWeight() {
         return weight;
     }
 
-    public void setWeight(float weight) {
+    void setWeight(float weight) {
         this.weight = weight;
     }
 
@@ -46,17 +39,56 @@ public class Connection<V> {
         return "{" + a + ", " + b +'}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Connection connection = (Connection) o;
-        if (a.equals(connection.a) && b.equals(connection.b)) return true;
-        return false;
+    static class DirectedConnection<V> extends Connection<V>  {
+
+        DirectedConnection(Node<V> a, Node<V> b) {
+            super(a, b);
+        }
+
+        DirectedConnection(Node<V> a, Node<V> b, float weight) {
+            super(a, b, weight);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Connection connection = (Connection) o;
+            if (a.equals(connection.a) && b.equals(connection.b)) return true;
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(a, b);
+        }
+
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(a, b);
+    static class UndirectedConnection<V> extends Connection<V> {
+
+        UndirectedConnection(Node<V> a, Node<V> b) {
+            super(a, b);
+        }
+
+        UndirectedConnection(Node<V> a, Node<V> b, float weight) {
+            super(a, b, weight);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Connection connection = (Connection) o;
+            if ((a.equals(connection.a) && b.equals(connection.b))
+                    || (a.equals(connection.b) && b.equals(connection.a))) return true;
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(a, b) + Objects.hash(b, a);
+        }
     }
+
 }

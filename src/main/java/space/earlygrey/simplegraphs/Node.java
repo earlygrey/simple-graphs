@@ -6,12 +6,12 @@ import java.util.Map;
 
 class Node<T extends Object> {
 
-    final Graph graph;
+    final AbstractGraph graph;
     public final T object;
     Map<Edge<T>, Connection<T>> connections = new LinkedHashMap<>();
     Map<Node<T>, Connection<T>> neighbours = new LinkedHashMap<>();
 
-    Node (T object, Graph<T> graph) {
+    Node (T object, AbstractGraph<T> graph) {
         this.object = object;
         this.graph = graph;
     }
@@ -32,7 +32,8 @@ class Node<T extends Object> {
     Connection<T> connect(Node v, float weight) {
         Connection<T> connection = neighbours.get(v);
         if (connection == null) {
-            connection = new Connection<T>(this, v, weight);
+            //connection = new Connection<T>(this, v, weight);
+            connection = graph.createConnection(this, v, weight);
             connections.put(connection.edge, connection);
             neighbours.put(v, connection);
             return connection;

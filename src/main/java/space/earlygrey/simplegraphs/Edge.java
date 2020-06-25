@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Edge<V> {
 
-    private final Connection<V> connection;
+    final Connection<V> connection;
 
     Edge(Connection<V> connection){
         this.connection = connection;

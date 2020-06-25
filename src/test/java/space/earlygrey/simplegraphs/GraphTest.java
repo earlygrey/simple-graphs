@@ -2,7 +2,6 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +37,8 @@ public class GraphTest {
 
     }
 
-    private static Graph<Vector2> createGridGraph(int n) {
-        Graph<Vector2> graph = new Graph<>();
+    private static AbstractGraph<Vector2> createGridGraph(int n, boolean directed) {
+        AbstractGraph<Vector2> graph = directed ? new DirectedGraph<>() : new Graph<>();
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -69,17 +68,25 @@ public class GraphTest {
     @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
-        Graph<Vector2> graph = createGridGraph(n);
+        AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
 
-        assertEquals(2*n*(n-1), graph.getEdgeCount());
+        assertEquals(2*n*(n-1), undirectedGraph.getEdgeCount());
+
+        for (int i = 0; i < n/2; i++) {
+            for (int j = 0; j < n/2; j++) {
+                
+            }
+        }
+
+
 
     }
 
     @Test
     public void shortestPathShouldBeCorrectLength() {
         int n = 5;
-        Graph<Vector2> graph = createGridGraph(n);
-        List<Vector2> path = graph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
+        AbstractGraph<Vector2> undirectedGraph = createGridGraph(n, false);
+        List<Vector2> path = undirectedGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
 
         assertEquals(2*(n-1) + 1, path.size());
     }

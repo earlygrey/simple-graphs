@@ -1,4 +1,44 @@
 package space.earlygrey.simplegraphs;
 
-class AlgorithmsTest {
+import org.junit.Test;
+
+import java.util.List;
+
+import space.earlygrey.simplegraphs.TestUtils.Vector2;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class AlgorithmsTest {
+
+    @Test
+    public void shortestPathShouldBeCorrect() {
+        int n = 5;
+        Graph<Vector2> undirectedGraph = TestUtils.createGridGraph(n, false);
+        Graph<Vector2> diGraph = TestUtils.createGridGraph(n, true);
+
+        Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
+
+        List<Vector2> path = undirectedGraph.findShortestPath(start, end);
+        assertEquals(2*(n-1) + 1, path.size());
+        assertEquals(start, path.get(0));
+        assertTrue(pathIsConnected(path, undirectedGraph));
+
+        path = diGraph.findShortestPath(start, end);
+        assertEquals(2*(n-1) + 1, path.size());
+        assertEquals(start, path.get(0));
+        assertTrue(pathIsConnected(path, diGraph));
+        
+    }
+
+    private static boolean pathIsConnected(List<Vector2> path, Graph<Vector2> graph) {
+        for (int i = 0; i < path.size()-1; i++) {
+            if (!graph.isConnected(path.get(i), path.get(i+1))) return false;
+        }
+        return true;
+    }
+
+
+
+
 }

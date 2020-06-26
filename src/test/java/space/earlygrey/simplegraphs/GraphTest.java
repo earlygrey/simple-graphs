@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import space.earlygrey.simplegraphs.TestUtils.Vector2;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -37,41 +39,11 @@ public class GraphTest {
 
     }
 
-    private static Graph<Vector2> createGridGraph(int n, boolean directed) {
-        Graph<Vector2> graph = directed ? new DirectedGraph<>() : new UndirectedGraph<>();
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                Vector2 v = new Vector2(i, j);
-                graph.addVertex(v);
-            }
-        }
-
-        int e = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i<n-1) {
-                    Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i+1,j);
-                    graph.addEdge(v1, v2, v1.dst(v2));
-                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
-                    e++;
-                }
-                if (j<n-1) {
-                    Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i,j+1);
-                    graph.addEdge(v1, v2, v1.dst(v2));
-                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
-                    e++;
-                }
-            }
-        }
-        return graph;
-    }
-
     @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = createGridGraph(n, false);
-        Graph<Vector2> diGraph = createGridGraph(n, true);
+        Graph<Vector2> undirectedGraph = TestUtils.createGridGraph(n, false);
+        Graph<Vector2> diGraph = TestUtils.createGridGraph(n, true);
 
         int expectedUndirected = 2*n*(n-1), expectedDirected = 2 * 2*n*(n-1);
         assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());
@@ -97,19 +69,6 @@ public class GraphTest {
         assertEquals(expectedUndirected-2, undirectedGraph.getEdgeCount());
         assertEquals(expectedDirected-2, diGraph.getEdgeCount());
 
-    }
-
-    @Test
-    public void shortestPathShouldBeCorrectLength() {
-        int n = 5;
-        Graph<Vector2> undirectedGraph = createGridGraph(n, false);
-        Graph<Vector2> diGraph = createGridGraph(n, true);
-
-        List<Vector2> path = undirectedGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
-        assertEquals(2*(n-1) + 1, path.size());
-
-        path = diGraph.findShortestPath(new Vector2(0, 0), new Vector2(n - 1, n - 1));
-        assertEquals(2*(n-1) + 1, path.size());
     }
 
 }

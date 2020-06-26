@@ -12,7 +12,7 @@ It has two types of graph data structures - representing undirected and directed
 Algorithms implemented are:
 - [breadth first search](https://en.wikipedia.org/wiki/Breadth-first_search)
 - [depth first search](https://en.wikipedia.org/wiki/Depth-first_search)
-- find a shortest path using the [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm) (which is [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) when no heuristic is provided)
+- shortest path using the [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm) (which is [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) when no heuristic is provided)
 - [cycle detection](https://en.wikipedia.org/wiki/Cycle_(graph_theory)#Cycle_detection) for directed graphs
 
-You might be wondering what the point of another graph library is, since there are already some very [powerful](https://jgrapht.org/) and [versatile](https://github.com/google/guava/wiki/GraphsExplained) libraries out there, which are made by much better programmers than me. Well the idea behind simple graphs is that it's first and foremost user-friendly and simple to use - just instantiate a graph object, add some vertices and edges and you're ready. Algorithms are called directly on the graph object.
+You might be wondering what the point of another graph library is, since there are already some very [powerful](https://jgrapht.org/) and [versatile](https://github.com/google/guava/wiki/GraphsExplained) libraries out there, which are made by much better programmers than me. Well the idea behind simple graphs is that it's first and foremost user-friendly and simple to use. Just instantiate a graph object, add some vertices and edges and you're ready, algorithms are called directly on the graph object. Simple graphs has no dependencies.

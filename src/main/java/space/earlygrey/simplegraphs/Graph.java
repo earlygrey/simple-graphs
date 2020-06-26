@@ -278,16 +278,16 @@ public abstract class Graph<V> {
         return breadthFirstSearch(v, size(), size());
     }
 
-    public List<V> depthFirstSearch(V v, int maxVertices) {
+    public List<V> depthFirstSearch(V v, int maxVertices, int maxDepth) {
         List<V> list = new ArrayList<>();
         Node node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        algorithms.dfs(node, list, maxVertices);
+        algorithms.dfs(node, list, maxVertices, maxDepth);
         return list;
     }
 
     public List<V> depthFirstSearch(V v) {
-        return depthFirstSearch(v, size());
+        return depthFirstSearch(v, size(), size());
     }
 
 }

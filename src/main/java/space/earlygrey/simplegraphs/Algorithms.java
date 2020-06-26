@@ -132,7 +132,6 @@ class Algorithms<V> {
 
         resetAttribs(vertex);
         vertex.visited = true;
-        vertex.distance = 0;
 
         queue.add(vertex);
 
@@ -154,12 +153,11 @@ class Algorithms<V> {
         clear();
     }
 
-    void dfs(Node<V> vertex, List<V> vertices, int maxVertices) {
+    void dfs(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
         vertices.clear();
         clear();
 
         resetAttribs(vertex);
-        vertex.distance = 0;
 
         queue.add(vertex);
 
@@ -167,11 +165,14 @@ class Algorithms<V> {
             Node<V> v = queue.poll();
             if (!v.visited) {
                 vertices.add(v.object);
+                if (v.i == maxDepth) continue;
                 if (vertices.size() == maxVertices) break;
                 v.visited = true;
                 for (Connection e : v.connections.values()) {
-                    resetAttribs(e.b);
-                    queue.addFirst(e.b);
+                    Node<V> w = e.b;
+                    resetAttribs(w);
+                    w.i = v.i+1;
+                    queue.addFirst(w);
                 }
             }
         }

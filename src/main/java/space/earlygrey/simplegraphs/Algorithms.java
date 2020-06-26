@@ -121,13 +121,8 @@ class Algorithms<V> {
         return null;
     }
 
-/*
-    List<Node<V>> getComponent(Node<V> vertex) {
-        return getComponent(vertex, Float.MAX_VALUE);
-    }
-    List<Node<V>> getComponent(Node<V> vertex, float max) {
-        ArrayList<Node<V>> nodeList = new ArrayList<>();
-
+    void findComponent(Node<V> vertex, List<V> vertices, float maxDistance) {
+        vertices.clear();
         clear();
 
         resetAttribs(vertex);
@@ -139,28 +134,28 @@ class Algorithms<V> {
 
         while(!priorityQueue.isEmpty()) {
             Node<V> v = priorityQueue.poll();
-            nodeList.add(v);
+            vertices.add(v.object);
             for (Connection e : v.connections.values()) {
                 Node<V> w = e.b;
                 resetAttribs(w);
                 if (!w.visited) {
                     w.visited = true;
                     w.distance = v.distance + e.getWeight();
-                    if (w.distance <= max) priorityQueue.add(w);
+                    if (w.distance <= maxDistance) priorityQueue.add(w);
                 }
             }
 
         }
-        priorityQueue.clear();
-        return nodeList;
+
+        clear();
     }
 
-    List<List<V>> getComponents(Graph<V> graph) {
+    /*List<List<V>> getComponents(Graph<V> graph) {
         Set<Node<V>> nodeSet = new HashSet();
         nodeSet.addAll(graph.getNodes());
         List<List<Node<V>>> components = new ArrayList<>();
         while(!nodeSet.isEmpty()) {
-            List<Node<V>> nodeList = getComponent(nodeSet.iterator().next());
+            List<Node<V>> nodeList = findComponent(nodeSet.iterator().next());
             components.add(nodeList);
             nodeSet.removeAll(nodeList);
         }
@@ -173,13 +168,12 @@ class Algorithms<V> {
             objectComponents.add(objectNodes);
         }
         return objectComponents;
-    }
-*/
+    }*/
+
     boolean containsCycle(Graph<V> graph) {
         if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
         clear();
         for (Node<V> v : graph.getNodes()) {
-            System.out.println("running on "+v.object);
             resetAttribs(v);
             if (detectCycleDFS(v, new HashSet<>())) {
                 clear();

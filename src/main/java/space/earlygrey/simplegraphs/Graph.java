@@ -266,17 +266,4 @@ public abstract class Graph<V> {
         return algorithms.findMinimumDistance(getNode(start), getNode(target));
     }
 
-    /*public List<V> getComponent (V object, int max) {
-        List<V> list = new ArrayList<>();
-        Node node = getNode(object);
-        if (node==null) return list;
-        List<Node> nodeList = algorithms.getComponent(node, max);
-        for (int i = 0, n = nodeList.size(); i < n; i++) {
-            list.add((V) nodeList.get(i).object);
-        }
-        return list;
-    }
-*/
-
-
 }

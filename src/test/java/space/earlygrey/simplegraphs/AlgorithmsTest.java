@@ -59,4 +59,28 @@ public class AlgorithmsTest {
         assertTrue(diGraph.containsCycle());
     }
 
+    @Test
+    public void graphShouldFindComponent() {
+
+        UndirectedGraph<Integer> graph = new UndirectedGraph<>();
+
+        for (int i = 0; i < 6; i++) {
+            graph.addVertex(i);
+        }
+
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 2);
+
+        graph.addEdge(4,3);
+
+        List<Integer> component = graph.findComponent(0);
+        assertEquals(3, component.size());
+
+        component = graph.findComponent(3);
+        assertEquals(2, component.size());
+
+        component = graph.findComponent(5);
+        assertEquals(1, component.size());
+    }
+
 }

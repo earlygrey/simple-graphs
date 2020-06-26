@@ -1,6 +1,8 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
 
@@ -46,6 +48,14 @@ public class UndirectedGraph<V> extends Graph<V> {
     @Override
     public boolean isDirected() {
         return false;
+    }
+
+    public List<V> findComponent (V v) {
+        List<V> list = new ArrayList<>();
+        Node node = getNode(v);
+        if (node==null) return list;
+        algorithms.findComponent(node, list, Float.MAX_VALUE);
+        return list;
     }
 
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +13,8 @@ public abstract class Graph<V> {
     // Members
     //================================================================================
 
-    //private final Collection<Node<V>> vertices;
-    private final Map<V, Node<V>> vertexMap;
-    //private final Collection<Connection<V>> connections;
-    //private final Collection<V> objects;
-    private final Map<Edge<V>, Connection<V>> edges;
-
+    final Map<V, Node<V>> vertexMap;
+    final Map<Edge<V>, Connection<V>> edges;
 
     final Algorithms algorithms;
 
@@ -34,10 +29,7 @@ public abstract class Graph<V> {
 
     protected Graph() {
         algorithms = new Algorithms(this);
-        //objects =  new LinkedHashSet<>();
-        //vertices = new LinkedHashSet<>();
         vertexMap = new LinkedHashMap<>();
-        //connections = new LinkedHashSet<>();
         edges = new LinkedHashMap<>();
     }
 
@@ -102,10 +94,10 @@ public abstract class Graph<V> {
     }
 
     public void disconnectAll() {
-        //connections.clear();
         for (Node v : getNodes()) {
             v.disconnectAll();
         }
+        edges.clear();
     }
 
     //------------------
@@ -118,24 +110,20 @@ public abstract class Graph<V> {
         Node n = new Node(v, this);
         //vertices.add(n);
         vertexMap.put(v, n);
-        //objects.add(v);
         return n;
     }
 
     void removeVertex (Node<V> node) {
         for (Node<V> neighbour : node.neighbours.keySet()) {
-            neighbour.disconnect(node);
+            neighbour.removeEdge(node);
         }
         node.disconnectAll();
-       // vertices.remove(node);
-        //objects.remove(node.object);
         vertexMap.remove(node.object);
     }
 
     Connection<V> addEdge(Node v, Node w, float weight) {
-        Connection<V> e = v.connect(w, weight);
+        Connection<V> e = v.addEdge(w, weight);
         if (e!=null) {
-            //connections.add(e);
             edges.put(e.edge, e);
             return e;
         } else {
@@ -150,18 +138,14 @@ public abstract class Graph<V> {
     }
 
     Connection<V> removeEdge(Node v, Node w) {
-        Connection<V> e = v.disconnect(w);
-        //connections.remove(e);
+        Connection<V> e = v.removeEdge(w);
         edges.remove(e.edge);
         return e;
     }
 
     void clear() {
-        //vertices.clear();
-        //connections.clear();
         edges.clear();
         vertexMap.clear();
-        //objects.clear();
     }
 
     abstract Connection<V> createConnection(Node<V> u, Node<V> v, float weight);
@@ -171,7 +155,7 @@ public abstract class Graph<V> {
     //================================================================================
 
     //------------------
-    //  Public Methods
+    //  Public Getters
     //------------------
 
     public boolean contains(V v) {
@@ -179,12 +163,10 @@ public abstract class Graph<V> {
     }
 
     public Edge<V> getEdge(V v, V w) {
-        if (!contains(v) || !contains(w)) return null;
-        Node<V> nodeV = getNode(v), nodeW = getNode(w);
-        Connection<V> connection = nodeV.getEdge(nodeW);
-        if (connection == null && isDirected()) {
-            connection = nodeW.getEdge(nodeV);
-        }
+        Node<V> a = getNode(v), b = getNode(w);
+        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        Connection<V> connection = a.getEdge(b);
+        if (connection == null) return null;
         return connection.edge;
     }
 
@@ -224,25 +206,24 @@ public abstract class Graph<V> {
     }
 
     //------------------
-    //  Internal Methods
+    //  Internal Getters
     //------------------
 
     Node getNode(V v) {
         return vertexMap.get(v);
     }
 
-
     Collection<Node<V>> getNodes() {
         return vertexMap.values();
     }
 
-    Collection<Connection<V>> getConnections() {
-        return edges.values();
+    /*Map<Edge<V>, Connection<V>> getEdgeMap() {
+        return edges;
     }
 
     Collection<Connection<V>> getConnections(V v) {
         return getNode(v).connections.values();
-    }
+    }*/
 
 
     //================================================================================

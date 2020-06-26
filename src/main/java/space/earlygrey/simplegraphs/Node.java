@@ -25,11 +25,7 @@ class Node<T extends Object> {
         return neighbours.get(v);
     }
 
-    Connection<T> connect(Node v) {
-        return connect(v, Connection.DEFAULT_WEIGHT);
-    }
-
-    Connection<T> connect(Node v, float weight) {
+    Connection<T> addEdge(Node v, float weight) {
         Connection<T> connection = neighbours.get(v);
         if (connection == null) {
             connection = graph.createConnection(this, v, weight);
@@ -41,7 +37,7 @@ class Node<T extends Object> {
         }
         return connection;
     }
-    Connection<T> disconnect(Node v) {
+    Connection<T> removeEdge(Node v) {
         Connection<T> connection = neighbours.remove(v);
         connections.remove(connection.edge);
         return connection;

@@ -14,14 +14,11 @@ public abstract class Graph<V> {
     // Members
     //================================================================================
 
-    // Collections for internal use
     //private final Collection<Node<V>> vertices;
     private final Map<V, Node<V>> vertexMap;
-    private final Collection<Connection<V>> connections;
-
-    // Collections for public access
+    //private final Collection<Connection<V>> connections;
     //private final Collection<V> objects;
-    private final Collection<Edge> edges;
+    private final Map<Edge<V>, Connection<V>> edges;
 
 
     final Algorithms algorithms;
@@ -40,8 +37,8 @@ public abstract class Graph<V> {
         //objects =  new LinkedHashSet<>();
         //vertices = new LinkedHashSet<>();
         vertexMap = new LinkedHashMap<>();
-        connections = new LinkedHashSet<>();
-        edges = new LinkedHashSet<>();
+        //connections = new LinkedHashSet<>();
+        edges = new LinkedHashMap<>();
     }
 
     protected Graph(Collection<V> vertices) {
@@ -105,7 +102,7 @@ public abstract class Graph<V> {
     }
 
     public void disconnectAll() {
-        connections.clear();
+        //connections.clear();
         for (Node v : getNodes()) {
             v.disconnectAll();
         }
@@ -138,8 +135,8 @@ public abstract class Graph<V> {
     Connection<V> addEdge(Node v, Node w, float weight) {
         Connection<V> e = v.connect(w, weight);
         if (e!=null) {
-            connections.add(e);
-            edges.add(e.edge);
+            //connections.add(e);
+            edges.put(e.edge, e);
             return e;
         } else {
             return v.getEdge(w);
@@ -154,14 +151,14 @@ public abstract class Graph<V> {
 
     Connection<V> removeEdge(Node v, Node w) {
         Connection<V> e = v.disconnect(w);
-        connections.remove(e);
+        //connections.remove(e);
         edges.remove(e.edge);
         return e;
     }
 
     void clear() {
         //vertices.clear();
-        connections.clear();
+        //connections.clear();
         edges.clear();
         vertexMap.clear();
         //objects.clear();
@@ -191,14 +188,15 @@ public abstract class Graph<V> {
         return connection.edge;
     }
 
+
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
         return Collections.unmodifiableCollection(node.getEdges());
     }
 
-    public Collection<Edge> getEdges() {
-        return Collections.unmodifiableCollection(edges);
+    public Collection<Edge<V>> getEdges() {
+        return Collections.unmodifiableCollection(edges.keySet());
     }
 
     public Collection<V> getVertices() {
@@ -214,7 +212,7 @@ public abstract class Graph<V> {
     }
 
     public int getEdgeCount() {
-        return connections.size();
+        return edges.size();
     }
 
     public boolean isConnected(V u, V v) {
@@ -239,7 +237,7 @@ public abstract class Graph<V> {
     }
 
     Collection<Connection<V>> getConnections() {
-        return connections;
+        return edges.values();
     }
 
     Collection<Connection<V>> getConnections(V v) {

@@ -54,12 +54,14 @@ class Node<T extends Object> {
     float distance;
     float estimate;
     Node prev;
+    int i;
 
     void resetAlgorithmAttribs() {
         visited = false;
         prev = null;
         distance = Float.MAX_VALUE;
         estimate = 0;
+        i = 0;
     }
 
     @Override

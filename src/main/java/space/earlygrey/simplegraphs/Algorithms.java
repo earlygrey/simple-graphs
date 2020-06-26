@@ -1,10 +1,12 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
@@ -12,7 +14,8 @@ import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
 class Algorithms<V> {
 
     private final Graph<V> graph;
-    private final PriorityQueue<Node> priorityQueue;
+    private final Queue<Node<V>> priorityQueue;
+    private final ArrayDeque<Node<V>> queue = new ArrayDeque<>();
     private final HashSet<Node<V>> isReset;
     final Heuristic<V> defaultHeuristic = new DefaultHeuristic<>();
 
@@ -25,6 +28,7 @@ class Algorithms<V> {
     private void clear() {
         isReset.clear();
         priorityQueue.clear();
+        queue.clear();
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -32,7 +36,7 @@ class Algorithms<V> {
     }
 
     float findMinimumDistance(Node<V> start, Node<V> target) {
-        Node<V> end = performShortestPathSearch(start, target, defaultHeuristic);
+        Node<V> end = aStarSearch(start, target, defaultHeuristic);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
     }
@@ -54,7 +58,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<Node<V>> path, Heuristic<V> heuristic) {
-        Node<V> end = performShortestPathSearch(start, target, heuristic);
+        Node<V> end = aStarSearch(start, target, heuristic);
         path.clear();
         if (end==null) {
             priorityQueue.clear();
@@ -85,7 +89,7 @@ class Algorithms<V> {
         return distances;
     }*/
 
-    private Node<V> performShortestPathSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
 
         clear();
 
@@ -121,34 +125,80 @@ class Algorithms<V> {
         return null;
     }
 
-    void findComponent(Node<V> vertex, List<V> vertices, float maxDistance) {
+    void bfs(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
         vertices.clear();
+        if (maxDepth <= 0 ) return;
         clear();
 
         resetAttribs(vertex);
         vertex.visited = true;
         vertex.distance = 0;
 
-        priorityQueue.add(vertex);
-        isReset.add(vertex);
+        queue.add(vertex);
 
-        while(!priorityQueue.isEmpty()) {
-            Node<V> v = priorityQueue.poll();
+        while(!queue.isEmpty()) {
+            Node<V> v = queue.poll();
             vertices.add(v.object);
+            if (v.i == maxDepth) continue;
+            if (vertices.size() == maxVertices) break;
             for (Connection e : v.connections.values()) {
                 Node<V> w = e.b;
                 resetAttribs(w);
                 if (!w.visited) {
                     w.visited = true;
-                    w.distance = v.distance + e.getWeight();
-                    if (w.distance <= maxDistance) priorityQueue.add(w);
+                    w.i = v.i+1;
+                    queue.addLast(w);
                 }
             }
-
         }
-
         clear();
     }
+
+    void dfs(Node<V> vertex, List<V> vertices, int maxVertices) {
+        vertices.clear();
+        clear();
+
+        resetAttribs(vertex);
+        vertex.distance = 0;
+
+        queue.add(vertex);
+
+        while(!queue.isEmpty()) {
+            Node<V> v = queue.poll();
+            if (!v.visited) {
+                vertices.add(v.object);
+                if (vertices.size() == maxVertices) break;
+                v.visited = true;
+                for (Connection e : v.connections.values()) {
+                    resetAttribs(e.b);
+                    queue.addFirst(e.b);
+                }
+            }
+        }
+        clear();
+    }
+
+    /*void dfs(Node<V> vertex, List<V> vertices, float maxDistance, int maxDepth) {
+        vertices.clear();
+        clear();
+        dfsRecursive(vertex, vertices, maxDistance, maxDepth, 0);
+        clear();
+    }
+
+    private void dfsRecursive(Node<V> v, List<V> vertices, float maxDistance, int maxDepth, int depth) {
+        if (depth > maxDepth) return;
+        resetAttribs(v);
+        v.visited = true;
+        vertices.add(v.object);
+        for (Connection e : v.connections.values()) {
+            Node<V> w = e.b;
+            if (!w.visited) {
+                w.distance = v.distance + e.getWeight();
+                if (w.distance <= maxDistance) dfsRecursive(w, vertices, maxDistance, maxDepth, depth + 1);
+            }
+        }
+    }*/
+
 
     /*List<List<V>> getComponents(Graph<V> graph) {
         Set<Node<V>> nodeSet = new HashSet();

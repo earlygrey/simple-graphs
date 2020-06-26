@@ -266,4 +266,28 @@ public abstract class Graph<V> {
         return algorithms.findMinimumDistance(getNode(start), getNode(target));
     }
 
+    public List<V> breadthFirstSearch(V v, int maxVertices, int maxDepth) {
+        List<V> list = new ArrayList<>();
+        Node node = getNode(v);
+        if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        algorithms.bfs(node, list, maxVertices, maxDepth);
+        return list;
+    }
+
+    public List<V> breadthFirstSearch(V v) {
+        return breadthFirstSearch(v, size(), size());
+    }
+
+    public List<V> depthFirstSearch(V v, int maxVertices) {
+        List<V> list = new ArrayList<>();
+        Node node = getNode(v);
+        if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        algorithms.dfs(node, list, maxVertices);
+        return list;
+    }
+
+    public List<V> depthFirstSearch(V v) {
+        return depthFirstSearch(v, size());
+    }
+
 }

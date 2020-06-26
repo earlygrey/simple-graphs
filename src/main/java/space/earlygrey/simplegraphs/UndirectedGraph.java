@@ -50,12 +50,4 @@ public class UndirectedGraph<V> extends Graph<V> {
         return false;
     }
 
-    public List<V> findComponent (V v) {
-        List<V> list = new ArrayList<>();
-        Node node = getNode(v);
-        if (node==null) return list;
-        algorithms.findComponent(node, list, Float.MAX_VALUE);
-        return list;
-    }
-
 }

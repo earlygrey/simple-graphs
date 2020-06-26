@@ -58,29 +58,42 @@ public class AlgorithmsTest {
         diGraph.addEdge(2,0);
         assertTrue(diGraph.containsCycle());
     }
+    
+    private Graph<Integer> createSearchGraph() {
+        Graph<Integer> graph = new UndirectedGraph<>();
 
-    @Test
-    public void graphShouldFindComponent() {
-
-        UndirectedGraph<Integer> graph = new UndirectedGraph<>();
-
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             graph.addVertex(i);
         }
 
         graph.addEdge(0, 1);
-        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(0, 2);
+        graph.addEdge(2, 3);
+        
+        return graph;
+    }
 
-        graph.addEdge(4,3);
+    @Test
+    public void bfsShouldWork() {
+        Graph<Integer> graph = createSearchGraph();
 
-        List<Integer> component = graph.findComponent(0);
-        assertEquals(3, component.size());
+        List<Integer> results = graph.breadthFirstSearch(0);
 
-        component = graph.findComponent(3);
-        assertEquals(2, component.size());
+        assertEquals(4, results.size());
+        assertEquals(new Integer(0), results.get(0));
+        assertEquals(new Integer(3), results.get(3));
+    }
 
-        component = graph.findComponent(5);
-        assertEquals(1, component.size());
+    @Test
+    public void dfsShouldWork() {
+        Graph<Integer> graph = createSearchGraph();
+
+        List<Integer> results = graph.depthFirstSearch(0);
+
+        assertEquals(4, results.size());
+        assertEquals(new Integer(0), results.get(0));
+        assertEquals(new Integer(3), results.get(2));
     }
 
 }

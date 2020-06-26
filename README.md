@@ -7,7 +7,7 @@
 
 Simple graphs is a java library containing basic graph data structures and algorithms.
 
-It has two types of graph data structures - representing undirected and directed graphs, both weighted. Each of these provide methods for adding and removing vertices and edges, accessing collections of vertices and edges.
+It has two types of graph data structures representing weighted undirected and directed graphs. Each of these provides methods for adding and removing vertices and edges, and accessing collections of its vertices and edges.
 
 Algorithms implemented are:
 - [breadth first search](https://en.wikipedia.org/wiki/Breadth-first_search)

@@ -19,5 +19,8 @@ public class DirectedGraph<V> extends Graph<V> {
         return new DirectedConnection<>(a, b, weight);
     }
 
+    public boolean containsCycle() {
+        return algorithms.containsCycle(this);
+    }
 
 }

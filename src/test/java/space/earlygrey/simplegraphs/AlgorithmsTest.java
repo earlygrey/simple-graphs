@@ -28,7 +28,7 @@ public class AlgorithmsTest {
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
-        
+
     }
 
     private static boolean pathIsConnected(List<Vector2> path, Graph<Vector2> graph) {
@@ -39,6 +39,24 @@ public class AlgorithmsTest {
     }
 
 
+    @Test
+    public void graphShouldDetectCycles() {
 
+        DirectedGraph<Integer> diGraph = new DirectedGraph<>();
+
+        for (int i = 0; i < 6; i++) {
+            diGraph.addVertex(i);
+        }
+
+        diGraph.addEdge(0, 1);
+        diGraph.addEdge(1, 2);
+        assertTrue(!diGraph.containsCycle());
+
+        diGraph.addEdge(0,2);
+        assertTrue(!diGraph.containsCycle());
+
+        diGraph.addEdge(2,0);
+        assertTrue(diGraph.containsCycle());
+    }
 
 }

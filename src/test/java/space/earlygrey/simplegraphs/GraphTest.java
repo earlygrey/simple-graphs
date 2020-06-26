@@ -2,8 +2,6 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
-import java.util.List;
-
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import static org.junit.Assert.assertEquals;
@@ -37,6 +35,8 @@ public class GraphTest {
 
         assertEquals(n - n/2, graph.size());
 
+        graph.removeAllVertices();
+        assertEquals(0, graph.size());
     }
 
     @Test
@@ -68,6 +68,10 @@ public class GraphTest {
 
         assertEquals(expectedUndirected-2, undirectedGraph.getEdgeCount());
         assertEquals(expectedDirected-2, diGraph.getEdgeCount());
+
+
+        undirectedGraph.removeAllEdges();
+        assertEquals(0, undirectedGraph.getEdgeCount());
 
     }
 

@@ -100,11 +100,16 @@ public abstract class Graph<V> {
         return connection == null ? null : connection.edge;
     }
 
-    public void disconnectAll() {
+    public void removeAllEdges() {
         for (Node v : getNodes()) {
-            v.disconnectAll();
+            v.disconnect();
         }
         edges.clear();
+    }
+
+    public void removeAllVertices() {
+        edges.clear();
+        vertexMap.clear();
     }
 
     //------------------
@@ -124,7 +129,7 @@ public abstract class Graph<V> {
         for (Node<V> neighbour : node.neighbours.keySet()) {
             neighbour.removeEdge(node);
         }
-        node.disconnectAll();
+        node.disconnect();
         vertexMap.remove(node.object);
     }
 
@@ -142,11 +147,6 @@ public abstract class Graph<V> {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return null;
         return edges.remove(e.edge);
-    }
-
-    void clear() {
-        edges.clear();
-        vertexMap.clear();
     }
 
     //================================================================================
@@ -276,9 +276,7 @@ public abstract class Graph<V> {
         }
         return list;
     }
+*/
 
-    public boolean hasCycle() {
-        return algorithms.containsCycle(this);
-    }*/
 
 }

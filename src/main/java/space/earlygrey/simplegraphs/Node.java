@@ -44,7 +44,7 @@ class Node<T extends Object> {
         return connection;
     }
 
-    void disconnectAll() {
+    void disconnect() {
         neighbours.clear();
         connections.clear();
     }

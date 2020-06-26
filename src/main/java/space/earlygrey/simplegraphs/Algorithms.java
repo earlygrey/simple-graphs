@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
 
@@ -71,11 +72,11 @@ class Algorithms<V> {
         return true;
     }
 
-    /*Map<Node<T>, Float> findAllShortestDistances(Node<T> start) {
+    /*Map<Node<V>, Float> findAllShortestDistances(Node<V> start) {
         performShortestPathSearch(start, null, defaultHeuristic);
         priorityQueue.clear();
-        Map<Node<T>, Float> distances = new HashMap<>();
-        for (Node<T> v : graph.getNodes()) {
+        Map<Node<V>, Float> distances = new HashMap<>();
+        for (Node<V> v : graph.getNodes()) {
             if (v.visited) {
                 distances.put(v, new Float(v.distance));
                 //Gdx.app.log("GraphAlgorithms:findAllShortestDistances", ""+(v.distance));
@@ -121,11 +122,11 @@ class Algorithms<V> {
     }
 
 /*
-    List<Node<T>> getComponent(Node<T> vertex) {
+    List<Node<V>> getComponent(Node<V> vertex) {
         return getComponent(vertex, Float.MAX_VALUE);
     }
-    List<Node<T>> getComponent(Node<T> vertex, float max) {
-        ArrayList<Node<T>> nodeList = new ArrayList<>();
+    List<Node<V>> getComponent(Node<V> vertex, float max) {
+        ArrayList<Node<V>> nodeList = new ArrayList<>();
 
         clear();
 
@@ -137,10 +138,10 @@ class Algorithms<V> {
         isReset.add(vertex);
 
         while(!priorityQueue.isEmpty()) {
-            Node<T> v = priorityQueue.poll();
+            Node<V> v = priorityQueue.poll();
             nodeList.add(v);
             for (Connection e : v.connections.values()) {
-                Node<T> w = e.b;
+                Node<V> w = e.b;
                 resetAttribs(w);
                 if (!w.visited) {
                     w.visited = true;
@@ -154,31 +155,33 @@ class Algorithms<V> {
         return nodeList;
     }
 
-    List<List<T>> getComponents(Graph<T> graph) {
-        Set<Node<T>> nodeSet = new HashSet();
+    List<List<V>> getComponents(Graph<V> graph) {
+        Set<Node<V>> nodeSet = new HashSet();
         nodeSet.addAll(graph.getNodes());
-        List<List<Node<T>>> components = new ArrayList<>();
+        List<List<Node<V>>> components = new ArrayList<>();
         while(!nodeSet.isEmpty()) {
-            List<Node<T>> nodeList = getComponent(nodeSet.iterator().next());
+            List<Node<V>> nodeList = getComponent(nodeSet.iterator().next());
             components.add(nodeList);
             nodeSet.removeAll(nodeList);
         }
-        List<List<T>> objectComponents = new ArrayList<>(components.size());
-        for (List<Node<T>> component : components) {
-            List<T> objectNodes = new ArrayList<>();
-            for (Node<T> node : component) {
+        List<List<V>> objectComponents = new ArrayList<>(components.size());
+        for (List<Node<V>> component : components) {
+            List<V> objectNodes = new ArrayList<>();
+            for (Node<V> node : component) {
                 objectNodes.add(node.object);
             }
             objectComponents.add(objectNodes);
         }
         return objectComponents;
     }
-
-    boolean containsCycle(Graph<T> graph) {
+*/
+    boolean containsCycle(Graph<V> graph) {
         if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
         clear();
-        for (Node<T> v : graph.getNodes()) {
-            if (cycleDFS(v, new HashSet<>())) {
+        for (Node<V> v : graph.getNodes()) {
+            System.out.println("running on "+v.object);
+            resetAttribs(v);
+            if (detectCycleDFS(v, new HashSet<>())) {
                 clear();
                 return true;
             }
@@ -187,19 +190,21 @@ class Algorithms<V> {
         return false;
     }
 
-    private boolean cycleDFS(Node<T> v, Set<Node<T>> recursiveStack) {
-        resetAttribs(v);
+    private boolean detectCycleDFS(Node<V> v, Set<Node<V>> recursiveStack) {
         v.visited = true;
         recursiveStack.add(v);
-        for (Connection<T> e : v.connections.values()) {
-            if (recursiveStack.contains(e.b)) return true;
+        for (Connection<V> e : v.connections.values()) {
+            resetAttribs(e.b);
+            if (recursiveStack.contains(e.b)) {
+                return true;
+            }
             if (!e.b.visited) {
-                if (cycleDFS(e.b, recursiveStack)) return true;
+                if (detectCycleDFS(e.b, recursiveStack)) return true;
             }
         }
         recursiveStack.remove(v);
         return false;
-    }*/
+    }
 
     private void resetAttribs(Node<V> v) {
         boolean needsReset = isReset.add(v);

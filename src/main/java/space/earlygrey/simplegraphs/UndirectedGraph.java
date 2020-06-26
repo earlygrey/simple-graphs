@@ -15,49 +15,32 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> createConnection(Node<V> u, Node<V> v, float weight) {
-        return new UndirectedConnection<>(u, v, weight);
+    Connection<V> createConnection(Node<V> a, Node<V> b, float weight) {
+        return new UndirectedConnection<>(a, b, weight);
     }
 
     @Override
-    public Edge<V> addEdge(V v, V w, float weight) {
-        if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
-        if ( v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
-        Node a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        Edge<V> edge = addEdge(a, b, weight).edge;
-        addEdge(b, a, weight);
-        return edge;
+    Connection<V> addEdge(Node<V> a, Node<V> b, float weight) {
+        Connection<V> e = a.addEdge(b, weight);
+        edges.put(e.edge, e);
+        b.addEdge(a, weight);
+        return e; //return connection instance in edges map
     }
 
     @Override
-    public Edge<V> removeEdge(V v, V w) {
-        if (!contains(v) || !contains(w))  return null;
-        if (!isConnected(v,w)) return null;
-        Node a = getNode(v);
-        Node b = getNode(w);
-        Edge<V> edge = removeEdge(a, b).edge;
-        removeEdge(b, a);
-        return edge;
+    Connection<V> removeEdge(Node<V> a, Node<V> b) {
+        Connection<V> e = a.removeEdge(b);
+        if (e == null) return null;
+        b.removeEdge(a);
+        return edges.remove(e.edge);
     }
 
     @Override
-    Connection<V> removeEdge(Connection<V> connection) {
-        Node a = connection.a;
-        Node b = connection.b;
-        Connection<V> e = removeEdge(a, b);
-        removeEdge(b, a);
-        return e;
-    }
-
-    @Override
-    public Edge<V> getEdge(V v, V w) {
-        Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+    Connection<V> getConnection(Node<V> a, Node<V> b) {
         Connection<V> connection = a.getEdge(b);
-        connection = edges.get(connection.edge); // get the instance of the Connection in the edge map
         if (connection == null) return null;
-        return connection.edge;
+        connection = edges.get(connection.edge); // get the instance of the Connection in the edge map
+        return connection;
     }
 
     @Override

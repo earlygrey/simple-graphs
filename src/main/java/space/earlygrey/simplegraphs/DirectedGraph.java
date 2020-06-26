@@ -15,8 +15,8 @@ public class DirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> createConnection(Node<V> u, Node<V> v, float weight) {
-        return new DirectedConnection<>(u, v, weight);
+    Connection<V> createConnection(Node<V> a, Node<V> b, float weight) {
+        return new DirectedConnection<>(a, b, weight);
     }
 
 

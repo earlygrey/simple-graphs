@@ -45,6 +45,13 @@ public abstract class Graph<V> {
     //================================================================================
 
     //------------------
+    //  Abstract Methods
+    //------------------
+
+    abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
+
+
+    //------------------
     //  Public Methods
     //------------------
 
@@ -76,6 +83,7 @@ public abstract class Graph<V> {
     public Edge<V> addEdge(V v, V w) {
         return addEdge(v, w, Connection.DEFAULT_WEIGHT);
     }
+
     public Edge<V> addEdge(V v, V w, float weight) {
         if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
         if ( v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
@@ -86,11 +94,10 @@ public abstract class Graph<V> {
     }
 
     public Edge<V> removeEdge(V v, V w) {
-        if (!contains(v) || !contains(w))  return null;
-        if (!isConnected(v,w)) return null;
-        Node a = getNode(v);
-        Node b = getNode(w);
-        return removeEdge(a, b).edge;
+        Node<V> a = getNode(v), b = getNode(w);
+        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        Connection<V> connection = removeEdge(a, b);
+        return connection == null ? null : connection.edge;
     }
 
     public void disconnectAll() {
@@ -121,34 +128,26 @@ public abstract class Graph<V> {
         vertexMap.remove(node.object);
     }
 
-    Connection<V> addEdge(Node v, Node w, float weight) {
-        Connection<V> e = v.addEdge(w, weight);
-        if (e!=null) {
-            edges.put(e.edge, e);
-            return e;
-        } else {
-            return v.getEdge(w);
-        }
+    Connection<V> addEdge(Node<V> a, Node<V> b, float weight) {
+        Connection<V> e = a.addEdge(b, weight);
+        edges.put(e.edge, e);
+        return e;
     }
 
     Connection<V> removeEdge(Connection<V> connection) {
-        Node a = connection.a;
-        Node b = connection.b;
-        return removeEdge(a, b);
+        return removeEdge(connection.a, connection.b);
     }
 
-    Connection<V> removeEdge(Node v, Node w) {
-        Connection<V> e = v.removeEdge(w);
-        edges.remove(e.edge);
-        return e;
+    Connection<V> removeEdge(Node<V> a, Node<V> b) {
+        Connection<V> e = a.removeEdge(b);
+        if (e == null) return null;
+        return edges.remove(e.edge);
     }
 
     void clear() {
         edges.clear();
         vertexMap.clear();
     }
-
-    abstract Connection<V> createConnection(Node<V> u, Node<V> v, float weight);
 
     //================================================================================
     // Getters
@@ -165,11 +164,16 @@ public abstract class Graph<V> {
     public Edge<V> getEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        Connection<V> connection = a.getEdge(b);
+        Connection<V> connection = getConnection(a, b);
         if (connection == null) return null;
         return connection.edge;
     }
 
+    Connection<V> getConnection(Node<V> a, Node<V> b) {
+        Connection<V> connection = a.getEdge(b);
+        if (connection == null) return null;
+        return connection;
+    }
 
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
@@ -197,12 +201,10 @@ public abstract class Graph<V> {
         return edges.size();
     }
 
-    public boolean isConnected(V u, V v) {
-        return getEdge(u, v) != null;
-    }
-
-    boolean isConnected(Node<V> u, Node<V> v) {
-        return isConnected(u.object, v.object);
+    public boolean isConnected(V v, V w) {
+        Node<V> a = getNode(v), b = getNode(w);
+        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        return isConnected(a, b);
     }
 
     //------------------
@@ -215,6 +217,10 @@ public abstract class Graph<V> {
 
     Collection<Node<V>> getNodes() {
         return vertexMap.values();
+    }
+
+    boolean isConnected(Node<V> u, Node<V> v) {
+        return u.getEdge(v) != null;
     }
 
     /*Map<Edge<V>, Connection<V>> getEdgeMap() {

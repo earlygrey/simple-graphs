@@ -39,6 +39,7 @@ class Node<T extends Object> {
     }
     Connection<T> removeEdge(Node v) {
         Connection<T> connection = neighbours.remove(v);
+        if (connection == null) return null;
         connections.remove(connection.edge);
         return connection;
     }

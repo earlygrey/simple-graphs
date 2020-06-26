@@ -15,8 +15,8 @@ public abstract class Graph<V> {
     //================================================================================
 
     // Collections for internal use
-    private final Collection<Node<V>> vertices;
-    private final Map<V, Node> vertexMap;
+    //private final Collection<Node<V>> vertices;
+    private final Map<V, Node<V>> vertexMap;
     private final Collection<Connection<V>> connections;
 
     // Collections for public access
@@ -38,7 +38,7 @@ public abstract class Graph<V> {
     protected Graph() {
         algorithms = new Algorithms(this);
         //objects =  new LinkedHashSet<>();
-        vertices = new LinkedHashSet<>();
+        //vertices = new LinkedHashSet<>();
         vertexMap = new LinkedHashMap<>();
         connections = new LinkedHashSet<>();
         edges = new LinkedHashSet<>();
@@ -119,7 +119,7 @@ public abstract class Graph<V> {
         Node existing = getNode(v);
         if (existing!=null) return existing;
         Node n = new Node(v, this);
-        vertices.add(n);
+        //vertices.add(n);
         vertexMap.put(v, n);
         //objects.add(v);
         return n;
@@ -130,7 +130,7 @@ public abstract class Graph<V> {
             neighbour.disconnect(node);
         }
         node.disconnectAll();
-        vertices.remove(node);
+       // vertices.remove(node);
         //objects.remove(node.object);
         vertexMap.remove(node.object);
     }
@@ -160,7 +160,7 @@ public abstract class Graph<V> {
     }
 
     void clear() {
-        vertices.clear();
+        //vertices.clear();
         connections.clear();
         edges.clear();
         vertexMap.clear();
@@ -210,7 +210,7 @@ public abstract class Graph<V> {
     }
 
     public int size() {
-        return vertices.size();
+        return vertexMap.size();
     }
 
     public int getEdgeCount() {
@@ -235,7 +235,7 @@ public abstract class Graph<V> {
 
 
     Collection<Node<V>> getNodes() {
-        return vertices;
+        return vertexMap.values();
     }
 
     Collection<Connection<V>> getConnections() {

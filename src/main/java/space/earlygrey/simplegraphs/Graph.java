@@ -49,7 +49,7 @@ public abstract class Graph<V> {
     //------------------
 
     abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
-
+    abstract Graph<V> createNew();
 
     //------------------
     //  Public Methods
@@ -288,6 +288,10 @@ public abstract class Graph<V> {
 
     public List<V> depthFirstSearch(V v) {
         return depthFirstSearch(v, size(), size());
+    }
+
+    public Graph<V> findMinimumWeightSpanningTree() {
+        return algorithms.kruskalsMinimumWeightSpanningTree(true);
     }
 
 }

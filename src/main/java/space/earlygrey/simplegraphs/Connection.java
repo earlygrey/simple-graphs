@@ -34,11 +34,6 @@ public abstract class Connection<V> {
         this.weight = weight;
     }
 
-    @Override
-    public String toString() {
-        return "{" + a + ", " + b +'}';
-    }
-
     static class DirectedConnection<V> extends Connection<V>  {
 
         DirectedConnection(Node<V> a, Node<V> b) {
@@ -61,6 +56,11 @@ public abstract class Connection<V> {
         @Override
         public int hashCode() {
             return Objects.hash(a, b);
+        }
+
+        @Override
+        public String toString() {
+            return "{" + a + " -> " + b +'}';
         }
 
     }
@@ -88,6 +88,11 @@ public abstract class Connection<V> {
         @Override
         public int hashCode() {
             return Objects.hash(a, b) + Objects.hash(b, a);
+        }
+
+        @Override
+        public String toString() {
+            return "{" + a + ", " + b +'}';
         }
     }
 

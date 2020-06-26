@@ -79,4 +79,9 @@ class Node<T extends Object> {
         //return Objects.hashCode(object);
         return System.identityHashCode(this);
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(object);
+    }
 }

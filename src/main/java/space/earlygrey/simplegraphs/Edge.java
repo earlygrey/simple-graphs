@@ -38,4 +38,9 @@ public class Edge<V> {
     public int hashCode() {
         return Objects.hashCode(connection);
     }
+
+    @Override
+    public String toString() {
+        return connection.toString();
+    }
 }

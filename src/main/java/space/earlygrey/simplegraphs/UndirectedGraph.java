@@ -50,4 +50,9 @@ public class UndirectedGraph<V> extends Graph<V> {
         return false;
     }
 
+    @Override
+    Graph<V> createNew() {
+        return new UndirectedGraph<>();
+    }
+
 }

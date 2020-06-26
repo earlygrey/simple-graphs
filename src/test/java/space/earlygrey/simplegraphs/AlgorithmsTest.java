@@ -125,4 +125,22 @@ public class AlgorithmsTest {
 
     }
 
+    @Test
+    public void mwstShouldWork() {
+
+        int n = 10;
+        Graph<Object> graph = new UndirectedGraph<>();
+
+        for (int i = 0; i < n; i++) {
+            graph.addVertex(i);
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = i+1; j < n; j++) {
+                graph.addEdge(i, j);
+            }
+        }
+
+        Graph<Object> mwst = graph.findMinimumWeightSpanningTree();
+        assertEquals(n-1, mwst.getEdgeCount());
+    }
 }

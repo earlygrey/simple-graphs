@@ -2,7 +2,9 @@ package space.earlygrey.simplegraphs;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -181,20 +183,20 @@ class Algorithms<V> {
         clear();
     }
 
-    boolean topologicalSort(List<V> vertices) {
-        vertices.clear();
+    boolean topologicalSort(List<V> sortedVertices) {
+        sortedVertices.clear();
         clear();
         set.addAll(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(vertices, set.iterator().next());
+            success = recursiveTopologicalSort(sortedVertices, set.iterator().next());
         }
-        Collections.reverse(vertices);
+        Collections.reverse(sortedVertices);
         clear();
         return success;
     }
 
-    boolean recursiveTopologicalSort(List<V> vertices, Node<V> v) {
+    private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v) {
         resetAttribs(v);
 
         if (v.visited) return true;
@@ -204,14 +206,86 @@ class Algorithms<V> {
         }
         v.seen = true;
         for (Connection e : v.connections.values()) {
-            boolean success = recursiveTopologicalSort(vertices, e.b);
+            boolean success = recursiveTopologicalSort(sortedVertices, e.b);
             if (!success) return false;
         }
         v.seen = false;
         v.visited = true;
-        vertices.add(v.object);
+        sortedVertices.add(v.object);
         set.remove(v);
         return true;
+    }
+
+    // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
+
+    Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
+        clear();
+
+        Graph<V> spanningTree = graph.createNew();
+
+        Collection<Connection<V>> edges = graph.edges.values();
+        List<Connection<V>> edgeList = new ArrayList<>(edges);
+
+        if (minSpanningTree) {
+           edgeList.sort(Comparator.comparing(e -> e.weight));
+        } else {
+           edgeList.sort(Collections.reverseOrder(Comparator.comparing(e -> e.weight)));
+        }
+
+        int totalNodes = graph.size();
+        int edgeCount = 0;
+
+        for (Connection<V> edge : edgeList) {
+            if (detectCycle(edge.a, edge.b)) {
+                continue;
+            }
+            spanningTree.addEdge(edge.a, edge.b, edge.weight);
+            edgeCount++;
+            if (edgeCount == totalNodes - 1) {
+                break;
+            }
+        }
+
+        clear();
+        return spanningTree;
+    }
+
+    private void unionByRank(Node<V> rootU, Node<V> rootV) {
+        if (rootU.i < rootV.i) {
+            rootU.prev = rootV;
+        } else {
+            rootV.prev = rootU;
+            if (rootU.i == rootV.i) rootU.i++;
+        }
+    }
+
+    private Node<V> find(Node<V> node) {
+        if (node.prev.equals(node)) {
+            return node;
+        } else {
+            return find(node.prev);
+        }
+    }
+    private Node<V> pathCompressionFind(Node<V> node) {
+        if (node.prev.equals(node)) {
+            return node;
+        } else {
+            Node<V> parentNode = find(node.prev);
+            node.prev = parentNode;
+            return parentNode;
+        }
+    }
+
+    private boolean detectCycle(Node<V> u, Node<V> v) {
+        if (resetAttribs(u)) u.prev = u;
+        if (resetAttribs(v)) v.prev = v;
+        Node<V> rootU = pathCompressionFind(u);
+        Node<V> rootV = pathCompressionFind(v);
+        if (rootU.equals(rootV)) {
+            return true;
+        }
+        unionByRank(rootU, rootV);
+        return false;
     }
 
     /*void dfs(Node<V> vertex, List<V> vertices, float maxDistance, int maxDepth) {
@@ -286,12 +360,13 @@ class Algorithms<V> {
         return false;
     }
 
-    private void resetAttribs(Node<V> v) {
+    private boolean resetAttribs(Node<V> v) {
         boolean needsReset = isReset.add(v);
         if (needsReset) {
             v.resetAlgorithmAttribs();
             isReset.add(v);
         }
+        return needsReset;
     }
 
 }

@@ -21,6 +21,11 @@ public class DirectedGraph<V> extends Graph<V> {
         return new DirectedConnection<>(a, b, weight);
     }
 
+    @Override
+    Graph<V> createNew() {
+        return new DirectedGraph<>();
+    }
+
     public boolean containsCycle() {
         return algorithms.containsCycle(this);
     }
@@ -31,5 +36,7 @@ public class DirectedGraph<V> extends Graph<V> {
         if (!success) vertices.clear();
         return vertices;
     }
+
+
 
 }

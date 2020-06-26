@@ -14,12 +14,15 @@ public abstract class Graph<V> {
     // Members
     //================================================================================
 
-    private final Collection<V> objects;
+    // Collections for internal use
     private final Collection<Node<V>> vertices;
     private final Map<V, Node> vertexMap;
-
     private final Collection<Connection<V>> connections;
+
+    // Collections for public access
+    //private final Collection<V> objects;
     private final Collection<Edge> edges;
+
 
     final Algorithms algorithms;
 
@@ -34,7 +37,7 @@ public abstract class Graph<V> {
 
     protected Graph() {
         algorithms = new Algorithms(this);
-        objects =  new LinkedHashSet<>();
+        //objects =  new LinkedHashSet<>();
         vertices = new LinkedHashSet<>();
         vertexMap = new LinkedHashMap<>();
         connections = new LinkedHashSet<>();
@@ -118,7 +121,7 @@ public abstract class Graph<V> {
         Node n = new Node(v, this);
         vertices.add(n);
         vertexMap.put(v, n);
-        objects.add(v);
+        //objects.add(v);
         return n;
     }
 
@@ -128,7 +131,7 @@ public abstract class Graph<V> {
         }
         node.disconnectAll();
         vertices.remove(node);
-        objects.remove(node.object);
+        //objects.remove(node.object);
         vertexMap.remove(node.object);
     }
 
@@ -161,7 +164,7 @@ public abstract class Graph<V> {
         connections.clear();
         edges.clear();
         vertexMap.clear();
-        objects.clear();
+        //objects.clear();
     }
 
     abstract Connection<V> createConnection(Node<V> u, Node<V> v, float weight);
@@ -199,7 +202,7 @@ public abstract class Graph<V> {
     }
 
     public Collection<V> getVertices() {
-        return Collections.unmodifiableCollection(objects);
+        return Collections.unmodifiableCollection(vertexMap.keySet());
     }
 
     public boolean isDirected() {
@@ -267,9 +270,9 @@ public abstract class Graph<V> {
         Node startNode = getNode(start);
         Node targetNode = getNode(target);
         if (startNode==null || targetNode==null) return !path.isEmpty();
-        List<Node> nodeList = algorithms.findShortestPath(startNode, targetNode, heuristic);
-        for (int i = 0, n = nodeList.size(); i < n; i++) {
-            path.add((V) nodeList.get(i).object);
+        List<Node<V>> nodeList = algorithms.findShortestPath(startNode, targetNode, heuristic);
+        for (Node<V> v : nodeList) {
+            path.add(v.object);
         }
         return !path.isEmpty();
     }

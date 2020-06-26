@@ -32,7 +32,6 @@ class Node<T extends Object> {
     Connection<T> connect(Node v, float weight) {
         Connection<T> connection = neighbours.get(v);
         if (connection == null) {
-            //connection = new Connection<T>(this, v, weight);
             connection = graph.createConnection(this, v, weight);
             connections.put(connection.edge, connection);
             neighbours.put(v, connection);

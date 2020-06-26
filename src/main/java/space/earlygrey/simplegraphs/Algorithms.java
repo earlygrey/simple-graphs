@@ -16,19 +16,21 @@ class Algorithms<V> {
     private final Graph<V> graph;
     private final Queue<Node<V>> priorityQueue;
     private final ArrayDeque<Node<V>> queue = new ArrayDeque<>();
-    private final HashSet<Node<V>> isReset;
+    private final HashSet<Node<V>> isReset, set;
     final Heuristic<V> defaultHeuristic = new DefaultHeuristic<>();
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
         priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
         isReset = new HashSet<>();
+        set = new HashSet<>();
     }
 
     private void clear() {
         isReset.clear();
         priorityQueue.clear();
         queue.clear();
+        set.clear();
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -125,7 +127,7 @@ class Algorithms<V> {
         return null;
     }
 
-    void bfs(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
+    void breadthFirstSearch(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
         vertices.clear();
         if (maxDepth <= 0 ) return;
         clear();
@@ -153,7 +155,7 @@ class Algorithms<V> {
         clear();
     }
 
-    void dfs(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
+    void depthFirstSearch(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
         vertices.clear();
         clear();
 
@@ -177,6 +179,39 @@ class Algorithms<V> {
             }
         }
         clear();
+    }
+
+    boolean topologicalSort(List<V> vertices) {
+        vertices.clear();
+        clear();
+        set.addAll(graph.vertexMap.values());
+        boolean success = true;
+        while (success && !set.isEmpty()) {
+            success = recursiveTopologicalSort(vertices, set.iterator().next());
+        }
+        Collections.reverse(vertices);
+        clear();
+        return success;
+    }
+
+    boolean recursiveTopologicalSort(List<V> vertices, Node<V> v) {
+        resetAttribs(v);
+
+        if (v.visited) return true;
+        if (v.seen) {
+            // not a DAG
+            return false;
+        }
+        v.seen = true;
+        for (Connection e : v.connections.values()) {
+            boolean success = recursiveTopologicalSort(vertices, e.b);
+            if (!success) return false;
+        }
+        v.seen = false;
+        v.visited = true;
+        vertices.add(v.object);
+        set.remove(v);
+        return true;
     }
 
     /*void dfs(Node<V> vertex, List<V> vertices, float maxDistance, int maxDepth) {

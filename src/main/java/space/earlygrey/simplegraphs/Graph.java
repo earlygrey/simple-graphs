@@ -270,7 +270,7 @@ public abstract class Graph<V> {
         List<V> list = new ArrayList<>();
         Node node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        algorithms.bfs(node, list, maxVertices, maxDepth);
+        algorithms.breadthFirstSearch(node, list, maxVertices, maxDepth);
         return list;
     }
 
@@ -282,7 +282,7 @@ public abstract class Graph<V> {
         List<V> list = new ArrayList<>();
         Node node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        algorithms.dfs(node, list, maxVertices, maxDepth);
+        algorithms.depthFirstSearch(node, list, maxVertices, maxDepth);
         return list;
     }
 

@@ -2,6 +2,7 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
@@ -94,6 +95,34 @@ public class AlgorithmsTest {
         assertEquals(4, results.size());
         assertEquals(new Integer(0), results.get(0));
         assertEquals(new Integer(3), results.get(2));
+    }
+
+    @Test
+    public void topologicalSortShouldWork() {
+        DirectedGraph<Integer> graph = new DirectedGraph<>();
+        int n = 10;
+        for (int i = 0; i < n; i++) graph.addVertex(i);
+        for (int i = 0; i < n/2; i++) graph.addEdge(i, i+1);
+        for (int i = n-1; i > n/2; i--) graph.addEdge(i, i-1);
+
+        List<Integer> sort = graph.topologicalSort();
+        assertEquals(graph.size(), sort.size());
+
+        graph.removeAllEdges();
+
+        for (int i = 0; i < n-1; i++) {
+            graph.addEdge(i+1, i);
+        }
+        sort = graph.topologicalSort();
+        List<Integer> correct = new ArrayList<>(n);
+        for (int i = n-1; i >= 0 ; i--) correct.add(i);
+
+        assertEquals(correct, sort);
+
+        graph.addEdge(0, n-1);
+        sort = graph.topologicalSort();
+        assertEquals(0, sort.size());
+
     }
 
 }

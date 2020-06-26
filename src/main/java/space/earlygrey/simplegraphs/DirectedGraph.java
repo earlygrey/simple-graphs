@@ -1,6 +1,8 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
@@ -21,6 +23,13 @@ public class DirectedGraph<V> extends Graph<V> {
 
     public boolean containsCycle() {
         return algorithms.containsCycle(this);
+    }
+
+    public List<V> topologicalSort() {
+        List<V> vertices= new ArrayList<>();
+        boolean success = algorithms.topologicalSort(vertices);
+        if (!success) vertices.clear();
+        return vertices;
     }
 
 }

@@ -50,7 +50,7 @@ class Node<T extends Object> {
     }
 
     //util fields for algorithms, don't store data in them
-    boolean visited;
+    boolean visited, seen;
     float distance;
     float estimate;
     Node prev;
@@ -62,6 +62,7 @@ class Node<T extends Object> {
         distance = Float.MAX_VALUE;
         estimate = 0;
         i = 0;
+        seen = false;
     }
 
     @Override

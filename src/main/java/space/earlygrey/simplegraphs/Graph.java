@@ -55,18 +55,35 @@ public abstract class Graph<V> {
     //  Public Methods
     //--------------------
 
+    /**
+     * Adds a vertex to the graph.
+     * @param v the vertex to be added
+     * @return true if the vertex was not already in the graph, false otherwise
+     */
+
     public boolean addVertex(V v) {
-        int n = size();
-        addVertexAndGetNode(v);
-        return size() > n;
+        Node node = getNode(v);
+        if (node!=null) return false;
+        node = new Node(v, this);
+        vertexMap.put(v, node);
+        return true;
     }
 
+    /**
+     * Adds all the vertices in the collection to the graph.
+     * @param vertices a collection of vertices to be added
+     */
     public void addVertices(Collection<V> vertices) {
         for (V v : vertices) {
             addVertex(v);
         }
     }
 
+    /**
+     * Removes a vertex from the graph, and any adjacent edges.
+     * @param v the vertex to be removed
+     * @return true if the vertex was in the graph, false otherwise
+     */
     public boolean removeVertex(V v) {
         Node existing = getNode(v);
         if (existing==null) return false;
@@ -74,25 +91,50 @@ public abstract class Graph<V> {
         return true;
     }
 
+    /**
+     * Removes all the vertices in the collection from the graph, and any adjacent edges.
+     * @param vertices vertices a collection of vertices to be removed
+     */
     public void removeVertices(Collection<V> vertices) {
         for (V v : vertices) {
             removeVertex(v);
         }
     }
 
+    /**
+     * Add an edge to the graph, from v to w. The edge will have a default weight of 1.
+     * If there is already an edge between v and w, its weight will be set to 1.
+     * @param v the source vertex of the edge
+     * @param w the destination vertex of the edge
+     * @return the edge
+     */
     public Edge<V> addEdge(V v, V w) {
         return addEdge(v, w, Connection.DEFAULT_WEIGHT);
     }
 
+    /**
+     * Add an edge to the graph, from v to w and with the specified weight.
+     * If there is already an edge between v and w, its weight will be set to the specified weight.
+     * @param v the source vertex of the edge
+     * @param w the destination vertex of the edge
+     * @param weight the weight of the edge
+     * @return the edge
+     */
     public Edge<V> addEdge(V v, V w, float weight) {
         if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
-        if ( v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
+        if (v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
         Node a = getNode(v);
         Node b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         return addEdge(a, b, weight).edge;
     }
 
+    /**
+     * Removes the edge from v to w from the graph.
+     * @param v the source vertex of the edge
+     * @param w the destination vertex of the edge
+     * @return the edge if there exists an edge from v to w, or null if there is no edge
+     */
     public Edge<V> removeEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
@@ -100,6 +142,9 @@ public abstract class Graph<V> {
         return connection == null ? null : connection.edge;
     }
 
+    /**
+     * Removes all edges from the graph.
+     */
     public void removeAllEdges() {
         for (Node v : getNodes()) {
             v.disconnect();
@@ -107,6 +152,9 @@ public abstract class Graph<V> {
         edges.clear();
     }
 
+    /**
+     * Removes all vertices and edges from the graph.
+     */
     public void removeAllVertices() {
         edges.clear();
         vertexMap.clear();
@@ -115,15 +163,6 @@ public abstract class Graph<V> {
     //--------------------
     //  Internal Methods
     //--------------------
-
-    Node addVertexAndGetNode(V v) {
-        Node existing = getNode(v);
-        if (existing!=null) return existing;
-        Node n = new Node(v, this);
-        //vertices.add(n);
-        vertexMap.put(v, n);
-        return n;
-    }
 
     void removeVertex (Node<V> node) {
         for (Node<V> neighbour : node.neighbours.keySet()) {
@@ -157,10 +196,21 @@ public abstract class Graph<V> {
     //  Public Getters
     //--------------------
 
+    /**
+     * Check if the graph contains a vertex.
+     * @param v the vertex with which to check
+     * @return true if the graph contains the vertex, false otherwise
+     */
     public boolean contains(V v) {
         return vertexMap.containsKey(v);
     }
 
+    /**
+     * Retrieve the edge which is from v to w.
+     * @param v the source vertex of the edge
+     * @param w the destination vertex of the edge
+     * @return the edge if it is in the graph, otherwise null
+     */
     public Edge<V> getEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
@@ -169,34 +219,65 @@ public abstract class Graph<V> {
         return connection.edge;
     }
 
+    /**
+     * Check if the graph contains an edge from v to w.
+     * @param v the source vertex of the edge
+     * @param w the destination vertex of the edge
+     * @return true if the edge is in the graph, false otherwise
+     */
     public boolean isConnected(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         return isConnected(a, b);
     }
 
+    /**
+     * Get a collection containing all the edges which have v as a source.
+     * @param v the source vertex of all the edges
+     * @return an unmodifiable collection of edges
+     */
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
         return Collections.unmodifiableCollection(node.getEdges());
     }
 
+    /**
+     * Get a collection containing all the edges in the graph.
+     * @return an unmodifiable collection of all the edges in the graph
+     */
     public Collection<Edge<V>> getEdges() {
         return Collections.unmodifiableCollection(edges.keySet());
     }
 
+    /**
+     * Get a collection containing all the vertices in the graph.
+     * @return an unmodifiable collection of all the vertices in the graph
+     */
     public Collection<V> getVertices() {
         return Collections.unmodifiableCollection(vertexMap.keySet());
     }
 
+    /**
+     * Check if the graph is directed, that is whether the edges form an ordered pair or a set.
+     * @return whether the graph is directed
+     */
     public boolean isDirected() {
         return true;
     }
 
+    /**
+     * Get the number of vertices in the graph.
+     * @return the number of vertices
+     */
     public int size() {
         return vertexMap.size();
     }
 
+    /**
+     * Get the number of edges in the graph.
+     * @return the number of edges
+     */
     public int getEdgeCount() {
         return edges.size();
     }

@@ -41,7 +41,7 @@ public class AlgorithmsTest {
 
 
     @Test
-    public void graphShouldDetectCycles() {
+    public void cyclesShouldBeDetected() {
 
         Graph<Integer> graph = new DirectedGraph<>();
 
@@ -95,6 +95,7 @@ public class AlgorithmsTest {
 
         Graph<Integer> tree = graph.breadthFirstSearch(0);
         assertEquals(4, tree.size());
+        assertEquals(3, tree.getEdgeCount());
 
         int count = 0;
         for (Integer vertex : tree.getVertices()) {
@@ -105,11 +106,9 @@ public class AlgorithmsTest {
                 case 3:
                     assertEquals(new Integer(3), vertex);
                     break;
-
             }
             count++;
         }
-
 
     }
 
@@ -120,6 +119,8 @@ public class AlgorithmsTest {
         Graph<Integer> tree = graph.depthFirstSearch(0);
 
         assertEquals(4, tree.size());
+        assertEquals(3, tree.getEdgeCount());
+
         int count = 0;
         for (Integer vertex : tree.getVertices()) {
             switch(count) {
@@ -129,7 +130,6 @@ public class AlgorithmsTest {
                 case 2:
                     assertEquals(new Integer(3), vertex);
                     break;
-
             }
             count++;
         }
@@ -164,7 +164,7 @@ public class AlgorithmsTest {
     }
 
     @Test
-    public void mwstShouldWork() {
+    public void mwstShouldBeTree() {
 
         int n = 4;
         Graph<Integer> graph = TestUtils.makeCompleteGraph(new UndirectedGraph<>(), n);

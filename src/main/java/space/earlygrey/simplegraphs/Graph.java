@@ -44,16 +44,16 @@ public abstract class Graph<V> {
     // Graph Builders
     //================================================================================
 
-    //------------------
+    //--------------------
     //  Abstract Methods
-    //------------------
+    //--------------------
 
     abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
     abstract Graph<V> createNew();
 
-    //------------------
+    //--------------------
     //  Public Methods
-    //------------------
+    //--------------------
 
     public boolean addVertex(V v) {
         int n = size();
@@ -112,9 +112,9 @@ public abstract class Graph<V> {
         vertexMap.clear();
     }
 
-    //------------------
+    //--------------------
     //  Internal Methods
-    //------------------
+    //--------------------
 
     Node addVertexAndGetNode(V v) {
         Node existing = getNode(v);
@@ -153,9 +153,9 @@ public abstract class Graph<V> {
     // Getters
     //================================================================================
 
-    //------------------
+    //--------------------
     //  Public Getters
-    //------------------
+    //--------------------
 
     public boolean contains(V v) {
         return vertexMap.containsKey(v);
@@ -203,9 +203,9 @@ public abstract class Graph<V> {
 
 
 
-    //------------------
+    //--------------------
     //  Internal Getters
-    //------------------
+    //--------------------
 
     Node getNode(V v) {
         return vertexMap.get(v);
@@ -238,6 +238,10 @@ public abstract class Graph<V> {
     // Algorithms API
     //================================================================================
 
+    //--------------------
+    //  Shortest Path
+    //--------------------
+
     public List<V> findShortestPath(V start, V target) {
         return findShortestPath(start, target, algorithms.defaultHeuristic);
     }
@@ -264,6 +268,10 @@ public abstract class Graph<V> {
     public float findMinimumDistance(V start, V target) {
         return algorithms.findMinimumDistance(getNode(start), getNode(target));
     }
+
+    //--------------------
+    // Graph Searching
+    //--------------------
 
     public Graph<V> breadthFirstSearch(V v, int maxVertices, int maxDepth) {
         Node node = getNode(v);
@@ -292,6 +300,10 @@ public abstract class Graph<V> {
     public Graph<V> findMinimumWeightSpanningTree() {
         return algorithms.kruskalsMinimumWeightSpanningTree(true);
     }
+
+    //--------------------
+    //  Structures
+    //--------------------
 
     public boolean containsCycle() {
         return algorithms.containsCycle(this);

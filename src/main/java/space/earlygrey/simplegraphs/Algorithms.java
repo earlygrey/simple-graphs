@@ -45,38 +45,37 @@ class Algorithms<V> {
         else return end.distance;
     }
 
-    List<Node<V>> findShortestPath(Node<V> start, Node<V> target) {
-        ArrayList<Node<V>> nodeList = new ArrayList<>();
-        findShortestPath(start, target, nodeList);
-        return nodeList;
+    List<V> findShortestPath(Node<V> start, Node<V> target) {
+        ArrayList<V> path = new ArrayList<>();
+        findShortestPath(start, target, path);
+        return path;
     }
 
-    boolean findShortestPath(Node<V> start, Node<V> target, List<Node<V>> path) {
+    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path) {
         return findShortestPath(start, target, path, defaultHeuristic);
     }
 
-    List<Node<V>> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        ArrayList<Node<V>> nodeList = new ArrayList<>();
-        findShortestPath(start, target, nodeList, heuristic);
-        return nodeList;
+    List<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        ArrayList<V> path = new ArrayList<>();
+        findShortestPath(start, target, path, heuristic);
+        return path;
     }
 
-    boolean findShortestPath(Node<V> start, Node<V> target, List<Node<V>> path, Heuristic<V> heuristic) {
+    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
         Node<V> end = aStarSearch(start, target, heuristic);
         path.clear();
         if (end==null) {
-            priorityQueue.clear();
+            clear();
             return false;
         }
-
         Node<V> v = end;
         while(v.prev!=null) {
-            path.add(v);
+            path.add(v.object);
             v = v.prev;
         }
-        path.add(start);
+        path.add(start.object);
         Collections.reverse(path);
-        priorityQueue.clear();
+        clear();
         return true;
     }
 

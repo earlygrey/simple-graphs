@@ -254,11 +254,8 @@ public abstract class Graph<V> {
         path.clear();
         Node startNode = getNode(start);
         Node targetNode = getNode(target);
-        if (startNode==null || targetNode==null) return !path.isEmpty();
-        List<Node<V>> nodeList = algorithms.findShortestPath(startNode, targetNode, heuristic);
-        for (Node<V> v : nodeList) {
-            path.add(v.object);
-        }
+        if (startNode==null || targetNode==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        algorithms.findShortestPath(startNode, targetNode, path, heuristic);
         return !path.isEmpty();
     }
 

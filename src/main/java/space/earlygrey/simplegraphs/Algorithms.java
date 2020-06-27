@@ -222,6 +222,8 @@ class Algorithms<V> {
 
         Graph<V> spanningTree = graph.createNew();
 
+        spanningTree.addVertices(graph.getVertices());
+
         Collection<Connection<V>> edges = graph.edges.values();
         List<Connection<V>> edgeList = new ArrayList<>(edges);
 
@@ -334,7 +336,7 @@ class Algorithms<V> {
         clear();
         for (Node<V> v : graph.getNodes()) {
             resetAttribs(v);
-            if (detectCycleDFS(v, new HashSet<>())) {
+            if (detectCycleDFS(v, null, new HashSet<>())) {
                 clear();
                 return true;
             }
@@ -343,16 +345,17 @@ class Algorithms<V> {
         return false;
     }
 
-    private boolean detectCycleDFS(Node<V> v, Set<Node<V>> recursiveStack) {
+    private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
         v.visited = true;
         recursiveStack.add(v);
         for (Connection<V> e : v.connections.values()) {
+            if (!graph.isDirected() && e.b.equals(parent)) continue;
             resetAttribs(e.b);
             if (recursiveStack.contains(e.b)) {
                 return true;
             }
             if (!e.b.visited) {
-                if (detectCycleDFS(e.b, recursiveStack)) return true;
+                if (detectCycleDFS(e.b, v, recursiveStack)) return true;
             }
         }
         recursiveStack.remove(v);

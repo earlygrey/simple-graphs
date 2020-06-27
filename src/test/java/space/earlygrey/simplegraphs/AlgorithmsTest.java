@@ -15,8 +15,8 @@ public class AlgorithmsTest {
     @Test
     public void shortestPathShouldBeCorrect() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.createGridGraph(n, false);
-        Graph<Vector2> diGraph = TestUtils.createGridGraph(n, true);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
@@ -43,21 +43,35 @@ public class AlgorithmsTest {
     @Test
     public void graphShouldDetectCycles() {
 
-        DirectedGraph<Integer> diGraph = new DirectedGraph<>();
+        Graph<Integer> graph = new DirectedGraph<>();
 
         for (int i = 0; i < 6; i++) {
-            diGraph.addVertex(i);
+            graph.addVertex(i);
         }
 
-        diGraph.addEdge(0, 1);
-        diGraph.addEdge(1, 2);
-        assertTrue(!diGraph.containsCycle());
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 2);
+        assertTrue(!graph.containsCycle());
 
-        diGraph.addEdge(0,2);
-        assertTrue(!diGraph.containsCycle());
+        graph.addEdge(0,2);
+        assertTrue(!graph.containsCycle());
 
-        diGraph.addEdge(2,0);
-        assertTrue(diGraph.containsCycle());
+        graph.addEdge(2,0);
+        assertTrue(graph.containsCycle());
+
+        graph = new UndirectedGraph<>();
+
+        for (int i = 0; i < 6; i++) {
+            graph.addVertex(i);
+        }
+
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 2);
+        assertTrue(!graph.containsCycle());
+
+        graph.addEdge(0,2);
+        assertTrue(graph.containsCycle());
+
     }
     
     private Graph<Integer> createSearchGraph() {
@@ -128,19 +142,14 @@ public class AlgorithmsTest {
     @Test
     public void mwstShouldWork() {
 
-        int n = 10;
-        Graph<Object> graph = new UndirectedGraph<>();
+        int n = 4;
+        Graph<Integer> graph = TestUtils.makeCompleteGraph(new UndirectedGraph<>(), n);
 
-        for (int i = 0; i < n; i++) {
-            graph.addVertex(i);
-        }
-        for (int i = 0; i < n; i++) {
-            for (int j = i+1; j < n; j++) {
-                graph.addEdge(i, j);
-            }
-        }
+        Graph<Integer> mwst = graph.findMinimumWeightSpanningTree();
 
-        Graph<Object> mwst = graph.findMinimumWeightSpanningTree();
+        assertEquals(n, mwst.size());
         assertEquals(n-1, mwst.getEdgeCount());
+
+        assertTrue(!mwst.containsCycle());
     }
 }

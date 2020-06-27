@@ -169,10 +169,10 @@ public abstract class Graph<V> {
         return connection.edge;
     }
 
-    Connection<V> getConnection(Node<V> a, Node<V> b) {
-        Connection<V> connection = a.getEdge(b);
-        if (connection == null) return null;
-        return connection;
+    public boolean isConnected(V v, V w) {
+        Node<V> a = getNode(v), b = getNode(w);
+        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
+        return isConnected(a, b);
     }
 
     public Collection<Edge<V>> getEdges(V v) {
@@ -201,11 +201,7 @@ public abstract class Graph<V> {
         return edges.size();
     }
 
-    public boolean isConnected(V v, V w) {
-        Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return isConnected(a, b);
-    }
+
 
     //------------------
     //  Internal Getters
@@ -221,6 +217,12 @@ public abstract class Graph<V> {
 
     boolean isConnected(Node<V> u, Node<V> v) {
         return u.getEdge(v) != null;
+    }
+
+    Connection<V> getConnection(Node<V> a, Node<V> b) {
+        Connection<V> connection = a.getEdge(b);
+        if (connection == null) return null;
+        return connection;
     }
 
     /*Map<Edge<V>, Connection<V>> getEdgeMap() {
@@ -289,6 +291,10 @@ public abstract class Graph<V> {
 
     public Graph<V> findMinimumWeightSpanningTree() {
         return algorithms.kruskalsMinimumWeightSpanningTree(true);
+    }
+
+    public boolean containsCycle() {
+        return algorithms.containsCycle(this);
     }
 
 }

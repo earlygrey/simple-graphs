@@ -42,8 +42,8 @@ public class GraphTest {
     @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.createGridGraph(n, false);
-        Graph<Vector2> diGraph = TestUtils.createGridGraph(n, true);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
 
         int expectedUndirected = 2*n*(n-1), expectedDirected = 2 * 2*n*(n-1);
         assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());

@@ -34,8 +34,21 @@ class TestUtils {
         }
     }
 
-    static Graph<Vector2> createGridGraph(int n, boolean directed) {
-        Graph<Vector2> graph = directed ? new DirectedGraph<>() : new UndirectedGraph<>();
+    static Graph<Integer> makeCompleteGraph(Graph<Integer> graph, int n) {
+        for (int i = 0; i < n; i++) {
+            graph.addVertex(i);
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!graph.isDirected() && j<i+1) continue;
+                else if (i==j) continue;
+                graph.addEdge(i, j);
+            }
+        }
+        return graph;
+    }
+
+    static Graph<Vector2> makeGridGraph(Graph<Vector2> graph, int n) {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -50,13 +63,13 @@ class TestUtils {
                 if (i<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i+1,j);
                     graph.addEdge(v1, v2, v1.dst(v2));
-                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
+                    if (graph.isDirected()) graph.addEdge(v2, v1, v1.dst(v2));
                     e++;
                 }
                 if (j<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i,j+1);
                     graph.addEdge(v1, v2, v1.dst(v2));
-                    if (directed) graph.addEdge(v2, v1, v1.dst(v2));
+                    if (graph.isDirected()) graph.addEdge(v2, v1, v1.dst(v2));
                     e++;
                 }
             }

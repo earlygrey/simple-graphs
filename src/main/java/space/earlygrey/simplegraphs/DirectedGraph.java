@@ -26,10 +26,6 @@ public class DirectedGraph<V> extends Graph<V> {
         return new DirectedGraph<>();
     }
 
-    public boolean containsCycle() {
-        return algorithms.containsCycle(this);
-    }
-
     public List<V> topologicalSort() {
         List<V> vertices= new ArrayList<>();
         boolean success = algorithms.topologicalSort(vertices);

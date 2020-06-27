@@ -323,10 +323,22 @@ public abstract class Graph<V> {
     //  Shortest Path
     //--------------------
 
+    /**
+     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     */
     public List<V> findShortestPath(V start, V target) {
         return findShortestPath(start, target, null);
     }
 
+    /**
+     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     */
     public List<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
         List<V> list = new ArrayList<>();
         findShortestPath(start, target, list, heuristic);
@@ -337,6 +349,13 @@ public abstract class Graph<V> {
         return findShortestPath(start, target, path, null);
     }*/
 
+    /**
+     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param path the list of vertices to which the path vertices should be added
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     */
     public boolean findShortestPath(V start, V target, List<V> path, Heuristic<V> heuristic) {
         path.clear();
         Node startNode = getNode(start);
@@ -346,6 +365,12 @@ public abstract class Graph<V> {
         return !path.isEmpty();
     }
 
+    /**
+     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @return the sum of the weights in a shortest path from the starting vertex to the target vertex
+     */
     public float findMinimumDistance(V start, V target) {
         return algorithms.findMinimumDistance(getNode(start), getNode(target));
     }

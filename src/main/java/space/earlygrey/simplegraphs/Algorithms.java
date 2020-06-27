@@ -14,13 +14,14 @@ import java.util.Set;
 class Algorithms<V> {
 
     private final Graph<V> graph;
-    private final Queue<Node<V>> priorityQueue;
+    private final Queue<Node<V>> priorityQueueWithEstimate, priorityQueue;
     private final ArrayDeque<Node<V>> queue = new ArrayDeque<>();
     private final HashSet<Node<V>> isReset, set;
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
-        priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
+        priorityQueueWithEstimate = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
+        priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance - o2.distance));
         isReset = new HashSet<>();
         set = new HashSet<>();
     }
@@ -28,8 +29,10 @@ class Algorithms<V> {
     private void clear() {
         isReset.clear();
         priorityQueue.clear();
+        priorityQueueWithEstimate.clear();
         queue.clear();
         set.clear();
+
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -59,7 +62,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
-        Node<V> end = aStarSearch(start, target, heuristic);
+        Node<V> end = heuristic==null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
         path.clear();
         if (end==null) {
             clear();
@@ -89,8 +92,7 @@ class Algorithms<V> {
         return distances;
     }*/
 
-    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-
+    private Node<V> dijkstra(Node<V> start, Node<V> target) {
         clear();
 
         resetAttribs(start);
@@ -105,18 +107,54 @@ class Algorithms<V> {
                 clear();
                 return u;
             }
-            if (u.visited) continue;
-            u.visited = true;
-            for (Connection e : u.connections.values()) {
-                Node<V> v = e.b;
-                resetAttribs(v);
-                if (!v.visited) {
-                    float newDistance = u.distance + e.getWeight();
-                    if (newDistance < v.distance) {
-                        v.distance = newDistance;
-                        v.prev = u;
-                        if (heuristic != null) v.estimate = heuristic.getEstimate(v.object, target.object);
-                        priorityQueue.add(v);
+            if (!u.visited) {
+                u.visited = true;
+                for (Connection e : u.connections.values()) {
+                    Node<V> v = e.b;
+                    resetAttribs(v);
+                    if (!v.visited) {
+                        float newDistance = u.distance + e.weight;
+                        if (newDistance < v.distance) {
+                            v.distance = newDistance;
+                            v.prev = u;
+                            priorityQueue.add(v);
+                        }
+                    }
+                }
+            }
+        }
+        clear();
+        return null;
+    }
+
+    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        clear();
+
+        resetAttribs(start);
+        start.distance = 0;
+
+        priorityQueueWithEstimate.add(start);
+        isReset.add(start);
+
+        while(!priorityQueueWithEstimate.isEmpty()) {
+            Node<V> u = priorityQueueWithEstimate.poll();
+            if (u == target) {
+                clear();
+                return u;
+            }
+            if (!u.visited) {
+                u.visited = true;
+                for (Connection e : u.connections.values()) {
+                    Node<V> v = e.b;
+                    resetAttribs(v);
+                    if (!v.visited) {
+                        float newDistance = u.distance + e.weight;
+                        if (newDistance < v.distance) {
+                            v.distance = newDistance;
+                            v.prev = u;
+                            if (heuristic != null) v.estimate = heuristic.getEstimate(v.object, target.object);
+                            priorityQueueWithEstimate.add(v);
+                        }
                     }
                 }
             }

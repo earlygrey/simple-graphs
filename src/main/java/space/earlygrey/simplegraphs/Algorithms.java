@@ -11,15 +11,12 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-import space.earlygrey.simplegraphs.Heuristic.DefaultHeuristic;
-
 class Algorithms<V> {
 
     private final Graph<V> graph;
     private final Queue<Node<V>> priorityQueue;
     private final ArrayDeque<Node<V>> queue = new ArrayDeque<>();
     private final HashSet<Node<V>> isReset, set;
-    final Heuristic<V> defaultHeuristic = new DefaultHeuristic<>();
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
@@ -40,7 +37,7 @@ class Algorithms<V> {
     }
 
     float findMinimumDistance(Node<V> start, Node<V> target) {
-        Node<V> end = aStarSearch(start, target, defaultHeuristic);
+        Node<V> end = aStarSearch(start, target, null);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
     }
@@ -52,7 +49,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path) {
-        return findShortestPath(start, target, path, defaultHeuristic);
+        return findShortestPath(start, target, path, null);
     }
 
     List<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
@@ -118,7 +115,7 @@ class Algorithms<V> {
                     if (newDistance < v.distance) {
                         v.distance = newDistance;
                         v.prev = u;
-                        v.estimate = heuristic.getEstimate(v.object, target.object);
+                        if (heuristic != null) v.estimate = heuristic.getEstimate(v.object, target.object);
                         priorityQueue.add(v);
                     }
                 }

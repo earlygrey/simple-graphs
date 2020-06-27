@@ -243,7 +243,7 @@ public abstract class Graph<V> {
     //--------------------
 
     public List<V> findShortestPath(V start, V target) {
-        return findShortestPath(start, target, algorithms.defaultHeuristic);
+        return findShortestPath(start, target, null);
     }
 
     public List<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
@@ -252,9 +252,9 @@ public abstract class Graph<V> {
         return list;
     }
 
-    public boolean findShortestPath(V start, V target, List<V> path) {
-        return findShortestPath(start, target, path, algorithms.defaultHeuristic);
-    }
+    /*public boolean findShortestPath(V start, V target, List<V> path) {
+        return findShortestPath(start, target, path, null);
+    }*/
 
     public boolean findShortestPath(V start, V target, List<V> path, Heuristic<V> heuristic) {
         path.clear();

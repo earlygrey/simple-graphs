@@ -128,8 +128,7 @@ class Algorithms<V> {
         return null;
     }
 
-    void breadthFirstSearch(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
-        vertices.clear();
+    void breadthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
         if (maxDepth <= 0 ) return;
         clear();
 
@@ -140,15 +139,17 @@ class Algorithms<V> {
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            vertices.add(v.object);
+            tree.addVertex(v.object);
+            if (v.prev != null) tree.addEdge(v.object, v.prev.object);
             if (v.i == maxDepth) continue;
-            if (vertices.size() == maxVertices) break;
+            if (tree.size() == maxVertices) break;
             for (Connection e : v.connections.values()) {
                 Node<V> w = e.b;
                 resetAttribs(w);
                 if (!w.visited) {
                     w.visited = true;
                     w.i = v.i+1;
+                    w.prev = v;
                     queue.addLast(w);
                 }
             }
@@ -156,8 +157,7 @@ class Algorithms<V> {
         clear();
     }
 
-    void depthFirstSearch(Node<V> vertex, List<V> vertices, int maxVertices, int maxDepth) {
-        vertices.clear();
+    void depthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
         clear();
 
         resetAttribs(vertex);
@@ -167,14 +167,16 @@ class Algorithms<V> {
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
             if (!v.visited) {
-                vertices.add(v.object);
+                tree.addVertex(v.object);
+                if (v.prev != null) tree.addEdge(v.object, v.prev.object);
                 if (v.i == maxDepth) continue;
-                if (vertices.size() == maxVertices) break;
+                if (tree.size() == maxVertices) break;
                 v.visited = true;
                 for (Connection e : v.connections.values()) {
                     Node<V> w = e.b;
                     resetAttribs(w);
                     w.i = v.i+1;
+                    w.prev = v;
                     queue.addFirst(w);
                 }
             }

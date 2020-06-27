@@ -4,29 +4,29 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class Node<T extends Object> {
+class Node<V extends Object> {
 
     final Graph graph;
-    public final T object;
-    Map<Edge<T>, Connection<T>> connections = new LinkedHashMap<>();
-    Map<Node<T>, Connection<T>> neighbours = new LinkedHashMap<>();
+    public final V object;
+    Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
+    Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
 
-    Node (T object, Graph<T> graph) {
+    Node (V object, Graph<V> graph) {
         this.object = object;
         this.graph = graph;
     }
 
-    Collection<Edge<T>> getEdges() {
+    Collection<Edge<V>> getEdges() {
         return connections.keySet();
     }
 
 
-    Connection<T> getEdge(Node v) {
+    Connection<V> getEdge(Node v) {
         return neighbours.get(v);
     }
 
-    Connection<T> addEdge(Node v, float weight) {
-        Connection<T> connection = neighbours.get(v);
+    Connection<V> addEdge(Node v, float weight) {
+        Connection<V> connection = neighbours.get(v);
         if (connection == null) {
             connection = graph.createConnection(this, v, weight);
             connections.put(connection.edge, connection);
@@ -37,8 +37,8 @@ class Node<T extends Object> {
         }
         return connection;
     }
-    Connection<T> removeEdge(Node v) {
-        Connection<T> connection = neighbours.remove(v);
+    Connection<V> removeEdge(Node v) {
+        Connection<V> connection = neighbours.remove(v);
         if (connection == null) return null;
         connections.remove(connection.edge);
         return connection;
@@ -53,7 +53,7 @@ class Node<T extends Object> {
     boolean visited, seen;
     float distance;
     float estimate;
-    Node prev;
+    Node<V> prev;
     int i;
 
     void resetAlgorithmAttribs() {

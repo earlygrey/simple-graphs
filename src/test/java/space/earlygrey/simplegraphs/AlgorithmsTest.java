@@ -93,22 +93,46 @@ public class AlgorithmsTest {
     public void bfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        List<Integer> results = graph.breadthFirstSearch(0);
+        Graph<Integer> tree = graph.breadthFirstSearch(0);
+        assertEquals(4, tree.size());
 
-        assertEquals(4, results.size());
-        assertEquals(new Integer(0), results.get(0));
-        assertEquals(new Integer(3), results.get(3));
+        int count = 0;
+        for (Integer vertex : tree.getVertices()) {
+            switch(count) {
+                case 0:
+                    assertEquals(new Integer(0), vertex);
+                    break;
+                case 3:
+                    assertEquals(new Integer(3), vertex);
+                    break;
+
+            }
+            count++;
+        }
+
+
     }
 
     @Test
     public void dfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        List<Integer> results = graph.depthFirstSearch(0);
+        Graph<Integer> tree = graph.depthFirstSearch(0);
 
-        assertEquals(4, results.size());
-        assertEquals(new Integer(0), results.get(0));
-        assertEquals(new Integer(3), results.get(2));
+        assertEquals(4, tree.size());
+        int count = 0;
+        for (Integer vertex : tree.getVertices()) {
+            switch(count) {
+                case 0:
+                    assertEquals(new Integer(0), vertex);
+                    break;
+                case 2:
+                    assertEquals(new Integer(3), vertex);
+                    break;
+
+            }
+            count++;
+        }
     }
 
     @Test

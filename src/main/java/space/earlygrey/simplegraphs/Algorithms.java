@@ -63,7 +63,6 @@ class Algorithms<V> {
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
         Node<V> end = heuristic==null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
-        path.clear();
         if (end==null) {
             clear();
             return false;

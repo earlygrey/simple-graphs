@@ -69,14 +69,4 @@ class Node<V extends Object> {
     public boolean equals(Object o) {
         return o == this;
     }
-
-    @Override
-    public int hashCode() {
-        return System.identityHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(object);
-    }
 }

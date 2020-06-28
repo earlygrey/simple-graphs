@@ -50,6 +50,15 @@ public class UndirectedGraph<V> extends Graph<V> {
         return false;
     }
 
+    /**
+     * Find a minimum weight spanning tree using Kruskal's algorithm.
+     * @return a Graph object containing a minimum weight spanning tree (if this graph is connected -
+     * in general a minimum weight spanning forest)
+     */
+    public Graph<V> findMinimumWeightSpanningTree() {
+        return algorithms.kruskalsMinimumWeightSpanningTree(true);
+    }
+
     @Override
     Graph<V> createNew() {
         return new UndirectedGraph<>();

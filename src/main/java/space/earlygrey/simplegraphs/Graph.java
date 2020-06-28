@@ -469,9 +469,6 @@ public abstract class Graph<V> {
         return depthFirstSearch(v, size(), size());
     }
 
-    public Graph<V> findMinimumWeightSpanningTree() {
-        return algorithms.kruskalsMinimumWeightSpanningTree(true);
-    }
 
     //--------------------
     //  Structures

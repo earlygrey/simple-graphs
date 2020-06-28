@@ -52,6 +52,7 @@ public abstract class Graph<V> {
 
     abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
     abstract Graph<V> createNew();
+    protected abstract <G extends Graph<V>, B extends GraphBuilder<V, G>> B builder();
 
     //--------------------
     //  Public Methods
@@ -200,6 +201,12 @@ public abstract class Graph<V> {
         }
         node.disconnect();
         vertexMap.remove(node.object);
+    }
+
+    Connection<V> addEdge(Node<V> a, Node<V> b) {
+        Connection<V> e = a.addEdge(b, Connection.DEFAULT_WEIGHT);
+        edges.put(e.edge, e);
+        return e;
     }
 
     Connection<V> addEdge(Node<V> a, Node<V> b, float weight) {

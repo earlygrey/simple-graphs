@@ -6,6 +6,8 @@ import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
 
 public class UndirectedGraph<V> extends Graph<V> {
 
+    GraphBuilder<V, UndirectedGraph<V>> builder = new GraphBuilder<>(this);
+
     public UndirectedGraph() {
         super();
     }
@@ -62,4 +64,8 @@ public class UndirectedGraph<V> extends Graph<V> {
         return new UndirectedGraph<>();
     }
 
+    @Override
+    public GraphBuilder<V, UndirectedGraph<V>> builder() {
+        return builder;
+    }
 }

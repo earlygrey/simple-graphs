@@ -34,20 +34,6 @@ class TestUtils {
         }
     }
 
-    static <G extends Graph<Integer>> G makeCompleteGraph(G graph, int n) {
-        for (int i = 0; i < n; i++) {
-            graph.addVertex(i);
-        }
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (!graph.isDirected() && j<i+1) continue;
-                else if (i==j) continue;
-                graph.addEdge(i, j);
-            }
-        }
-        return graph;
-    }
-
     static Graph<Vector2> makeGridGraph(Graph<Vector2> graph, int n) {
 
         for (int i = 0; i < n; i++) {

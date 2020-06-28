@@ -166,7 +166,9 @@ public class AlgorithmsTest {
     public void mwstShouldBeTree() {
 
         int n = 4;
-        UndirectedGraph<Integer> graph = TestUtils.makeCompleteGraph(new UndirectedGraph<>(), n);
+        UndirectedGraph<Integer> graph = new UndirectedGraph<>();
+        for (int i = 0; i < n; i++) graph.addVertex(i);
+        graph.builder().buildCompleteGraph();
 
         Graph<Integer> mwst = graph.findMinimumWeightSpanningTree();
 

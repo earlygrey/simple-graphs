@@ -7,7 +7,7 @@
 
 Simple graphs is a java library containing basic graph data structures and algorithms.
 
-It has two types of weighted graph data structures representing undirected and directed graphs. Each of these provides methods for adding and removing vertices and edges, for retrieving edges, and for accessing collections of its vertices and edges.
+It has two types of graph data structures representing undirected and directed graphs. Each of these provides methods for adding and removing vertices and edges, for retrieving edges, and for accessing collections of its vertices and edges. All graphs in simple graphs are weighted and (of course) simple.
 
 Algorithms implemented are:
 - [breadth first search](https://en.wikipedia.org/wiki/Breadth-first_search)
@@ -17,4 +17,8 @@ Algorithms implemented are:
 - [minimum weight spanning tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) for undirected graphs using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
 - [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) for directed graphs
 
-You might be wondering what the point of another graph library is, since there are already some very [powerful](https://jgrapht.org/) and [versatile](https://github.com/google/guava/wiki/GraphsExplained) libraries out there, which are made by much better programmers than me. Well the idea behind simple graphs is that it's first and foremost user-friendly and simple to use. Just instantiate a graph object, add some vertices and edges and you're ready - no implementing complex interfaces or finding the right factory method. Algorithms are called directly on the graph object. Simple graphs has no dependencies.
+You might be wondering what the point of this graph library is, since there are already some very [powerful](https://jgrapht.org/) and [versatile](https://github.com/google/guava/wiki/GraphsExplained) libraries out there. Well the idea behind simple graphs is that it's first and foremost user-friendly and simple to use. Just instantiate a graph object, add some vertices and edges and you're ready. Algorithms are called directly on the graph object.
+
+If you're looking for a broader, more powerful library I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more, though it has more requirements.
+
+Simple graphs uses java 8 (JGraphT 1.5.0+ requires JDK 11) and only uses java collections. It has no dependencies, and so should be GWT compatible (JGraphT and guava graphs are not).

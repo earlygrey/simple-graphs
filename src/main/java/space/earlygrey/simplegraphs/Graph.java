@@ -3,9 +3,11 @@ package space.earlygrey.simplegraphs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class Graph<V> {
 
@@ -158,6 +160,34 @@ public abstract class Graph<V> {
     public void removeAllVertices() {
         edges.clear();
         vertexMap.clear();
+    }
+
+    /**
+     * Sort the vertices using the provided comparator. This affects the iteration order of the collection returned by {@link #getVertices()},
+     * as well as algorithms which involve iterating over vertices.
+     * @param comparator a comparator for comparing vertices
+     */
+    public void sortVertices(Comparator<V> comparator) {
+        List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
+        Collections.sort(entryList, Entry.comparingByKey(comparator));
+        vertexMap.clear();
+        for (Entry<V, Node<V>> entry : entryList) {
+            vertexMap.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Sort the edges using the provided comparator. This affects the iteration order of the collection returned by {@link #getEdges()},
+     * as well as algorithms which involve iterating over edges.
+     * @param comparator a comparator for comparing edges
+     */
+    public void sortEdges(Comparator<Edge<V>> comparator) {
+        List<Entry<Edge<V>, Connection<V>>> entryList = new ArrayList<>(edges.entrySet());
+        Collections.sort(entryList, Entry.comparingByKey(comparator));
+        edges.clear();
+        for (Entry<Edge<V>, Connection<V>> entry : entryList) {
+            edges.put(entry.getKey(), entry.getValue());
+        }
     }
 
     //--------------------

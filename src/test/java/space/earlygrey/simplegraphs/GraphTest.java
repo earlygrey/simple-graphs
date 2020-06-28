@@ -2,6 +2,14 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+
+import space.earlygrey.simplegraphs.TestUtils.Pair;
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import static org.junit.Assert.assertEquals;
@@ -75,4 +83,35 @@ public class GraphTest {
 
     }
 
+
+    @Test
+    public void verticesCanBeSorted() {
+        Graph<Integer> graph = new UndirectedGraph<>();
+        List<Integer> list = Arrays.asList(new Integer[]{9,4,3,2,5,7,6,0,8,1});
+        for (Integer i : list) {
+            graph.addVertex(i);
+        }
+        graph.sortVertices(Comparator.comparing(e -> e));
+        int i = 0;
+        for (Integer vertex : graph.getVertices()) {
+            assertEquals(new Integer(i++), vertex);
+        }
+    }
+
+    @Test
+    public void edgesCanBeSorted() {
+        Graph<Integer> graph = new DirectedGraph<>();
+        List<Integer> list = Arrays.asList(new Integer[]{9,4,3,2,5,7,6,0,8,1});
+        for (int j = 0; j < list.size(); j++) {
+            graph.addVertex(j);
+        }
+        for (int j = 0; j < list.size(); j++) {
+            graph.addEdge(list.get(j), list.get(list.size()-j-1));
+        }
+        graph.sortEdges(Comparator.comparing(e -> e.getA()));
+        int i = 0;
+        for (Edge<Integer> edge : graph.getEdges()) {
+            assertEquals(new Integer(i++), edge.getA());
+        }
+    }
 }

@@ -164,7 +164,7 @@ public abstract class Graph<V> {
 
     /**
      * Sort the vertices using the provided comparator. This affects the iteration order of the collection returned by {@link #getVertices()},
-     * as well as algorithms which involve iterating over vertices.
+     * as well as algorithms which involve iterating over all vertices.
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
@@ -178,7 +178,7 @@ public abstract class Graph<V> {
 
     /**
      * Sort the edges using the provided comparator. This affects the iteration order of the collection returned by {@link #getEdges()},
-     * as well as algorithms which involve iterating over edges.
+     * as well as algorithms which involve iterating over all edges.
      * @param comparator a comparator for comparing edges
      */
     public void sortEdges(Comparator<Edge<V>> comparator) {
@@ -409,6 +409,17 @@ public abstract class Graph<V> {
     // Graph Searching
     //--------------------
 
+    /**
+     * Perform a breadth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param maxVertices the maximum number of vertices to process before terminating the search
+     * @param maxDepth the maximum edge distance (the number of edges in a shortest path between vertices) a vertex should have to be
+     *                 considered for processing. If a vertex has a distance larger than the maxDepth, it will not be added to the
+     *                 returned graph
+     * @return a Graph object containing all the processed vertices, and the edges from which each vertex was encountered.
+     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
+     * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
+     */
     public Graph<V> breadthFirstSearch(V v, int maxVertices, int maxDepth) {
         Node node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
@@ -417,10 +428,28 @@ public abstract class Graph<V> {
         return tree;
     }
 
+    /**
+     * Perform a breadth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @return a Graph object containing all the processed vertices (all the vertices in this graph), and the edges from which each vertex was encountered.
+     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
+     * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
+     */
     public Graph<V> breadthFirstSearch(V v) {
         return breadthFirstSearch(v, size(), size());
     }
 
+    /**
+     * Perform a depth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param maxVertices the maximum number of vertices to process before terminating the search
+     * @param maxDepth the maximum edge distance (the number of edges in a shortest path between vertices) a vertex should have to be
+     *                 considered for processing. If a vertex has a distance larger than the maxDepth, it will not be added to the
+     *                 returned graph
+     * @return a Graph object containing all the processed vertices, and the edges from which each vertex was encountered.
+     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
+     * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
+     */
     public Graph<V> depthFirstSearch(V v, int maxVertices, int maxDepth) {
         Node node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
@@ -429,6 +458,13 @@ public abstract class Graph<V> {
         return tree;
     }
 
+    /**
+     * Perform a depth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @return a Graph object containing all the processed vertices (all the vertices in this graph), and the edges from which each vertex was encountered.
+     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
+     * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
+     */
     public Graph<V> depthFirstSearch(V v) {
         return depthFirstSearch(v, size(), size());
     }

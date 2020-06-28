@@ -226,8 +226,28 @@ class Algorithms<V> {
         while (success && !set.isEmpty()) {
             success = recursiveTopologicalSort(sortedVertices, set.iterator().next());
         }
-        Collections.reverse(sortedVertices);
+        if (success) {
+            Collections.reverse(sortedVertices);
+        }
+
+        return success;
+    }
+
+    boolean topologicalSort() {
+        List<V> sortedVertices = new ArrayList<>();
         clear();
+        set.addAll(graph.vertexMap.values());
+        boolean success = true;
+        while (success && !set.isEmpty()) {
+            success = recursiveTopologicalSort(sortedVertices, set.iterator().next());
+        }
+        if (success) {
+            for (int i = sortedVertices.size()-1; i >= 0; i--) {
+                V v = sortedVertices.get(i);
+                Node<V> value = graph.vertexMap.remove(v);
+                graph.vertexMap.put(v, value);
+            }
+        }
         return success;
     }
 

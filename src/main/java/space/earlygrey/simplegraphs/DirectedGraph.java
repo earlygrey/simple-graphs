@@ -26,13 +26,12 @@ public class DirectedGraph<V> extends Graph<V> {
         return new DirectedGraph<>();
     }
 
-    public List<V> topologicalSort() {
-        List<V> vertices= new ArrayList<>();
-        boolean success = algorithms.topologicalSort(vertices);
-        if (!success) vertices.clear();
-        return vertices;
+    public boolean topologicalSort() {
+        return algorithms.topologicalSort();
     }
 
-
+    public boolean topologicalSort(List<V> sortedVertices) {
+        return algorithms.topologicalSort(sortedVertices);
+    }
 
 }

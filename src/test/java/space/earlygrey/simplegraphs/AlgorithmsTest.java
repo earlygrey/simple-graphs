@@ -3,6 +3,7 @@ package space.earlygrey.simplegraphs;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
@@ -140,26 +141,24 @@ public class AlgorithmsTest {
         DirectedGraph<Integer> graph = new DirectedGraph<>();
         int n = 10;
         for (int i = 0; i < n; i++) graph.addVertex(i);
-        for (int i = 0; i < n/2; i++) graph.addEdge(i, i+1);
-        for (int i = n-1; i > n/2; i--) graph.addEdge(i, i-1);
+        for (int i = 0; i < n-1; i++) graph.addEdge(i+1, i);
 
-        List<Integer> sort = graph.topologicalSort();
-        assertEquals(graph.size(), sort.size());
+        List<Integer> sorted = new ArrayList<>(n);
+        boolean success = graph.topologicalSort(sorted);
+        assertTrue(success);
 
-        graph.removeAllEdges();
-
-        for (int i = 0; i < n-1; i++) {
-            graph.addEdge(i+1, i);
+        graph.topologicalSort();
+        int i = n-1;
+        for (Integer vertex : graph.getVertices()) {
+            Integer expected = new Integer(i--);
+            assertEquals(expected, vertex);
+            assertEquals(expected, sorted.get(n-2-i));
         }
-        sort = graph.topologicalSort();
-        List<Integer> correct = new ArrayList<>(n);
-        for (int i = n-1; i >= 0 ; i--) correct.add(i);
 
-        assertEquals(correct, sort);
 
         graph.addEdge(0, n-1);
-        sort = graph.topologicalSort();
-        assertEquals(0, sort.size());
+        success = graph.topologicalSort();
+        assertTrue(!success);
 
     }
 

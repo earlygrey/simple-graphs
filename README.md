@@ -19,6 +19,7 @@ Algorithms implemented are:
 
 You might be wondering what the point of this graph library is, since there are already some very [powerful](https://jgrapht.org/) and [versatile](https://github.com/google/guava/wiki/GraphsExplained) libraries out there. Well the idea behind simple graphs is that it's first and foremost user-friendly and simple to use. Just instantiate a graph object, add some vertices and edges and you're ready. Algorithms are called directly on the graph object.
 
-If you're looking for a broader, more powerful library I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more, though it has more requirements.
+Simple graphs uses java 8 (JGraphT 1.5.0+ requires JDK 11) and only uses java collections. It has no dependencies, and so should be GWT compatible (JGraphT and guava graphs are not). It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
 
-Simple graphs uses java 8 (JGraphT 1.5.0+ requires JDK 11) and only uses java collections. It has no dependencies, and so should be GWT compatible (JGraphT and guava graphs are not).
+
+If you're looking for a broader, more powerful library and don't care about java 8 or GWT, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more.

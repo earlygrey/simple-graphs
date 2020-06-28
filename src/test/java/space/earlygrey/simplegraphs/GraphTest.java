@@ -2,14 +2,10 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 
-import space.earlygrey.simplegraphs.TestUtils.Pair;
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import static org.junit.Assert.assertEquals;

@@ -1,8 +1,6 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
 

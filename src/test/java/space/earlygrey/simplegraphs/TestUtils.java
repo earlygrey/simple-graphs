@@ -34,7 +34,7 @@ class TestUtils {
         }
     }
 
-    static Graph<Integer> makeCompleteGraph(Graph<Integer> graph, int n) {
+    static <G extends Graph<Integer>> G makeCompleteGraph(G graph, int n) {
         for (int i = 0; i < n; i++) {
             graph.addVertex(i);
         }

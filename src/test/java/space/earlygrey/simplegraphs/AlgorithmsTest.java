@@ -51,13 +51,13 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.containsCycle());
+        assertTrue(!graph.detectCycle());
 
         graph.addEdge(0,2);
-        assertTrue(!graph.containsCycle());
+        assertTrue(!graph.detectCycle());
 
         graph.addEdge(2,0);
-        assertTrue(graph.containsCycle());
+        assertTrue(graph.detectCycle());
 
         graph = new UndirectedGraph<>();
 
@@ -67,10 +67,10 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.containsCycle());
+        assertTrue(!graph.detectCycle());
 
         graph.addEdge(0,2);
-        assertTrue(graph.containsCycle());
+        assertTrue(graph.detectCycle());
 
     }
     
@@ -167,13 +167,13 @@ public class AlgorithmsTest {
     public void mwstShouldBeTree() {
 
         int n = 4;
-        Graph<Integer> graph = TestUtils.makeCompleteGraph(new UndirectedGraph<>(), n);
+        UndirectedGraph<Integer> graph = TestUtils.makeCompleteGraph(new UndirectedGraph<>(), n);
 
         Graph<Integer> mwst = graph.findMinimumWeightSpanningTree();
 
         assertEquals(n, mwst.size());
         assertEquals(n-1, mwst.getEdgeCount());
 
-        assertTrue(!mwst.containsCycle());
+        assertTrue(!mwst.detectCycle());
     }
 }

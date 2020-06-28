@@ -474,7 +474,11 @@ public abstract class Graph<V> {
     //  Structures
     //--------------------
 
-    public boolean containsCycle() {
+    /**
+     * Checks whether there are any cycles in the graph using depth first searches.
+     * @return true if the graph contains a cycle, false otherwise
+     */
+    public boolean detectCycle() {
         return algorithms.containsCycle(this);
     }
 

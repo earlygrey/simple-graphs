@@ -20,8 +20,8 @@ class Algorithms<V> {
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance+o1.estimate - (o2.distance+o2.estimate)));
-        priorityQueue = new PriorityQueue<>((o1, o2) -> (int) Math.signum(o1.distance - o2.distance));
+        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
+        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
         isReset = new HashSet<>();
         set = new HashSet<>();
     }

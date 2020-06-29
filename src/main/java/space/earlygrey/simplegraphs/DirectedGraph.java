@@ -3,6 +3,7 @@ package space.earlygrey.simplegraphs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
@@ -17,8 +18,8 @@ public class DirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> createConnection(Node<V> a, Node<V> b, float weight) {
-        return new DirectedConnection<>(a, b, weight);
+    protected Supplier<Connection<V>> getConnectionSupplier() {
+        return () -> new DirectedConnection<>();
     }
 
     @Override

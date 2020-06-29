@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 public abstract class Graph<V> {
 
@@ -18,7 +19,8 @@ public abstract class Graph<V> {
 
     final Map<V, Node<V>> vertexMap;
     final Map<Edge<V>, Connection<V>> edges;
-    final Nodes nodes;
+    final Nodes<V> nodes;
+    final Connections<V> connections;
 
     final Algorithms algorithms;
 
@@ -38,6 +40,7 @@ public abstract class Graph<V> {
         vertexMap = new LinkedHashMap<>();
         edges = new LinkedHashMap<>();
         nodes = new Nodes(this);
+        connections = new Connections(this, getConnectionSupplier());
     }
 
     protected Graph(Collection<V> vertices) {
@@ -55,7 +58,7 @@ public abstract class Graph<V> {
     //  Abstract Methods
     //--------------------
 
-    abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
+    protected abstract Supplier<Connection<V>> getConnectionSupplier();
     abstract Graph<V> createNew();
 
     //--------------------

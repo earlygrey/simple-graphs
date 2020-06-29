@@ -7,20 +7,21 @@ public abstract class Connection<V> {
 
     static final float DEFAULT_WEIGHT = 1;
 
-    final Node<V> a, b;
+    Node<V> a, b;
     float weight = DEFAULT_WEIGHT;
     final Edge edge = new Edge(this);
+    int index;
 
-    Connection(Node<V> a, Node<V> b) {
-        this.a = a;
-        this.b = b;
+    void reset() {
+        a = null;
+        b = null;
     }
-    Connection(Node<V> a, Node<V> b, float weight) {
+
+    void set(Node<V> a, Node<V> b, float weight) {
         this.a = a;
         this.b = b;
         this.weight = weight;
     }
-
 
     boolean isIncident(Node<V> v) {
         return a.equals(v) || b.equals(v);
@@ -35,14 +36,6 @@ public abstract class Connection<V> {
     }
 
     static class DirectedConnection<V> extends Connection<V>  {
-
-        DirectedConnection(Node<V> a, Node<V> b) {
-            super(a, b);
-        }
-
-        DirectedConnection(Node<V> a, Node<V> b, float weight) {
-            super(a, b, weight);
-        }
 
         @Override
         public boolean equals(Object o) {
@@ -66,14 +59,6 @@ public abstract class Connection<V> {
     }
 
     static class UndirectedConnection<V> extends Connection<V> {
-
-        UndirectedConnection(Node<V> a, Node<V> b) {
-            super(a, b);
-        }
-
-        UndirectedConnection(Node<V> a, Node<V> b, float weight) {
-            super(a, b, weight);
-        }
 
         @Override
         public boolean equals(Object o) {

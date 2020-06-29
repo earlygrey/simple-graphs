@@ -1,6 +1,7 @@
 package space.earlygrey.simplegraphs;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
 
@@ -15,8 +16,8 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> createConnection(Node<V> a, Node<V> b, float weight) {
-        return new UndirectedConnection<>(a, b, weight);
+    protected Supplier<Connection<V>> getConnectionSupplier() {
+        return () -> new UndirectedConnection<>();
     }
 
     @Override

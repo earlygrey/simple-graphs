@@ -38,7 +38,7 @@ class Node<V extends Object> {
     Connection<V> addEdge(Node v, float weight) {
         Connection<V> connection = neighbours.get(v);
         if (connection == null) {
-            connection = graph.createConnection(this, v, weight);
+            connection = graph.connections.getEdge(this, v, weight);
             connections.put(connection.edge, connection);
             neighbours.put(v, connection);
             outEdges.add(connection);

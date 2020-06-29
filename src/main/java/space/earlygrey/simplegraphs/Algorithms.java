@@ -55,7 +55,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
-        Node<V> end = aStarSearch(start, target, heuristic);
+        Node<V> end = heuristic == null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
         if (end==null) {
             clear();
             return false;
@@ -83,6 +83,45 @@ class Algorithms<V> {
         }
         return distances;
     }*/
+
+    private Node<V> dijkstra(Node<V> start, Node<V> target) {
+        clear();
+
+        FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
+
+        resetAttribs(start);
+        start.distance = 0;
+
+        queue.enqueue(start, 0);
+
+        while(!queue.isEmpty()) {
+            Node<V> u = queue.dequeueMin().getValue();
+            if (u == target) {
+                clear();
+                return u;
+            }
+            if (!u.visited) {
+                u.visited = true;
+                int n = u.outEdges.size();
+                for (int i = 0; i < n; i++) {
+                    Connection<V> e = u.outEdges.get(i);
+                    Node<V> v = e.b;
+                    resetAttribs(v);
+                    if (!v.visited) {
+                        float newDistance = u.distance + e.weight;
+                        if (newDistance < v.distance) {
+                            v.distance = newDistance;
+                            v.prev = u;
+                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance);
+                            else queue.decreaseKey(v.entry, v.distance);
+                        }
+                    }
+                }
+            }
+        }
+        clear();
+        return null;
+    }
 
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         clear();

@@ -85,7 +85,7 @@ public final class FibonacciHeap<V> {
 
         private Entry<V> mChild;  // Child node, if any.
 
-        private V mElem;     // Element being stored here
+        V object;     // Element being stored here
         private float mPriority; // Its priority
 
         /**
@@ -94,7 +94,7 @@ public final class FibonacciHeap<V> {
          * @return The element represented by this heap entry.
          */
         public V getValue() {
-            return mElem;
+            return object;
         }
         /**
          * Sets the element associated with this heap entry.
@@ -102,7 +102,7 @@ public final class FibonacciHeap<V> {
          * @param value The element to associate with this heap entry.
          */
         public void setValue(V value) {
-            mElem = value;
+            object = value;
         }
 
         /**
@@ -123,7 +123,7 @@ public final class FibonacciHeap<V> {
          */
         private Entry(V elem, float priority) {
             mNext = mPrev = this;
-            mElem = elem;
+            object = elem;
             mPriority = priority;
         }
     }
@@ -313,8 +313,9 @@ public final class FibonacciHeap<V> {
          * list is empty or while the current element isn't the first element
          * of that list.
          */
-        for (Entry<V> curr = mMin; toVisit.isEmpty() || toVisit.get(0) != curr; curr = curr.mNext)
+        for (Entry<V> curr = mMin; toVisit.isEmpty() || toVisit.get(0) != curr; curr = curr.mNext) {
             toVisit.add(curr);
+        }
 
         /* Traverse this list and perform the appropriate unioning steps. */
         int n = toVisit.size;

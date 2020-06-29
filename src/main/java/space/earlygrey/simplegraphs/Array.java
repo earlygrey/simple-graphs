@@ -16,20 +16,23 @@ class Array<T> {
         this.size = 0;
     }
 
-    void add(T item) {
+    int add(T item) {
         checkSize();
         items[size] = item;
         size++;
+        return size-1;
     }
 
-    void remove(T item) {
-        int index = -1;
+    int getIndex(T item) {
         for (int i = size-1; i >= 0; i--) {
             if (item == items[i]) {
-                index = i;
-                break;
+                return i;
             }
         }
+        return -1;
+    }
+
+    void remove(int index) {
         if (index >= 0) {
             for (int i = index; i < size-1; i++) {
                 items[i] = items[i+1];
@@ -37,6 +40,10 @@ class Array<T> {
             size--;
             checkSize();
         }
+    }
+
+    void remove(T item) {
+        remove(getIndex(item));
     }
 
     void checkSize() {

@@ -69,19 +69,6 @@ class Algorithms<V> {
         return true;
     }
 
-    /*Map<Node<V>, Float> findAllShortestDistances(Node<V> start) {
-        performShortestPathSearch(start, null, defaultHeuristic);
-        priorityQueue.clear();
-        Map<Node<V>, Float> distances = new HashMap<>();
-        for (Node<V> v : graph.getNodes()) {
-            if (v.visited) {
-                distances.put(v, new Float(v.distance));
-                //Gdx.app.log("GraphAlgorithms:findAllShortestDistances", ""+(v.distance));
-            }
-        }
-        return distances;
-    }*/
-
     private Node<V> dijkstra(Node<V> start, Node<V> target) {
         init();
 
@@ -130,7 +117,7 @@ class Algorithms<V> {
         queue.enqueue(start, 0);
 
         while(!queue.isEmpty()) {
-            Node<V> u = queue.dequeueMin().getValue();
+            Node<V> u = queue.dequeueMin().object;
             if (u == target) {
                 return u;
             }

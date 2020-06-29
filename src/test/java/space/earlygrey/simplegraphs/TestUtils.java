@@ -32,6 +32,11 @@ class TestUtils {
         public int hashCode() {
             return Objects.hash(x, y);
         }
+
+        @Override
+        public String toString() {
+            return "(" +x +", " + y +')';
+        }
     }
 
     static Graph<Vector2> makeGridGraph(Graph<Vector2> graph, int n) {

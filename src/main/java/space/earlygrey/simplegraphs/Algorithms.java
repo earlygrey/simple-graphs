@@ -87,15 +87,17 @@ class Algorithms<V> {
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         clear();
 
-        FibonacciHeap<Node<V>> fibQueue = new FibonacciHeap<>();
+
+
+        FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
 
         resetAttribs(start);
         start.distance = 0;
 
-        fibQueue.enqueue(start, 0);
+        queue.enqueue(start, 0);
 
-        while(!fibQueue.isEmpty()) {
-            Node<V> u = fibQueue.dequeueMin().getValue();
+        while(!queue.isEmpty()) {
+            Node<V> u = queue.dequeueMin().getValue();
             if (u == target) {
                 clear();
                 return u;
@@ -112,12 +114,12 @@ class Algorithms<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            if (heuristic != null && !v.seen) {
+                            if (!v.seen) {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
                                 v.seen = true;
                             }
-                            if (v.entry == null) v.entry = fibQueue.enqueue(v, v.distance + v.estimate);
-                            else fibQueue.decreaseKey(v.entry, v.distance + v.estimate);
+                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance + v.estimate);
+                            else queue.decreaseKey(v.entry, v.distance + v.estimate);
                         }
                     }
                 }

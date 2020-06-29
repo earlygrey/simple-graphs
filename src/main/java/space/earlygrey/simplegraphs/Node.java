@@ -11,7 +11,7 @@ class Node<V extends Object> {
 
     final Graph graph;
     V object;
-    final int index;
+    int index;
     Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     List<Connection<V>> outEdges = new ArrayList<>();
@@ -20,6 +20,10 @@ class Node<V extends Object> {
         this.object = object;
         this.graph = graph;
         this.index = index;
+    }
+
+    public void reset() {
+        object = null;
     }
 
     Collection<Edge<V>> getEdges() {

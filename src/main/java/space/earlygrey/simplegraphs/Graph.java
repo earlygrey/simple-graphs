@@ -18,12 +18,11 @@ public abstract class Graph<V> {
 
     final Map<V, Node<V>> vertexMap;
     final Map<Edge<V>, Connection<V>> edges;
-    final List<Node<V>> nodeList;
-
-    final ArrayDeque<Integer> freeIndexStack;
-    int largestUsedIndex = 0;
+    final Nodes nodes;
 
     final Algorithms algorithms;
+
+
 
     static final String
             NULL_VERTEX_MESSAGE = "Vertices cannot be null",
@@ -38,8 +37,7 @@ public abstract class Graph<V> {
         algorithms = new Algorithms(this);
         vertexMap = new LinkedHashMap<>();
         edges = new LinkedHashMap<>();
-        nodeList = new ArrayList<>();
-        freeIndexStack = new ArrayDeque<>();
+        nodes = new Nodes(this);
     }
 
     protected Graph(Collection<V> vertices) {
@@ -73,17 +71,7 @@ public abstract class Graph<V> {
     public boolean addVertex(V v) {
         Node node = getNode(v);
         if (node!=null) return false;
-        if (freeIndexStack.size() > 0) {
-            int index = freeIndexStack.pop();
-            node = nodeList.get(index);
-            node.object = v;
-        } else {
-            int index = nodeList.size();
-            node = new Node(v, this, index);
-            nodeList.add(node);
-            largestUsedIndex = Math.max(index, largestUsedIndex);
-            algorithms.ensureCapacity(largestUsedIndex+1);
-        }
+        node = nodes.getNode(v);
         vertexMap.put(v, node);
         return true;
     }
@@ -177,7 +165,7 @@ public abstract class Graph<V> {
     public void removeAllVertices() {
         edges.clear();
         vertexMap.clear();
-        freeIndexStack.clear();
+        nodes.clear();
     }
 
     /**
@@ -218,7 +206,7 @@ public abstract class Graph<V> {
         }
         node.disconnect();
         vertexMap.remove(node.object);
-        freeIndexStack.push(node.index);
+        nodes.free(node);
     }
 
     Connection<V> addEdge(Node<V> a, Node<V> b) {

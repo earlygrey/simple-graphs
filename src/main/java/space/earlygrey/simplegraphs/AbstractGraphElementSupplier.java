@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-class AbstractGraphElementSupplier<V, T extends Pooled> {
+class AbstractGraphElementSupplier<V, T extends Suppliable> {
 
     final Graph<V> graph;
     final Supplier<T> objectSupplier;
@@ -38,6 +38,10 @@ class AbstractGraphElementSupplier<V, T extends Pooled> {
             if (objects.get(i).isFree()) {
                 objects.remove(i);
             }
+        }
+        int n = objects.size();
+        for (int i = 0; i < n; i++) {
+            objects.get(i).setIndex(i);
         }
         freeIndexStack.clear();
         largestUsedIndex = objects.size()-1;

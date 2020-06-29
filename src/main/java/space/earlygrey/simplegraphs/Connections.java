@@ -17,7 +17,7 @@ class Connections<V> extends AbstractGraphElementSupplier<V, Connection<V>>{
         } else {
             int index = objects.size();
             connection = objectSupplier.get();
-            connection.index = index;
+            connection.setIndex(index);
             connection.set(a, b, weight);
             objects.add(connection);
             largestUsedIndex = Math.max(index, largestUsedIndex);

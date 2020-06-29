@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class Node<V extends Object> implements Pooled {
+class Node<V extends Object> implements Suppliable {
 
     final Graph graph;
     V object;
@@ -98,5 +98,10 @@ class Node<V extends Object> implements Pooled {
     @Override
     public boolean isFree() {
         return isFree;
+    }
+
+    @Override
+    public void setIndex(int i) {
+        this.index = i;
     }
 }

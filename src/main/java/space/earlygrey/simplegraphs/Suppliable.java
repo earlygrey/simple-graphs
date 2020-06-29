@@ -1,7 +1,8 @@
 package space.earlygrey.simplegraphs;
 
-interface Pooled {
+interface Suppliable {
     int getIndex();
+    void setIndex(int i);
     void free();
     boolean isFree();
 }

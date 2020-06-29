@@ -17,7 +17,7 @@ class Nodes<V> extends AbstractGraphElementSupplier<V, Node<V>> {
         } else {
             int index = objects.size();
             node = objectSupplier.get();
-            node.index = index;
+            node.setIndex(index);
             node.object = v;
             objects.add(node);
             largestUsedIndex = Math.max(index, largestUsedIndex);

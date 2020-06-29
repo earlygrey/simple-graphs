@@ -181,8 +181,8 @@ public abstract class Graph<V> {
     }
 
     /**
-     * Sort the vertices using the provided comparator. This affects the iteration order of the collection returned by {@link #getVertices()},
-     * as well as algorithms which involve iterating over all vertices.
+     * Sort the vertices using the provided comparator. This is reflected in the iteration order of the collection returned
+     * by {@link #getVertices()}, as well as algorithms which involve iterating over all vertices.
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
@@ -195,8 +195,8 @@ public abstract class Graph<V> {
     }
 
     /**
-     * Sort the edges using the provided comparator. This affects the iteration order of the collection returned by {@link #getEdges()},
-     * as well as algorithms which involve iterating over all edges.
+     * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
+     * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
      * @param comparator a comparator for comparing edges
      */
     public void sortEdges(Comparator<Edge<V>> comparator) {

@@ -29,11 +29,12 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> removeEdge(Node<V> a, Node<V> b) {
+    boolean removeEdge(Node<V> a, Node<V> b) {
         Connection<V> e = a.removeEdge(b);
-        if (e == null) return null;
+        if (e == null) return false;
         b.removeEdge(a);
-        return edges.remove(e.edge);
+        edges.remove(e.edge);
+        return true;
     }
 
     @Override

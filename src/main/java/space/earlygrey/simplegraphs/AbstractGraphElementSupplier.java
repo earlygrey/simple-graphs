@@ -23,7 +23,7 @@ class AbstractGraphElementSupplier<V, T extends Pooled> {
     void free(T object) {
         if (object == null) return;
         freeIndexStack.push(object.getIndex());
-        object.reset();
+        object.free();
     }
 
     void clear() {
@@ -31,5 +31,15 @@ class AbstractGraphElementSupplier<V, T extends Pooled> {
         for (int i = 0; i < n; i++) {
             free(objects.get(i));
         }
+    }
+
+    void reindex() {
+        for (int i = objects.size()-1; i >= 0; i--) {
+            if (objects.get(i).isFree()) {
+                objects.remove(i);
+            }
+        }
+        freeIndexStack.clear();
+        largestUsedIndex = objects.size()-1;
     }
 }

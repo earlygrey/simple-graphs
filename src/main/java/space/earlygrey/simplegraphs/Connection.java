@@ -11,11 +11,13 @@ public abstract class Connection<V> implements Pooled {
     float weight = DEFAULT_WEIGHT;
     final Edge edge = new Edge(this);
     int index;
+    boolean isFree;
 
     @Override
-    public void reset() {
+    public void free() {
         a = null;
         b = null;
+        isFree = true;
     }
 
     void set(Node<V> a, Node<V> b, float weight) {
@@ -39,6 +41,11 @@ public abstract class Connection<V> implements Pooled {
     @Override
     public int getIndex() {
         return index;
+    }
+
+    @Override
+    public boolean isFree() {
+        return isFree;
     }
 
     static class DirectedConnection<V> extends Connection<V>  {

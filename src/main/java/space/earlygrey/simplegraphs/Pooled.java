@@ -2,5 +2,6 @@ package space.earlygrey.simplegraphs;
 
 interface Pooled {
     int getIndex();
-    void reset();
+    void free();
+    boolean isFree();
 }

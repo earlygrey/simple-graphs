@@ -144,11 +144,10 @@ public abstract class Graph<V> {
      * @param w the destination vertex of the edge
      * @return the edge if there exists an edge from v to w, or null if there is no edge
      */
-    public Edge<V> removeEdge(V v, V w) {
+    public boolean removeEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        Connection<V> connection = removeEdge(a, b);
-        return connection == null ? null : connection.edge;
+        return removeEdge(a, b);
     }
 
     /**
@@ -223,14 +222,16 @@ public abstract class Graph<V> {
         return e;
     }
 
-    Connection<V> removeEdge(Connection<V> connection) {
+    boolean removeEdge(Connection<V> connection) {
         return removeEdge(connection.a, connection.b);
     }
 
-    Connection<V> removeEdge(Node<V> a, Node<V> b) {
+    boolean removeEdge(Node<V> a, Node<V> b) {
         Connection<V> e = a.removeEdge(b);
-        if (e == null) return null;
-        return edges.remove(e.edge);
+        if (e == null) return false;
+        edges.remove(e.edge);
+        connections.free(e);
+        return true;
     }
 
     //================================================================================

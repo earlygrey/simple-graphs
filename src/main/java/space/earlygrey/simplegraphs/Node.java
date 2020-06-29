@@ -12,6 +12,7 @@ class Node<V extends Object> implements Pooled {
     final Graph graph;
     V object;
     int index;
+    boolean isFree;
     Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     List<Connection<V>> outEdges = new ArrayList<>();
@@ -20,8 +21,9 @@ class Node<V extends Object> implements Pooled {
         this.graph = graph;
     }
 
-    public void reset() {
+    public void free() {
         object = null;
+        isFree = true;
     }
 
     Collection<Edge<V>> getEdges() {
@@ -91,5 +93,10 @@ class Node<V extends Object> implements Pooled {
     @Override
     public int getIndex() {
         return index;
+    }
+
+    @Override
+    public boolean isFree() {
+        return isFree;
     }
 }

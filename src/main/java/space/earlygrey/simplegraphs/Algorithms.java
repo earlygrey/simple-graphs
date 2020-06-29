@@ -14,15 +14,10 @@ import java.util.Set;
 class Algorithms<V> {
 
     private final Graph<V> graph;
-    FibonacciHeap<V> fibQueue = new FibonacciHeap<>();
-    private final ArrayDeque<Node<V>> queue;
-    private final Set<Node<V>> set;
     boolean[] reset = new boolean[8];
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
-        queue = new ArrayDeque<>();
-        set = new HashSet<>(16, 1);
     }
 
     void ensureCapacity(int capacity) {
@@ -31,9 +26,6 @@ class Algorithms<V> {
 
     private void clear() {
         Arrays.fill(reset, false);
-        fibQueue.clear();
-        queue.clear();
-        set.clear();
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -95,7 +87,7 @@ class Algorithms<V> {
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         clear();
 
-        fibQueue.clear();
+        FibonacciHeap<Node<V>> fibQueue = new FibonacciHeap<>();
 
         resetAttribs(start);
         start.distance = 0;
@@ -110,7 +102,9 @@ class Algorithms<V> {
             }
             if (!u.visited) {
                 u.visited = true;
-                for (Connection e : u.connections.values()) {
+                int n = u.outEdges.size();
+                for (int i = 0; i < n; i++) {
+                    Connection<V> e = u.outEdges.get(i);
                     Node<V> v = e.b;
                     resetAttribs(v);
                     if (!v.visited) {
@@ -118,7 +112,10 @@ class Algorithms<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            if (heuristic != null) v.estimate = heuristic.getEstimate(v.object, target.object);
+                            if (heuristic != null && !v.seen) {
+                                v.estimate = heuristic.getEstimate(v.object, target.object);
+                                v.seen = true;
+                            }
                             if (v.entry == null) v.entry = fibQueue.enqueue(v, v.distance + v.estimate);
                             else fibQueue.decreaseKey(v.entry, v.distance + v.estimate);
                         }
@@ -136,7 +133,7 @@ class Algorithms<V> {
 
         resetAttribs(vertex);
         vertex.visited = true;
-
+        ArrayDeque<Node<V>> queue = new ArrayDeque<>();
         queue.add(vertex);
 
         while(!queue.isEmpty()) {
@@ -145,7 +142,9 @@ class Algorithms<V> {
             if (v.prev != null) tree.addEdge(v.object, v.prev.object);
             if (v.i == maxDepth) continue;
             if (tree.size() == maxVertices) break;
-            for (Connection e : v.connections.values()) {
+            int n = v.outEdges.size();
+            for (int i = 0; i < n; i++) {
+                Connection<V> e = v.outEdges.get(i);
                 Node<V> w = e.b;
                 resetAttribs(w);
                 if (!w.visited) {
@@ -163,7 +162,7 @@ class Algorithms<V> {
         clear();
 
         resetAttribs(vertex);
-
+        ArrayDeque<Node<V>> queue = new ArrayDeque<>();
         queue.add(vertex);
 
         while(!queue.isEmpty()) {
@@ -174,7 +173,9 @@ class Algorithms<V> {
                 if (v.i == maxDepth) continue;
                 if (tree.size() == maxVertices) break;
                 v.visited = true;
-                for (Connection e : v.connections.values()) {
+                int n = v.outEdges.size();
+                for (int i = 0; i < n; i++) {
+                    Connection<V> e = v.outEdges.get(i);
                     Node<V> w = e.b;
                     resetAttribs(w);
                     w.i = v.i+1;
@@ -189,10 +190,10 @@ class Algorithms<V> {
     boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
         clear();
-        set.addAll(graph.vertexMap.values());
+        HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(sortedVertices, set.iterator().next());
+            success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
         }
         if (success) {
             Collections.reverse(sortedVertices);
@@ -204,10 +205,10 @@ class Algorithms<V> {
     boolean topologicalSort() {
         List<V> sortedVertices = new ArrayList<>();
         clear();
-        set.addAll(graph.vertexMap.values());
+        HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(sortedVertices, set.iterator().next());
+            success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
         }
         if (success) {
             for (int i = sortedVertices.size()-1; i >= 0; i--) {
@@ -219,7 +220,7 @@ class Algorithms<V> {
         return success;
     }
 
-    private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v) {
+    private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v, Set<Node<V>> set) {
         resetAttribs(v);
 
         if (v.visited) return true;
@@ -228,8 +229,10 @@ class Algorithms<V> {
             return false;
         }
         v.seen = true;
-        for (Connection e : v.connections.values()) {
-            boolean success = recursiveTopologicalSort(sortedVertices, e.b);
+        int n = v.outEdges.size();
+        for (int i = 0; i < n; i++) {
+            Connection<V> e = v.outEdges.get(i);
+            boolean success = recursiveTopologicalSort(sortedVertices, e.b, set);
             if (!success) return false;
         }
         v.seen = false;
@@ -372,7 +375,9 @@ class Algorithms<V> {
     private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
         v.visited = true;
         recursiveStack.add(v);
-        for (Connection<V> e : v.connections.values()) {
+        int n = v.outEdges.size();
+        for (int i = 0; i < n; i++) {
+            Connection<V> e = v.outEdges.get(i);
             if (!graph.isDirected() && e.b.equals(parent)) continue;
             resetAttribs(e.b);
             if (recursiveStack.contains(e.b)) {

@@ -96,7 +96,7 @@ public abstract class Graph<V> {
     public boolean removeVertex(V v) {
         Node existing = getNode(v);
         if (existing==null) return false;
-        removeVertex(existing);
+        removeNode(existing);
         return true;
     }
 
@@ -135,7 +135,7 @@ public abstract class Graph<V> {
         Node a = getNode(v);
         Node b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return addEdge(a, b, weight).edge;
+        return addConnection(a, b, weight).edge;
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class Graph<V> {
     public boolean removeEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return removeEdge(a, b);
+        return removeConnection(a, b);
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class Graph<V> {
     //  Internal Methods
     //--------------------
 
-    void removeVertex (Node<V> node) {
+    void removeNode(Node<V> node) {
         for (Node<V> neighbour : node.neighbours.keySet()) {
             neighbour.removeEdge(node);
         }
@@ -210,23 +210,23 @@ public abstract class Graph<V> {
         nodes.free(node);
     }
 
-    Connection<V> addEdge(Node<V> a, Node<V> b) {
+    Connection<V> addConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.addEdge(b, Connection.DEFAULT_WEIGHT);
         edges.put(e.edge, e);
         return e;
     }
 
-    Connection<V> addEdge(Node<V> a, Node<V> b, float weight) {
+    Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
         Connection<V> e = a.addEdge(b, weight);
         edges.put(e.edge, e);
         return e;
     }
 
-    boolean removeEdge(Connection<V> connection) {
-        return removeEdge(connection.a, connection.b);
+    boolean removeConnection(Connection<V> connection) {
+        return removeConnection(connection.a, connection.b);
     }
 
-    boolean removeEdge(Node<V> a, Node<V> b) {
+    boolean removeConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
         edges.remove(e.edge);

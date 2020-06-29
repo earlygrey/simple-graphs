@@ -267,7 +267,7 @@ class Algorithms<V> {
             if (detectCycle(edge.a, edge.b)) {
                 continue;
             }
-            spanningTree.addEdge(edge.a, edge.b, edge.weight);
+            spanningTree.addConnection(edge.a, edge.b, edge.weight);
             edgeCount++;
             if (edgeCount == totalNodes - 1) {
                 break;

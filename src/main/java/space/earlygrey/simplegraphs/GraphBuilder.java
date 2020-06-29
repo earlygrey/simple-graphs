@@ -3,7 +3,6 @@ package space.earlygrey.simplegraphs;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
-import space.earlygrey.simplegraphs.VertexTypes.SpatiallyEmbeddedVertex;
 import space.earlygrey.simplegraphs.VertexTypes.SpatiallyEmbeddedVertex2D;
 
 public class GraphBuilder{
@@ -18,12 +17,12 @@ public class GraphBuilder{
                 if (!a.equals(b)) {
                     Connection<V> e = a.getEdge(b);
                     if (e == null) {
-                        graph.addEdge(a, b);
+                        graph.addConnection(a, b);
                     }
                     if (graph.isDirected()) {
                         e = b.getEdge(a);
                         if (e == null) {
-                            graph.addEdge(b, a);
+                            graph.addConnection(b, a);
                         }
                     }
                 }

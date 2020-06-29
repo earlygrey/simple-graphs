@@ -21,7 +21,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> addEdge(Node<V> a, Node<V> b, float weight) {
+    Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
         Connection<V> e = a.addEdge(b, weight);
         edges.put(e.edge, e);
         b.addEdge(a, weight);
@@ -29,7 +29,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    boolean removeEdge(Node<V> a, Node<V> b) {
+    boolean removeConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
         b.removeEdge(a);

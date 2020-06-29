@@ -24,7 +24,7 @@ class Algorithms<V> {
         if (reset.length < capacity) reset = new boolean[(int) (1.5*capacity)];
     }
 
-    private void clear() {
+    private void init() {
         Arrays.fill(reset, false);
     }
 
@@ -57,7 +57,6 @@ class Algorithms<V> {
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
         Node<V> end = heuristic == null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
         if (end==null) {
-            clear();
             return false;
         }
         Node<V> v = end;
@@ -67,7 +66,6 @@ class Algorithms<V> {
         }
         path.add(start.object);
         Collections.reverse(path);
-        clear();
         return true;
     }
 
@@ -85,7 +83,7 @@ class Algorithms<V> {
     }*/
 
     private Node<V> dijkstra(Node<V> start, Node<V> target) {
-        clear();
+        init();
 
         FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
 
@@ -97,7 +95,6 @@ class Algorithms<V> {
         while(!queue.isEmpty()) {
             Node<V> u = queue.dequeueMin().getValue();
             if (u == target) {
-                clear();
                 return u;
             }
             if (!u.visited) {
@@ -119,14 +116,11 @@ class Algorithms<V> {
                 }
             }
         }
-        clear();
         return null;
     }
 
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        clear();
-
-
+        init();
 
         FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
 
@@ -138,7 +132,6 @@ class Algorithms<V> {
         while(!queue.isEmpty()) {
             Node<V> u = queue.dequeueMin().getValue();
             if (u == target) {
-                clear();
                 return u;
             }
             if (!u.visited) {
@@ -164,13 +157,12 @@ class Algorithms<V> {
                 }
             }
         }
-        clear();
         return null;
     }
 
     void breadthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
         if (maxDepth <= 0 ) return;
-        clear();
+        init();
 
         resetAttribs(vertex);
         vertex.visited = true;
@@ -196,11 +188,10 @@ class Algorithms<V> {
                 }
             }
         }
-        clear();
     }
 
     void depthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
-        clear();
+        init();
 
         resetAttribs(vertex);
         ArrayDeque<Node<V>> queue = new ArrayDeque<>();
@@ -225,12 +216,11 @@ class Algorithms<V> {
                 }
             }
         }
-        clear();
     }
 
     boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
-        clear();
+        init();
         HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
@@ -245,7 +235,7 @@ class Algorithms<V> {
 
     boolean topologicalSort() {
         List<V> sortedVertices = new ArrayList<>();
-        clear();
+        init();
         HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
@@ -286,7 +276,7 @@ class Algorithms<V> {
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
-        clear();
+        init();
 
         Graph<V> spanningTree = graph.createNew();
 
@@ -315,7 +305,6 @@ class Algorithms<V> {
             }
         }
 
-        clear();
         return spanningTree;
     }
 
@@ -401,15 +390,14 @@ class Algorithms<V> {
 
     boolean containsCycle(Graph<V> graph) {
         if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
-        clear();
+        init();
         for (Node<V> v : graph.getNodes()) {
             resetAttribs(v);
             if (detectCycleDFS(v, null, new HashSet<>())) {
-                clear();
+                init();
                 return true;
             }
         }
-        clear();
         return false;
     }
 

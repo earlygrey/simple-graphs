@@ -25,7 +25,7 @@ class Algorithms<V> {
     }
 
     private void init() {
-        Arrays.fill(reset, false);
+        Arrays.fill(reset, 0, graph.nodes.objects.size(), false);
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {

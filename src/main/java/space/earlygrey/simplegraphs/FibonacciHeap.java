@@ -4,6 +4,7 @@ package space.earlygrey.simplegraphs;
  *
  * NOTE: I've edited this code a little, original source here:
  * https://keithschwarz.com/interesting/code/?dir=fibonacci-heap
+ * I've eg removed any safety checks
  *
  * File: FibonacciHeap.java
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
@@ -84,7 +85,7 @@ public final class FibonacciHeap<V> {
 
         private Entry<V> mChild;  // Child node, if any.
 
-        private Node<V> mElem;     // Element being stored here
+        private V mElem;     // Element being stored here
         private float mPriority; // Its priority
 
         /**
@@ -92,7 +93,7 @@ public final class FibonacciHeap<V> {
          *
          * @return The element represented by this heap entry.
          */
-        public Node<V> getValue() {
+        public V getValue() {
             return mElem;
         }
         /**
@@ -100,7 +101,7 @@ public final class FibonacciHeap<V> {
          *
          * @param value The element to associate with this heap entry.
          */
-        public void setValue(Node<V> value) {
+        public void setValue(V value) {
             mElem = value;
         }
 
@@ -120,7 +121,7 @@ public final class FibonacciHeap<V> {
          * @param elem The element stored in this node.
          * @param priority The priority of this element.
          */
-        private Entry(Node<V> elem, float priority) {
+        private Entry(V elem, float priority) {
             mNext = mPrev = this;
             mElem = elem;
             mPriority = priority;
@@ -146,8 +147,8 @@ public final class FibonacciHeap<V> {
      * @param priority Its priority, which must be valid.
      * @return An Entry<V> representing that element in the tree.
      */
-    public Entry<V> enqueue(Node<V> value, float priority) {
-        checkPriority(priority);
+    public Entry<V> enqueue(V value, float priority) {
+        //checkPriority(priority);
 
         /* Create the entry object, which is a circularly-linked list of length
          * one.
@@ -173,8 +174,8 @@ public final class FibonacciHeap<V> {
      * @throws NoSuchElementException If the heap is empty.
      */
     public Entry<V> min() {
-        if (isEmpty())
-            throw new NoSuchElementException("Heap is empty.");
+        //if (isEmpty())
+          //  throw new NoSuchElementException("Heap is empty.");
         return mMin;
     }
 
@@ -239,8 +240,8 @@ public final class FibonacciHeap<V> {
      */
     public Entry<V> dequeueMin() {
         /* Check for whether we're empty. */
-        if (isEmpty())
-            throw new NoSuchElementException("Heap is empty.");
+        //if (isEmpty())
+        //    throw new NoSuchElementException("Heap is empty.");
 
         /* Otherwise, we're about to lose an element, so decrement the number of
          * entries in this heap.
@@ -393,9 +394,9 @@ public final class FibonacciHeap<V> {
      *         priority, or if the argument is not a finite float.
      */
     public void decreaseKey(Entry<V> entry, float newPriority) {
-        checkPriority(newPriority);
-        if (newPriority > entry.mPriority)
-            throw new IllegalArgumentException("New priority exceeds old.");
+        //checkPriority(newPriority);
+        //if (newPriority > entry.mPriority)
+         //   throw new IllegalArgumentException("New priority exceeds old.");
 
         /* Forward this to a helper function. */
         decreaseKeyUnchecked(entry, newPriority);
@@ -426,10 +427,10 @@ public final class FibonacciHeap<V> {
      * @param priority The user's specified priority.
      * @throws IllegalArgumentException If it is not valid.
      */
-    private void checkPriority(float priority) {
-        if (Double.isNaN(priority))
+    /*private void checkPriority(float priority) {
+        if (Float.isNaN(priority))
             throw new IllegalArgumentException(priority + " is invalid.");
-    }
+    }*/
 
     /**
      * Utility function which, given two pointers into disjoint circularly-

@@ -64,7 +64,7 @@ class Node<V extends Object> {
     float estimate;
     Node<V> prev;
     int i;
-    FibonacciHeap.Entry<V> entry;
+    FibonacciHeap.Entry<Node<V>> entry;
 
     void resetAlgorithmAttribs() {
         visited = false;

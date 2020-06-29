@@ -7,13 +7,15 @@ import java.util.Map;
 class Node<V extends Object> {
 
     final Graph graph;
-    public final V object;
+    V object;
+    final int index;
     Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
 
-    Node (V object, Graph<V> graph) {
+    Node (V object, Graph<V> graph, int index) {
         this.object = object;
         this.graph = graph;
+        this.index = index;
     }
 
     Collection<Edge<V>> getEdges() {
@@ -68,5 +70,10 @@ class Node<V extends Object> {
     @Override
     public boolean equals(Object o) {
         return o == this;
+    }
+
+    @Override
+    public String toString() {
+        return "["+object + " (" +index +")]";
     }
 }

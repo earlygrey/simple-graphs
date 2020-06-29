@@ -1,5 +1,6 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +18,10 @@ public abstract class Graph<V> {
 
     final Map<V, Node<V>> vertexMap;
     final Map<Edge<V>, Connection<V>> edges;
+    final List<Node<V>> nodeList;
+
+    final ArrayDeque<Integer> freeIndexStack;
+    int largestUsedIndex = 0;
 
     final Algorithms algorithms;
 
@@ -33,6 +38,8 @@ public abstract class Graph<V> {
         algorithms = new Algorithms(this);
         vertexMap = new LinkedHashMap<>();
         edges = new LinkedHashMap<>();
+        nodeList = new ArrayList<>();
+        freeIndexStack = new ArrayDeque<>();
     }
 
     protected Graph(Collection<V> vertices) {
@@ -67,7 +74,17 @@ public abstract class Graph<V> {
     public boolean addVertex(V v) {
         Node node = getNode(v);
         if (node!=null) return false;
-        node = new Node(v, this);
+        if (freeIndexStack.size() > 0) {
+            int index = freeIndexStack.pop();
+            node = nodeList.get(index);
+            node.object = v;
+        } else {
+            int index = nodeList.size();
+            node = new Node(v, this, index);
+            nodeList.add(node);
+            largestUsedIndex = Math.max(index, largestUsedIndex);
+            algorithms.ensureCapacity(largestUsedIndex+1);
+        }
         vertexMap.put(v, node);
         return true;
     }
@@ -161,6 +178,7 @@ public abstract class Graph<V> {
     public void removeAllVertices() {
         edges.clear();
         vertexMap.clear();
+        freeIndexStack.clear();
     }
 
     /**
@@ -201,6 +219,7 @@ public abstract class Graph<V> {
         }
         node.disconnect();
         vertexMap.remove(node.object);
+        freeIndexStack.push(node.index);
     }
 
     Connection<V> addEdge(Node<V> a, Node<V> b) {

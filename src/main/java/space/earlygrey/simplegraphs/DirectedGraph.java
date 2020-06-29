@@ -8,8 +8,6 @@ import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
 public class DirectedGraph<V> extends Graph<V> {
 
-    GraphBuilder<V, DirectedGraph<V>> builder = new GraphBuilder<>(this);
-
     public DirectedGraph () {
         super();
     }
@@ -34,11 +32,6 @@ public class DirectedGraph<V> extends Graph<V> {
 
     public boolean topologicalSort(List<V> sortedVertices) {
         return algorithms.topologicalSort(sortedVertices);
-    }
-
-    @Override
-    public GraphBuilder<V, DirectedGraph<V>> builder() {
-        return builder;
     }
 
 }

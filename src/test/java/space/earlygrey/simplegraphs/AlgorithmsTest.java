@@ -168,7 +168,7 @@ public class AlgorithmsTest {
         int n = 4;
         UndirectedGraph<Integer> graph = new UndirectedGraph<>();
         for (int i = 0; i < n; i++) graph.addVertex(i);
-        graph.builder().buildCompleteGraph();
+        GraphBuilder.buildCompleteGraph(graph);
 
         Graph<Integer> mwst = graph.findMinimumWeightSpanningTree();
 

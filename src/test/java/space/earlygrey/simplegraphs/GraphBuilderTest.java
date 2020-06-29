@@ -12,7 +12,7 @@ public class GraphBuilderTest {
         UndirectedGraph<Integer> graph = new UndirectedGraph<>();
         for (int i = 0; i < n; i++) graph.addVertex(i);
 
-        graph.builder().buildCompleteGraph();
+        GraphBuilder.buildCompleteGraph(graph);
 
         assertEquals(n, graph.size());
 
@@ -21,7 +21,7 @@ public class GraphBuilderTest {
         DirectedGraph<Integer> digraph = new DirectedGraph<>();
         for (int i = 0; i < n; i++) digraph.addVertex(i);
 
-        digraph.builder().buildCompleteGraph();
+        GraphBuilder.buildCompleteGraph(digraph);
 
         assertEquals(n, digraph.size());
 

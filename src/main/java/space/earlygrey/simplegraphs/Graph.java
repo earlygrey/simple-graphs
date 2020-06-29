@@ -59,7 +59,6 @@ public abstract class Graph<V> {
 
     abstract Connection<V> createConnection(Node<V> a, Node<V> b, float weight);
     abstract Graph<V> createNew();
-    protected abstract <G extends Graph<V>, B extends GraphBuilder<V, G>> B builder();
 
     //--------------------
     //  Public Methods

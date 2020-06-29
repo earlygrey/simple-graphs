@@ -43,23 +43,21 @@ class TestUtils {
             }
         }
 
-        int e = 0;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i+1,j);
                     graph.addEdge(v1, v2, v1.dst(v2));
                     if (graph.isDirected()) graph.addEdge(v2, v1, v1.dst(v2));
-                    e++;
                 }
                 if (j<n-1) {
                     Vector2 v1 = new Vector2(i, j), v2 = new Vector2(i,j+1);
                     graph.addEdge(v1, v2, v1.dst(v2));
                     if (graph.isDirected()) graph.addEdge(v2, v1, v1.dst(v2));
-                    e++;
                 }
             }
         }
+
         return graph;
     }
 }

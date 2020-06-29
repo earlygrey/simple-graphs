@@ -1,9 +1,7 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -15,7 +13,7 @@ class Node<V extends Object> implements Suppliable {
     boolean isFree;
     Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
-    List<Connection<V>> outEdges = new ArrayList<>();
+    Array<Connection<V>> outEdges = new Array<>();
 
     Node (Graph<V> graph) {
         this.graph = graph;

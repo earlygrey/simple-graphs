@@ -297,7 +297,7 @@ public final class FibonacciHeap<V> {
          * ArrayList where the entry at position i is either null or the
          * unique tree of degree i.
          */
-        List<Entry<V>> treeTable = new ArrayList<>();
+        Array<Entry<V>> treeTable = new Array<>();
 
         /* We need to traverse the entire list, but since we're going to be
          * messing around with it we have to be careful not to break our
@@ -306,7 +306,7 @@ public final class FibonacciHeap<V> {
          * spent a bit of overhead adding all of the nodes to a list, and
          * then will visit each element of this list in order.
          */
-        List<Entry<V>> toVisit = new ArrayList<>();
+        Array<Entry<V>> toVisit = new Array<>();
 
         /* To add everything, we'll iterate across the elements until we
          * find the first element twice.  We check this by looping while the
@@ -317,7 +317,9 @@ public final class FibonacciHeap<V> {
             toVisit.add(curr);
 
         /* Traverse this list and perform the appropriate unioning steps. */
-        for (Entry<V> curr: toVisit) {
+        int n = toVisit.size;
+        for (int i = 0; i < n; i++) {
+            Entry<V> curr = toVisit.get(i);
             /* Keep merging until a match arises. */
             while (true) {
                 /* Ensure that the list is long enough to hold an element of this

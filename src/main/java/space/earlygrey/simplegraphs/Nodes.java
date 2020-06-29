@@ -17,7 +17,6 @@ class Nodes<V> {
         nodeList = new ArrayList<>();
     }
 
-
     Node<V> getNode(V v) {
         Node<V> node;
         if (freeIndexStack.size() > 0) {
@@ -29,7 +28,7 @@ class Nodes<V> {
             node = new Node(v, graph, index);
             nodeList.add(node);
             largestUsedIndex = Math.max(index, largestUsedIndex);
-            graph.algorithms.ensureCapacity(largestUsedIndex+1);
+            graph.algorithms.ensureVertexCapacity(largestUsedIndex+1);
         }
         return node;
     }

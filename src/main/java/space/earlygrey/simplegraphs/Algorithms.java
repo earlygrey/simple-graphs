@@ -20,7 +20,7 @@ class Algorithms<V> {
         this.graph = graph;
     }
 
-    void ensureCapacity(int capacity) {
+    void ensureVertexCapacity(int capacity) {
         if (reset.length < capacity) reset = new boolean[(int) (1.5*capacity)];
     }
 

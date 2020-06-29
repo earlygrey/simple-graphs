@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class Node<V extends Object> {
+class Node<V extends Object> implements Pooled {
 
     final Graph graph;
     V object;
@@ -88,5 +88,10 @@ class Node<V extends Object> {
     @Override
     public String toString() {
         return "["+object + " (" +index +")]";
+    }
+
+    @Override
+    public int getIndex() {
+        return index;
     }
 }

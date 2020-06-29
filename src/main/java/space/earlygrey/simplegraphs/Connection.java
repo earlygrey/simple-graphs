@@ -3,7 +3,7 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Objects;
 
-public abstract class Connection<V> {
+public abstract class Connection<V> implements Pooled {
 
     static final float DEFAULT_WEIGHT = 1;
 
@@ -12,7 +12,8 @@ public abstract class Connection<V> {
     final Edge edge = new Edge(this);
     int index;
 
-    void reset() {
+    @Override
+    public void reset() {
         a = null;
         b = null;
     }
@@ -33,6 +34,11 @@ public abstract class Connection<V> {
 
     void setWeight(float weight) {
         this.weight = weight;
+    }
+
+    @Override
+    public int getIndex() {
+        return index;
     }
 
     static class DirectedConnection<V> extends Connection<V>  {

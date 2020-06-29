@@ -1,6 +1,5 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +38,7 @@ public abstract class Graph<V> {
         algorithms = new Algorithms(this);
         vertexMap = new LinkedHashMap<>();
         edges = new LinkedHashMap<>();
-        nodes = new Nodes(this);
+        nodes = new Nodes(this, () -> new Node<>(Graph.this));
         connections = new Connections(this, getConnectionSupplier());
     }
 

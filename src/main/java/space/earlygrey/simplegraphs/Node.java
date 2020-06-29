@@ -16,10 +16,8 @@ class Node<V extends Object> implements Pooled {
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     List<Connection<V>> outEdges = new ArrayList<>();
 
-    Node (V object, Graph<V> graph, int index) {
-        this.object = object;
+    Node (Graph<V> graph) {
         this.graph = graph;
-        this.index = index;
     }
 
     public void reset() {

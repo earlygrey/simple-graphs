@@ -1,38 +1,39 @@
 package space.earlygrey.simplegraphs;
 
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
 
 class Algorithms<V> {
 
     private final Graph<V> graph;
-    private final Queue<Node<V>> priorityQueueWithEstimate, priorityQueue;
-    private final ArrayDeque<Node<V>> queue = new ArrayDeque<>();
-    private final HashSet<Node<V>> isReset, set;
+    FibonacciHeap<V> fibQueue = new FibonacciHeap<>();
+    private final ArrayDeque<Node<V>> queue;
+    private final Set<Node<V>> set;
+    boolean[] reset = new boolean[8];
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
-        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
-        isReset = new HashSet<>();
-        set = new HashSet<>();
+        queue = new ArrayDeque<>();
+        set = new HashSet<>(16, 1);
+    }
+
+    void ensureCapacity(int capacity) {
+        if (reset.length < capacity) reset = new boolean[(int) (1.5*capacity)];
     }
 
     private void clear() {
-        isReset.clear();
-        priorityQueue.clear();
-        priorityQueueWithEstimate.clear();
+        Arrays.fill(reset, false);
+        fibQueue.clear();
         queue.clear();
         set.clear();
-
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -62,7 +63,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
-        Node<V> end = heuristic==null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
+        Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) {
             clear();
             return false;
@@ -91,52 +92,18 @@ class Algorithms<V> {
         return distances;
     }*/
 
-    private Node<V> dijkstra(Node<V> start, Node<V> target) {
-        clear();
-
-        resetAttribs(start);
-        start.distance = 0;
-
-        priorityQueue.add(start);
-        isReset.add(start);
-
-        while(!priorityQueue.isEmpty()) {
-            Node<V> u = priorityQueue.poll();
-            if (u == target) {
-                clear();
-                return u;
-            }
-            if (!u.visited) {
-                u.visited = true;
-                for (Connection e : u.connections.values()) {
-                    Node<V> v = e.b;
-                    resetAttribs(v);
-                    if (!v.visited) {
-                        float newDistance = u.distance + e.weight;
-                        if (newDistance < v.distance) {
-                            v.distance = newDistance;
-                            v.prev = u;
-                            priorityQueue.add(v);
-                        }
-                    }
-                }
-            }
-        }
-        clear();
-        return null;
-    }
-
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         clear();
 
+        fibQueue.clear();
+
         resetAttribs(start);
         start.distance = 0;
 
-        priorityQueueWithEstimate.add(start);
-        isReset.add(start);
+        fibQueue.enqueue(start, 0);
 
-        while(!priorityQueueWithEstimate.isEmpty()) {
-            Node<V> u = priorityQueueWithEstimate.poll();
+        while(!fibQueue.isEmpty()) {
+            Node<V> u = fibQueue.dequeueMin().getValue();
             if (u == target) {
                 clear();
                 return u;
@@ -152,7 +119,8 @@ class Algorithms<V> {
                             v.distance = newDistance;
                             v.prev = u;
                             if (heuristic != null) v.estimate = heuristic.getEstimate(v.object, target.object);
-                            priorityQueueWithEstimate.add(v);
+                            if (v.entry == null) v.entry = fibQueue.enqueue(v, v.distance + v.estimate);
+                            else fibQueue.decreaseKey(v.entry, v.distance + v.estimate);
                         }
                     }
                 }
@@ -418,13 +386,11 @@ class Algorithms<V> {
         return false;
     }
 
-    private boolean resetAttribs(Node<V> v) {
-        boolean needsReset = isReset.add(v);
-        if (needsReset) {
-            v.resetAlgorithmAttribs();
-            isReset.add(v);
-        }
-        return needsReset;
+    private boolean resetAttribs(Node<V> node) {
+        if (reset[node.index]) return false;
+        node.resetAlgorithmAttribs();
+        reset[node.index] = true;
+        return true;
     }
 
 }

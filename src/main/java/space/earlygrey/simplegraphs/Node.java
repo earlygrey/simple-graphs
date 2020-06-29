@@ -1,8 +1,11 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
 
 class Node<V extends Object> {
 
@@ -11,6 +14,7 @@ class Node<V extends Object> {
     final int index;
     Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
+    List<Connection<V>> outEdges = new ArrayList<>();
 
     Node (V object, Graph<V> graph, int index) {
         this.object = object;
@@ -33,6 +37,7 @@ class Node<V extends Object> {
             connection = graph.createConnection(this, v, weight);
             connections.put(connection.edge, connection);
             neighbours.put(v, connection);
+            outEdges.add(connection);
             return connection;
         } else {
             connection.setWeight(weight);
@@ -43,12 +48,14 @@ class Node<V extends Object> {
         Connection<V> connection = neighbours.remove(v);
         if (connection == null) return null;
         connections.remove(connection.edge);
+        outEdges.remove(connection);
         return connection;
     }
 
     void disconnect() {
         neighbours.clear();
         connections.clear();
+        outEdges.clear();
     }
 
     //util fields for algorithms, don't store data in them
@@ -57,6 +64,7 @@ class Node<V extends Object> {
     float estimate;
     Node<V> prev;
     int i;
+    FibonacciHeap.Entry<V> entry;
 
     void resetAlgorithmAttribs() {
         visited = false;
@@ -65,6 +73,7 @@ class Node<V extends Object> {
         estimate = 0;
         i = 0;
         seen = false;
+        entry = null;
     }
 
     @Override

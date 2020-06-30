@@ -3,11 +3,13 @@ package space.earlygrey.simplegraphs;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 class Node<V> implements Suppliable {
 
     final Graph<V> graph;
+    final int idHash;
     V object;
     int index;
     boolean isFree;
@@ -17,6 +19,7 @@ class Node<V> implements Suppliable {
 
     Node (Graph<V> graph) {
         this.graph = graph;
+        idHash = System.identityHashCode(this);
     }
 
     public void free() {
@@ -105,6 +108,6 @@ class Node<V> implements Suppliable {
 
     @Override
     public int hashCode() {
-        return object.hashCode();
+        return idHash;
     }
 }

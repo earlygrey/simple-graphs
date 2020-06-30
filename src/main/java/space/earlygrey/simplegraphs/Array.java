@@ -49,11 +49,6 @@ class Array<T> {
     void checkSize() {
         if (items.length <= size) {
             items = Arrays.copyOf(items, 2*items.length);
-        } else if (items.length > 4) {
-            int newSize = (int) (0.5*size);
-            if (items.length < newSize) {
-                items = Arrays.copyOf(items, newSize);
-            }
         }
     }
 

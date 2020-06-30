@@ -22,10 +22,6 @@ class Connection<V> extends Edge<V> implements Suppliable {
         this.weight = weight;
     }
 
-    boolean isIncident(Node<V> v) {
-        return a.equals(v) || b.equals(v);
-    }
-
     @Override
     public int getIndex() {
         return index;
@@ -39,6 +35,36 @@ class Connection<V> extends Edge<V> implements Suppliable {
     @Override
     public void setIndex(int i) {
         this.index = i;
+    }
+
+    @Override
+    public V getA() {
+        return a.object;
+    }
+
+    @Override
+    public V getB() {
+        return b.object;
+    }
+
+    @Override
+    public float getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(float weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    Node<V> getNodeA() {
+        return a;
+    }
+
+    @Override
+    Node<V> getNodeB() {
+        return b;
     }
 
     static class DirectedConnection<V> extends Connection<V> {
@@ -85,35 +111,5 @@ class Connection<V> extends Edge<V> implements Suppliable {
         public String toString() {
             return "{" + a + " <> " + b +'}';
         }
-    }
-
-    @Override
-    public V getA() {
-        return a.object;
-    }
-
-    @Override
-    public V getB() {
-        return b.object;
-    }
-
-    @Override
-    public float getWeight() {
-        return weight;
-    }
-
-    @Override
-    public void setWeight(float weight) {
-        this.weight = weight;
-    }
-
-    @Override
-    Node<V> getNodeA() {
-        return a;
-    }
-
-    @Override
-    Node<V> getNodeB() {
-        return b;
     }
 }

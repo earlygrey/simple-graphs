@@ -49,15 +49,6 @@ class Array<T> {
         if (items.length <= size) {
             items = Arrays.copyOf(items, 2*items.length);
         }
-        //// This doesn't appear to be necessary, and even though shrinking an Array should be a
-        //// memory usage optimization, it has to allocate a new (smaller) Object[] to do so.
-        //// That causes GC churn, which probably slows down code that removes from Arrays often.
-//        else if (items.length > 4) {
-//            int newSize = size >> 1;
-//            if (items.length < newSize) {
-//                items = Arrays.copyOf(items, newSize);
-//            }
-//        }
     }
 
     void set(int index, T item) {

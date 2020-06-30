@@ -27,15 +27,4 @@ public class GraphBuilder{
         }
     }
 
-//    public <V extends SpatiallyEmbeddedVertex2D, G extends Graph<V>> void buildGridGraph(G graph, Supplier<V> vertexSupplier) {
-//        int n = 10;
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                graph.addVertex(vertexSupplier.get());
-//            }
-//        }
-//
-//    }
-
-
 }

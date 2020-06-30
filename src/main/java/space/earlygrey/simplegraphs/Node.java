@@ -66,7 +66,7 @@ class Node<V> implements Suppliable {
     float estimate;
     Node<V> prev;
     int i;
-    FibonacciHeap.Entry<Node<V>> entry;
+    //FibonacciHeap.Entry<Node<V>> entry;
 
     void resetAlgorithmAttribs() {
         visited = false;
@@ -75,7 +75,7 @@ class Node<V> implements Suppliable {
         estimate = 0;
         i = 0;
         seen = false;
-        entry = null;
+        //entry = null;
     }
 
     @Override

@@ -1,15 +1,13 @@
 package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
+import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import space.earlygrey.simplegraphs.TestUtils.Vector2;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GraphTest {
 
@@ -34,7 +32,7 @@ public class GraphTest {
         for (int j = 0; j < n/2; j++) {
             boolean wasInGraph = graph.removeVertex(j);
             assertTrue(wasInGraph);
-            assertTrue(!graph.contains(j));
+            assertFalse(graph.contains(j));
         }
 
         assertEquals(n - n/2, graph.size());
@@ -83,31 +81,31 @@ public class GraphTest {
     @Test
     public void verticesCanBeSorted() {
         Graph<Integer> graph = new UndirectedGraph<>();
-        List<Integer> list = Arrays.asList(new Integer[]{9,4,3,2,5,7,6,0,8,1});
+        List<Integer> list = Arrays.asList(9,4,3,2,5,7,6,0,8,1);
         for (Integer i : list) {
             graph.addVertex(i);
         }
         graph.sortVertices(Comparator.comparing(e -> e));
         int i = 0;
         for (Integer vertex : graph.getVertices()) {
-            assertEquals(new Integer(i++), vertex);
+            assertEquals(Integer.valueOf(i++), vertex);
         }
     }
 
     @Test
     public void edgesCanBeSorted() {
         Graph<Integer> graph = new DirectedGraph<>();
-        List<Integer> list = Arrays.asList(new Integer[]{9,4,3,2,5,7,6,0,8,1});
+        List<Integer> list = Arrays.asList(9,4,3,2,5,7,6,0,8,1);
         for (int j = 0; j < list.size(); j++) {
             graph.addVertex(j);
         }
         for (int j = 0; j < list.size(); j++) {
             graph.addEdge(list.get(j), list.get(list.size()-j-1));
         }
-        graph.sortEdges(Comparator.comparing(e -> e.getA()));
+        graph.sortEdges(Comparator.comparing(Edge::getA));
         int i = 0;
         for (Edge<Integer> edge : graph.getEdges()) {
-            assertEquals(new Integer(i++), edge.getA());
+            assertEquals(Integer.valueOf(i++), edge.getA());
         }
     }
 }

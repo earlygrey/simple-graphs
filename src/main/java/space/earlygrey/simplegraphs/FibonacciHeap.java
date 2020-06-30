@@ -58,7 +58,7 @@ package space.earlygrey.simplegraphs;
  * dequeueMin to extract it.
  */
 
-import java.util.*; // For ArrayList
+import java.util.NoSuchElementException;
 
 
 /**

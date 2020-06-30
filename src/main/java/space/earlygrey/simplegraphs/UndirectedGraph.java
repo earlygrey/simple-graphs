@@ -16,16 +16,16 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    protected Supplier<Connection<V>> getConnectionSupplier() {
+    protected Supplier<Connection<V>> getEdgeSupplier() {
         return () -> new UndirectedConnection<>();
     }
 
     @Override
     Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
         Connection<V> e = a.addEdge(b, weight);
-        edges.put(e.edge, e);
+        edgeMap.put(e, e);
         b.addEdge(a, weight);
-        return e; //return connection instance in edges map
+        return e;
     }
 
     @Override
@@ -33,16 +33,16 @@ public class UndirectedGraph<V> extends Graph<V> {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
         b.removeEdge(a);
-        edges.remove(e.edge);
+        edgeMap.remove(e);
         return true;
     }
 
     @Override
-    Connection<V> getConnection(Node<V> a, Node<V> b) {
-        Connection<V> connection = a.getEdge(b);
-        if (connection == null) return null;
-        connection = edges.get(connection.edge); // get the instance of the Connection in the edge map
-        return connection;
+    Connection<V> getEdge(Node<V> a, Node<V> b) {
+        Connection<V> edge = a.getEdge(b);
+        if (edge == null) return null;
+        edge = edgeMap.get(edge);
+        return edge;
     }
 
     @Override

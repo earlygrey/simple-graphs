@@ -1,6 +1,5 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -18,7 +17,7 @@ public class DirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    protected Supplier<Connection<V>> getConnectionSupplier() {
+    protected Supplier<Connection<V>> getEdgeSupplier() {
         return () -> new DirectedConnection<>();
     }
 

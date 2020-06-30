@@ -1,44 +1,15 @@
 package space.earlygrey.simplegraphs;
 
-public class Edge<V> {
+public abstract class Edge<V> {
 
-    final Connection<V> connection;
 
-    Edge(Connection<V> connection){
-        this.connection = connection;
-    }
+    Edge(){}
 
-    public V getA() {
-        return connection.a.object;
-    }
+    public abstract V getA();
+    public abstract V getB();
+    public abstract float getWeight();
+    public abstract void setWeight(float weight);
 
-    public V getB() {
-        return connection.b.object;
-    }
-
-    public float getWeight() {
-        return connection.weight;
-    }
-
-    public void setWeight(float weight) {
-        connection.setWeight(weight);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Edge<?> edge = (Edge<?>) o;
-        return connection.equals(edge.connection);
-    }
-
-    @Override
-    public int hashCode() {
-        return connection.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return connection.toString();
-    }
+    abstract Node<V> getNodeA();
+    abstract Node<V> getNodeB();
 }

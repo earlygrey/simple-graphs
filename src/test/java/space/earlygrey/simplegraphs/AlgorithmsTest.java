@@ -44,7 +44,7 @@ public class AlgorithmsTest {
 
     private static boolean pathIsConnected(List<Vector2> path, Graph<Vector2> graph) {
         for (int i = 0; i < path.size()-1; i++) {
-            if (!graph.isConnected(path.get(i), path.get(i+1))) return false;
+            if (!graph.edgeExists(path.get(i), path.get(i+1))) return false;
         }
         return true;
     }

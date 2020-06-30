@@ -4,7 +4,6 @@ package space.earlygrey.simplegraphs;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -278,8 +277,7 @@ class Algorithms<V> {
 
         spanningTree.addVertices(graph.getVertices());
 
-        Collection<Connection<V>> edges = graph.edges.values();
-        List<Connection<V>> edgeList = new ArrayList<>(edges);
+        List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
            edgeList.sort(Comparator.comparing(e -> e.weight));

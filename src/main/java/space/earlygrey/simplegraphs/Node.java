@@ -1,9 +1,7 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 class Node<V> implements Suppliable {
@@ -13,7 +11,7 @@ class Node<V> implements Suppliable {
     V object;
     int index;
     boolean isFree;
-    Map<Edge<V>, Connection<V>> connections = new LinkedHashMap<>();
+
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     Array<Connection<V>> outEdges = new Array<>();
 
@@ -27,39 +25,32 @@ class Node<V> implements Suppliable {
         isFree = true;
     }
 
-    Collection<Edge<V>> getEdges() {
-        return connections.keySet();
-    }
-
 
     Connection<V> getEdge(Node<V> v) {
         return neighbours.get(v);
     }
 
     Connection<V> addEdge(Node<V> v, float weight) {
-        Connection<V> connection = neighbours.get(v);
-        if (connection == null) {
-            connection = graph.connections.getEdge(this, v, weight);
-            connections.put(connection.edge, connection);
-            neighbours.put(v, connection);
-            outEdges.add(connection);
-            return connection;
+        Connection<V> edge = neighbours.get(v);
+        if (edge == null) {
+            edge = graph.edges.getEdge(this, v, weight);
+            neighbours.put(v, edge);
+            outEdges.add(edge);
+            return edge;
         } else {
-            connection.setWeight(weight);
+            edge.setWeight(weight);
         }
-        return connection;
+        return edge;
     }
     Connection<V> removeEdge(Node<V> v) {
-        Connection<V> connection = neighbours.remove(v);
-        if (connection == null) return null;
-        connections.remove(connection.edge);
-        outEdges.remove(connection);
-        return connection;
+        Connection<V> edge = neighbours.remove(v);
+        if (edge == null) return null;
+        outEdges.remove(edge);
+        return edge;
     }
 
     void disconnect() {
         neighbours.clear();
-        connections.clear();
         outEdges.clear();
     }
 
@@ -69,7 +60,6 @@ class Node<V> implements Suppliable {
     float estimate;
     Node<V> prev;
     int i;
-    //FibonacciHeap.Entry<Node<V>> entry;
 
     void resetAlgorithmAttribs() {
         visited = false;
@@ -78,8 +68,8 @@ class Node<V> implements Suppliable {
         estimate = 0;
         i = 0;
         seen = false;
-        //entry = null;
     }
+
 
     @Override
     public boolean equals(Object o) {

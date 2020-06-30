@@ -17,13 +17,11 @@ public abstract class Graph<V> {
     //================================================================================
 
     final Map<V, Node<V>> vertexMap;
-    final Map<Edge<V>, Connection<V>> edges;
+    final Map<Connection<V>, Connection<V>> edgeMap;
+
     final Nodes<V> nodes;
-    final Connections<V> connections;
-
+    final Edges<V> edges;
     final Algorithms<V> algorithms;
-
-
 
     static final String
             NULL_VERTEX_MESSAGE = "Vertices cannot be null",
@@ -37,9 +35,9 @@ public abstract class Graph<V> {
     protected Graph() {
         algorithms = new Algorithms<>(this);
         vertexMap = new LinkedHashMap<>();
-        edges = new LinkedHashMap<>();
+        edgeMap = new LinkedHashMap<>();
         nodes = new Nodes<>(this, () -> new Node<>(Graph.this));
-        connections = new Connections<>(this, getConnectionSupplier());
+        edges = new Edges<>(this, getEdgeSupplier());
     }
 
     protected Graph(Collection<V> vertices) {
@@ -57,7 +55,7 @@ public abstract class Graph<V> {
     //  Abstract Methods
     //--------------------
 
-    protected abstract Supplier<Connection<V>> getConnectionSupplier();
+    protected abstract Supplier<Connection<V>> getEdgeSupplier();
     abstract Graph<V> createNew();
 
     //--------------------
@@ -117,7 +115,7 @@ public abstract class Graph<V> {
      * @param w the destination vertex of the edge
      * @return the edge
      */
-    public Edge<V> addEdge(V v, V w) {
+    public Connection<V> addEdge(V v, V w) {
         return addEdge(v, w, Connection.DEFAULT_WEIGHT);
     }
 
@@ -129,13 +127,13 @@ public abstract class Graph<V> {
      * @param weight the weight of the edge
      * @return the edge
      */
-    public Edge<V> addEdge(V v, V w, float weight) {
+    public Connection<V> addEdge(V v, V w, float weight) {
         if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
         if (v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
         Node<V> a = getNode(v);
         Node<V> b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return addConnection(a, b, weight).edge;
+        return addConnection(a, b, weight);
     }
 
     /**
@@ -150,6 +148,10 @@ public abstract class Graph<V> {
         return removeConnection(a, b);
     }
 
+    public boolean removeEdge(Edge<V> edge) {
+        return removeConnection(edge.getNodeA(), edge.getNodeB());
+    }
+
     /**
      * Removes all edges from the graph.
      */
@@ -157,14 +159,14 @@ public abstract class Graph<V> {
         for (Node<V> v : getNodes()) {
             v.disconnect();
         }
-        edges.clear();
+        edgeMap.clear();
     }
 
     /**
      * Removes all vertices and edges from the graph.
      */
     public void removeAllVertices() {
-        edges.clear();
+        edgeMap.clear();
         vertexMap.clear();
         nodes.clear();
     }
@@ -183,17 +185,17 @@ public abstract class Graph<V> {
         }
     }
 
-    /**
-     * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
-     * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
-     * @param comparator a comparator for comparing edges
-     */
-    public void sortEdges(Comparator<Edge<V>> comparator) {
-        List<Entry<Edge<V>, Connection<V>>> entryList = new ArrayList<>(edges.entrySet());
+ //   /**
+ //    * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
+ //    * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
+//     * @param comparator a comparator for comparing edges
+ //    */
+    public void sortEdges(Comparator<Connection<V>> comparator) {
+        List<Entry<Connection<V>, Connection<V>>> entryList = new ArrayList<>(edgeMap.entrySet());
         Collections.sort(entryList, Entry.comparingByKey(comparator));
-        edges.clear();
-        for (Entry<Edge<V>, Connection<V>> entry : entryList) {
-            edges.put(entry.getKey(), entry.getValue());
+        edgeMap.clear();
+        for (Entry<Connection<V>, Connection<V>> entry : entryList) {
+            edgeMap.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -212,25 +214,21 @@ public abstract class Graph<V> {
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.addEdge(b, Connection.DEFAULT_WEIGHT);
-        edges.put(e.edge, e);
+        edgeMap.put(e, e);
         return e;
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
         Connection<V> e = a.addEdge(b, weight);
-        edges.put(e.edge, e);
+        edgeMap.put(e, e);
         return e;
-    }
-
-    boolean removeConnection(Connection<V> connection) {
-        return removeConnection(connection.a, connection.b);
     }
 
     boolean removeConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
-        edges.remove(e.edge);
-        connections.free(e);
+        edgeMap.remove(e);
+        edges.free(e);
         return true;
     }
 
@@ -260,9 +258,9 @@ public abstract class Graph<V> {
     public Edge<V> getEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        Connection<V> connection = getConnection(a, b);
-        if (connection == null) return null;
-        return connection.edge;
+        Connection<V> edge = getEdge(a, b);
+        if (edge == null) return null;
+        return edge;
     }
 
     /**
@@ -271,10 +269,10 @@ public abstract class Graph<V> {
      * @param w the destination vertex of the edge
      * @return true if the edge is in the graph, false otherwise
      */
-    public boolean isConnected(V v, V w) {
+    public boolean edgeExists(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
-        return isConnected(a, b);
+        return connectionExists(a, b);
     }
 
     /**
@@ -285,7 +283,7 @@ public abstract class Graph<V> {
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
-        return Collections.unmodifiableCollection(node.getEdges());
+        return Collections.unmodifiableCollection(node.neighbours.values());
     }
 
     /**
@@ -293,7 +291,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the edges in the graph
      */
     public Collection<Edge<V>> getEdges() {
-        return Collections.unmodifiableCollection(edges.keySet());
+        return Collections.unmodifiableCollection(edgeMap.keySet());
     }
 
     /**
@@ -325,7 +323,7 @@ public abstract class Graph<V> {
      * @return the number of edges
      */
     public int getEdgeCount() {
-        return edges.size();
+        return edgeMap.size();
     }
 
 
@@ -342,23 +340,15 @@ public abstract class Graph<V> {
         return vertexMap.values();
     }
 
-    boolean isConnected(Node<V> u, Node<V> v) {
+    boolean connectionExists(Node<V> u, Node<V> v) {
         return u.getEdge(v) != null;
     }
 
-    Connection<V> getConnection(Node<V> a, Node<V> b) {
-        Connection<V> connection = a.getEdge(b);
-        if (connection == null) return null;
-        return connection;
+    Connection<V> getEdge(Node<V> a, Node<V> b) {
+        Connection<V> edge = a.getEdge(b);
+        if (edge == null) return null;
+        return edge;
     }
-
-    /*Map<Edge<V>, Connection<V>> getEdgeMap() {
-        return edges;
-    }
-
-    Collection<Connection<V>> getConnections(V v) {
-        return getNode(v).connections.values();
-    }*/
 
 
     //================================================================================

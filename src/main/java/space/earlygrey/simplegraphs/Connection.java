@@ -16,6 +16,7 @@ class Connection<V> extends Edge<V> implements Suppliable {
         isFree = true;
     }
 
+    @Override
     void set(Node<V> a, Node<V> b, float weight) {
         this.a = a;
         this.b = b;

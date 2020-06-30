@@ -12,4 +12,5 @@ public abstract class Edge<V> {
 
     abstract Node<V> getNodeA();
     abstract Node<V> getNodeB();
+    abstract void set(Node<V> a, Node<V> b, float weight);
 }

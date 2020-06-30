@@ -102,4 +102,9 @@ class Node<V> implements Suppliable {
     public void setIndex(int i) {
         this.index = i;
     }
+
+    @Override
+    public int hashCode() {
+        return object.hashCode();
+    }
 }

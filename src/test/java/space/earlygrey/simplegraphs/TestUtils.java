@@ -1,7 +1,5 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.Objects;
-
 class TestUtils {
 
     static class Vector2 {
@@ -30,7 +28,8 @@ class TestUtils {
 
         @Override
         public int hashCode() {
-            return Objects.hash(x, y);
+            return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
+                    + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
         }
 
         @Override

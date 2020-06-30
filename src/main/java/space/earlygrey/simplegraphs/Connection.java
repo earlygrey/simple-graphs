@@ -9,7 +9,7 @@ public abstract class Connection<V> implements Suppliable {
 
     Node<V> a, b;
     float weight = DEFAULT_WEIGHT;
-    final Edge edge = new Edge(this);
+    final Edge<V> edge = new Edge<>(this);
     int index;
     boolean isFree;
 
@@ -66,7 +66,7 @@ public abstract class Connection<V> implements Suppliable {
 
         @Override
         public int hashCode() {
-            return Objects.hash(a, b);
+            return (int) (Objects.hashCode(a) * 0xC13FA9A902A6328FL + Objects.hashCode(b) * 0x91E10DA5C79E7B1DL >>> 32);
         }
 
         @Override
@@ -90,7 +90,7 @@ public abstract class Connection<V> implements Suppliable {
 
         @Override
         public int hashCode() {
-            return Objects.hash(a, b) + Objects.hash(b, a);
+            return (int) ((Objects.hashCode(a) ^ Objects.hashCode(b)) * 0x9E3779B97F4A7C15L >>> 32);
         }
 
         @Override

@@ -209,9 +209,9 @@ public final class FibonacciHeap<V> {
      * @return A new FibonacciHeap containing all of the elements of both
      *         heaps.
      */
-    public static  FibonacciHeap merge(FibonacciHeap one, FibonacciHeap two) {
+    public static <V> FibonacciHeap<V> merge(FibonacciHeap<V> one, FibonacciHeap<V> two) {
         /* Create a new FibonacciHeap to hold the result. */
-        FibonacciHeap result = new FibonacciHeap();
+        FibonacciHeap<V> result = new FibonacciHeap<>();
 
         /* Merge the two Fibonacci heap root lists together.  This helper function
          * also computes the min of the two lists, so we can store the result in

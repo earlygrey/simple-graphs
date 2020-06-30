@@ -1,9 +1,6 @@
 package space.earlygrey.simplegraphs;
 
 import java.util.Map.Entry;
-import java.util.function.Supplier;
-
-import space.earlygrey.simplegraphs.VertexTypes.SpatiallyEmbeddedVertex2D;
 
 public class GraphBuilder{
 
@@ -28,17 +25,6 @@ public class GraphBuilder{
                 }
             }
         }
-    }
-
-
-    public <V extends SpatiallyEmbeddedVertex2D, G extends Graph<V>> void buildGridGraph(G graph, Supplier<V> vertexSupplier) {
-        int n = 10;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                graph.addVertex(vertexSupplier.get());
-            }
-        }
-
     }
 
 

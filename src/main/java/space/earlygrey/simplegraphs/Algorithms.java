@@ -10,20 +10,18 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 class Algorithms<V> {
 
     private final Graph<V> graph;
     boolean[] reset = new boolean[8];
-    private final PriorityQueue<Node<V>> priorityQueueWithEstimate, priorityQueue;
+    private final FibonacciHeap<Node<V>> priorityQueue;
     private final ArrayDeque<Node<V>> queue;
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
-        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
+        priorityQueue = new FibonacciHeap<>();
         queue = new ArrayDeque<>();
     }
 
@@ -79,16 +77,16 @@ class Algorithms<V> {
     private Node<V> dijkstra(Node<V> start, Node<V> target) {
         init();
         
-        PriorityQueue<Node<V>> queue = priorityQueue;
+        FibonacciHeap<Node<V>> queue = priorityQueue;
         queue.clear();
 
         resetAttribs(start);
         start.distance = 0;
 
-        queue.add(start);
+        queue.enqueue(start, 0);
 
         while(!queue.isEmpty()) {
-            Node<V> u = queue.poll();
+            Node<V> u = queue.dequeueMin().getValue();
             if (u == target) {
                 return u;
             }
@@ -104,7 +102,8 @@ class Algorithms<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            queue.add(v);
+                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance);
+                            else queue.decreaseKey(v.entry, v.distance);
                         }
                     }
                 }
@@ -116,16 +115,16 @@ class Algorithms<V> {
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         init();
 
-        PriorityQueue<Node<V>> queue = priorityQueueWithEstimate;
+        FibonacciHeap<Node<V>> queue = priorityQueue;
         queue.clear();
         
         resetAttribs(start);
         start.distance = 0;
 
-        queue.add(start);
+        queue.enqueue(start, 0);
 
         while(!queue.isEmpty()) {
-            Node<V> u = queue.poll();
+            Node<V> u = queue.dequeueMin().object;
             if (u == target) {
                 return u;
             }
@@ -145,7 +144,8 @@ class Algorithms<V> {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
                                 v.seen = true;
                             }
-                            queue.add(v); 
+                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance + v.estimate);
+                            else queue.decreaseKey(v.entry, v.distance + v.estimate);
                         }
                     }
                 }

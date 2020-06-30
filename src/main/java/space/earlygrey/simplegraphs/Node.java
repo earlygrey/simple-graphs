@@ -5,9 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-class Node<V extends Object> implements Suppliable {
+class Node<V> implements Suppliable {
 
-    final Graph graph;
+    final Graph<V> graph;
     V object;
     int index;
     boolean isFree;
@@ -29,11 +29,11 @@ class Node<V extends Object> implements Suppliable {
     }
 
 
-    Connection<V> getEdge(Node v) {
+    Connection<V> getEdge(Node<V> v) {
         return neighbours.get(v);
     }
 
-    Connection<V> addEdge(Node v, float weight) {
+    Connection<V> addEdge(Node<V> v, float weight) {
         Connection<V> connection = neighbours.get(v);
         if (connection == null) {
             connection = graph.connections.getEdge(this, v, weight);
@@ -46,7 +46,7 @@ class Node<V extends Object> implements Suppliable {
         }
         return connection;
     }
-    Connection<V> removeEdge(Node v) {
+    Connection<V> removeEdge(Node<V> v) {
         Connection<V> connection = neighbours.remove(v);
         if (connection == null) return null;
         connections.remove(connection.edge);
@@ -66,7 +66,7 @@ class Node<V extends Object> implements Suppliable {
     float estimate;
     Node<V> prev;
     int i;
-    FibonacciHeap.Entry<Node<V>> entry;
+    //FibonacciHeap.Entry<Node<V>> entry;
 
     void resetAlgorithmAttribs() {
         visited = false;
@@ -75,7 +75,7 @@ class Node<V extends Object> implements Suppliable {
         estimate = 0;
         i = 0;
         seen = false;
-        entry = null;
+        //entry = null;
     }
 
     @Override
@@ -101,5 +101,10 @@ class Node<V extends Object> implements Suppliable {
     @Override
     public void setIndex(int i) {
         this.index = i;
+    }
+
+    @Override
+    public int hashCode() {
+        return object.hashCode();
     }
 }

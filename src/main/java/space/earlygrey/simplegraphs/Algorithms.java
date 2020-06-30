@@ -8,20 +8,27 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 class Algorithms<V> {
 
     private final Graph<V> graph;
     boolean[] reset = new boolean[8];
+    private final PriorityQueue<Node<V>> priorityQueueWithEstimate, priorityQueue;
+    private final ArrayDeque<Node<V>> queue;
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
+        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
+        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
+        queue = new ArrayDeque<>();
     }
 
     void ensureVertexCapacity(int capacity) {
-        if (reset.length < capacity) reset = new boolean[(int) (1.5*capacity)];
+        if (reset.length < capacity) reset = new boolean[3 * capacity >>> 1]; // 3/2 of capacity
     }
 
     private void init() {
@@ -71,16 +78,17 @@ class Algorithms<V> {
 
     private Node<V> dijkstra(Node<V> start, Node<V> target) {
         init();
-
-        FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
+        
+        PriorityQueue<Node<V>> queue = priorityQueue;
+        queue.clear();
 
         resetAttribs(start);
         start.distance = 0;
 
-        queue.enqueue(start, 0);
+        queue.add(start);
 
         while(!queue.isEmpty()) {
-            Node<V> u = queue.dequeueMin().getValue();
+            Node<V> u = queue.poll();
             if (u == target) {
                 return u;
             }
@@ -96,8 +104,7 @@ class Algorithms<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance);
-                            else queue.decreaseKey(v.entry, v.distance);
+                            queue.add(v);
                         }
                     }
                 }
@@ -109,15 +116,16 @@ class Algorithms<V> {
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         init();
 
-        FibonacciHeap<Node<V>> queue = new FibonacciHeap<>();
-
+        PriorityQueue<Node<V>> queue = priorityQueueWithEstimate;
+        queue.clear();
+        
         resetAttribs(start);
         start.distance = 0;
 
-        queue.enqueue(start, 0);
+        queue.add(start);
 
         while(!queue.isEmpty()) {
-            Node<V> u = queue.dequeueMin().object;
+            Node<V> u = queue.poll();
             if (u == target) {
                 return u;
             }
@@ -137,8 +145,7 @@ class Algorithms<V> {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
                                 v.seen = true;
                             }
-                            if (v.entry == null) v.entry = queue.enqueue(v, v.distance + v.estimate);
-                            else queue.decreaseKey(v.entry, v.distance + v.estimate);
+                            queue.add(v); 
                         }
                     }
                 }
@@ -153,8 +160,9 @@ class Algorithms<V> {
 
         resetAttribs(vertex);
         vertex.visited = true;
-        ArrayDeque<Node<V>> queue = new ArrayDeque<>();
-        queue.add(vertex);
+        ArrayDeque<Node<V>> queue = this.queue;
+        queue.clear();
+        queue.addLast(vertex);
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
@@ -181,8 +189,9 @@ class Algorithms<V> {
         init();
 
         resetAttribs(vertex);
-        ArrayDeque<Node<V>> queue = new ArrayDeque<>();
-        queue.add(vertex);
+        ArrayDeque<Node<V>> queue = this.queue;
+        queue.clear();
+        queue.addLast(vertex);
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
@@ -208,7 +217,7 @@ class Algorithms<V> {
     boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
         init();
-        HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
+        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
             success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
@@ -223,7 +232,7 @@ class Algorithms<V> {
     boolean topologicalSort() {
         List<V> sortedVertices = new ArrayList<>();
         init();
-        HashSet<Node<V>> set = new HashSet<>(graph.vertexMap.values());
+        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
         boolean success = true;
         while (success && !set.isEmpty()) {
             success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);

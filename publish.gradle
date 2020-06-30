@@ -1,0 +1,34 @@
+modifyPom {
+    project {
+        name 'simple-graphs'
+        description 'Basic graph data structures and algorithms.'
+        url 'https://github.com/earlygrey/simple-graphs'
+        inceptionYear '2020'
+
+        scm {
+            url 'https://github.com/earlygrey/simple-graphs'
+            connection 'scm:https://github.com/earlygrey/simple-graphs.git'
+            developerConnection 'scm:git://github.com/earlygrey/simple-graphs.git'
+        }
+
+        licenses {
+            license {
+                name 'MIT License'
+                url 'https://mit-license.org/'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'earlygrey'
+                name 'earlygrey'
+                email 'nospam@earlygrey.space'
+            }
+        }
+    }
+}
+
+nexusStaging {
+    packageGroup = 'space.earlygrey'
+}

@@ -1,7 +1,5 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.Objects;
-
 public class Edge<V> {
 
     final Connection<V> connection;
@@ -36,7 +34,7 @@ public class Edge<V> {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(connection);
+        return connection.hashCode();
     }
 
     @Override

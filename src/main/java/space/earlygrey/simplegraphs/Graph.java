@@ -21,7 +21,7 @@ public abstract class Graph<V> {
     final Nodes<V> nodes;
     final Connections<V> connections;
 
-    final Algorithms algorithms;
+    final Algorithms<V> algorithms;
 
 
 
@@ -35,11 +35,11 @@ public abstract class Graph<V> {
     //================================================================================
 
     protected Graph() {
-        algorithms = new Algorithms(this);
+        algorithms = new Algorithms<>(this);
         vertexMap = new LinkedHashMap<>();
         edges = new LinkedHashMap<>();
-        nodes = new Nodes(this, () -> new Node<>(Graph.this));
-        connections = new Connections(this, getConnectionSupplier());
+        nodes = new Nodes<>(this, () -> new Node<>(Graph.this));
+        connections = new Connections<>(this, getConnectionSupplier());
     }
 
     protected Graph(Collection<V> vertices) {
@@ -71,7 +71,7 @@ public abstract class Graph<V> {
      */
 
     public boolean addVertex(V v) {
-        Node node = getNode(v);
+        Node<V> node = getNode(v);
         if (node!=null) return false;
         node = nodes.getNode(v);
         vertexMap.put(v, node);
@@ -94,7 +94,7 @@ public abstract class Graph<V> {
      * @return true if the vertex was in the graph, false otherwise
      */
     public boolean removeVertex(V v) {
-        Node existing = getNode(v);
+        Node<V> existing = getNode(v);
         if (existing==null) return false;
         removeNode(existing);
         return true;
@@ -132,8 +132,8 @@ public abstract class Graph<V> {
     public Edge<V> addEdge(V v, V w, float weight) {
         if (v == null || w == null) throw new IllegalArgumentException(NULL_VERTEX_MESSAGE);
         if (v.equals(w)) throw new UnsupportedOperationException(SAME_VERTEX_MESSAGE);
-        Node a = getNode(v);
-        Node b = getNode(w);
+        Node<V> a = getNode(v);
+        Node<V> b = getNode(w);
         if (a == null  || b == null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         return addConnection(a, b, weight).edge;
     }
@@ -154,7 +154,7 @@ public abstract class Graph<V> {
      * Removes all edges from the graph.
      */
     public void removeAllEdges() {
-        for (Node v : getNodes()) {
+        for (Node<V> v : getNodes()) {
             v.disconnect();
         }
         edges.clear();
@@ -176,7 +176,7 @@ public abstract class Graph<V> {
      */
     public void sortVertices(Comparator<V> comparator) {
         List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
-        Collections.sort(entryList, Entry.comparingByKey(comparator));
+        entryList.sort(Entry.comparingByKey(comparator));
         vertexMap.clear();
         for (Entry<V, Node<V>> entry : entryList) {
             vertexMap.put(entry.getKey(), entry.getValue());
@@ -334,7 +334,7 @@ public abstract class Graph<V> {
     //  Internal Getters
     //--------------------
 
-    Node getNode(V v) {
+    Node<V> getNode(V v) {
         return vertexMap.get(v);
     }
 
@@ -404,8 +404,8 @@ public abstract class Graph<V> {
      */
     public boolean findShortestPath(V start, V target, List<V> path, Heuristic<V> heuristic) {
         path.clear();
-        Node startNode = getNode(start);
-        Node targetNode = getNode(target);
+        Node<V> startNode = getNode(start);
+        Node<V> targetNode = getNode(target);
         if (startNode==null || targetNode==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         algorithms.findShortestPath(startNode, targetNode, path, heuristic);
         return !path.isEmpty();
@@ -437,7 +437,7 @@ public abstract class Graph<V> {
      * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
      */
     public Graph<V> breadthFirstSearch(V v, int maxVertices, int maxDepth) {
-        Node node = getNode(v);
+        Node<V> node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         Graph<V> tree = createNew();
         algorithms.breadthFirstSearch(node, tree, maxVertices, maxDepth);
@@ -467,7 +467,7 @@ public abstract class Graph<V> {
      * reflected in the iteration order of the collections returned by {@link #getVertices()} and {@link #getEdges()}.
      */
     public Graph<V> depthFirstSearch(V v, int maxVertices, int maxDepth) {
-        Node node = getNode(v);
+        Node<V> node = getNode(v);
         if (node==null) throw new IllegalArgumentException(NOT_IN_GRAPH_MESSAGE);
         Graph<V> tree = createNew();
         algorithms.depthFirstSearch(node, tree, maxVertices, maxDepth);

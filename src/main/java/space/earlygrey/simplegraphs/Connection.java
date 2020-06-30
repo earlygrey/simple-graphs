@@ -9,7 +9,7 @@ public abstract class Connection<V> implements Suppliable {
 
     Node<V> a, b;
     float weight = DEFAULT_WEIGHT;
-    final Edge edge = new Edge(this);
+    final Edge<V> edge = new Edge<>(this);
     int index;
     boolean isFree;
 
@@ -60,13 +60,14 @@ public abstract class Connection<V> implements Suppliable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Connection connection = (Connection) o;
-            if (a.equals(connection.a) && b.equals(connection.b)) return true;
-            return false;
+            // this assumes a and b are non-null when equals() is called.
+            return a.equals(connection.a) && b.equals(connection.b);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(a, b);
+            // you can use a.hashCode() and b.hashCode() here instead if you know a and b are non-null.
+            return (int) (Objects.hashCode(a) * 0xC13FA9A902A6328FL + Objects.hashCode(b) * 0x91E10DA5C79E7B1DL >>> 32);
         }
 
         @Override
@@ -83,19 +84,20 @@ public abstract class Connection<V> implements Suppliable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Connection connection = (Connection) o;
-            if ((a.equals(connection.a) && b.equals(connection.b))
-                    || (a.equals(connection.b) && b.equals(connection.a))) return true;
-            return false;
+            // this assumes a and b are non-null when equals() is called.
+            return (a.equals(connection.a) && b.equals(connection.b))
+                    || (a.equals(connection.b) && b.equals(connection.a));
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(a, b) + Objects.hash(b, a);
+            // you can use a.hashCode() and b.hashCode() here instead if you know a and b are non-null.
+            return (int) ((Objects.hashCode(a) + Objects.hashCode(b)) * 0x9E3779B97F4A7C15L >>> 32);
         }
 
         @Override
         public String toString() {
-            return "{" + a + ", " + b +'}';
+            return "{" + a + " <> " + b +'}';
         }
     }
 

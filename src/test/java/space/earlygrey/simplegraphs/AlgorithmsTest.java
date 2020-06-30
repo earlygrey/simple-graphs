@@ -1,12 +1,10 @@
 package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
+import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-
-import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +28,18 @@ public class AlgorithmsTest {
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
+        
+        Heuristic<Vector2> h = Vector2::dst;
 
+        path = undirectedGraph.findShortestPath(start, end, h);
+        assertEquals(2*(n-1) + 1, path.size());
+        assertEquals(start, path.get(0));
+        assertTrue(pathIsConnected(path, undirectedGraph));
+
+        path = diGraph.findShortestPath(start, end, h);
+        assertEquals(2*(n-1) + 1, path.size());
+        assertEquals(start, path.get(0));
+        assertTrue(pathIsConnected(path, diGraph));
     }
 
     private static boolean pathIsConnected(List<Vector2> path, Graph<Vector2> graph) {
@@ -102,10 +111,10 @@ public class AlgorithmsTest {
         for (Integer vertex : tree.getVertices()) {
             switch(count) {
                 case 0:
-                    assertEquals(new Integer(0), vertex);
+                    assertEquals(Integer.valueOf(0), vertex);
                     break;
                 case 3:
-                    assertEquals(new Integer(3), vertex);
+                    assertEquals(Integer.valueOf(3), vertex);
                     break;
             }
             count++;
@@ -126,10 +135,10 @@ public class AlgorithmsTest {
         for (Integer vertex : tree.getVertices()) {
             switch(count) {
                 case 0:
-                    assertEquals(new Integer(0), vertex);
+                    assertEquals(Integer.valueOf(0), vertex);
                     break;
                 case 2:
-                    assertEquals(new Integer(3), vertex);
+                    assertEquals(Integer.valueOf(3), vertex);
                     break;
             }
             count++;
@@ -150,7 +159,7 @@ public class AlgorithmsTest {
         graph.topologicalSort();
         int i = n-1;
         for (Integer vertex : graph.getVertices()) {
-            Integer expected = new Integer(i--);
+            Integer expected = Integer.valueOf(i--);
             assertEquals(expected, vertex);
             assertEquals(expected, sorted.get(n-2-i));
         }

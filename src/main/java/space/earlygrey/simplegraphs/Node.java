@@ -4,27 +4,20 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-class Node<V> implements Suppliable {
+class Node<V> {
 
     final Graph<V> graph;
     final int idHash;
-    V object;
-    int index;
-    boolean isFree;
+    final V object;
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     Array<Connection<V>> outEdges = new Array<>();
 
-    Node (Graph<V> graph) {
+    Node (V v, Graph<V> graph) {
+        this.object = v;
         this.graph = graph;
         idHash = System.identityHashCode(this);
     }
-
-    public void free() {
-        object = null;
-        isFree = true;
-    }
-
 
     Connection<V> getEdge(Node<V> v) {
         return neighbours.get(v);
@@ -33,7 +26,8 @@ class Node<V> implements Suppliable {
     Connection<V> addEdge(Node<V> v, float weight) {
         Connection<V> edge = neighbours.get(v);
         if (edge == null) {
-            edge = graph.edges.getEdge(this, v, weight);
+            edge = graph.edgeSupplier.get();
+            edge.set(this, v, weight);
             neighbours.put(v, edge);
             outEdges.add(edge);
             return edge;
@@ -59,15 +53,18 @@ class Node<V> implements Suppliable {
     float distance;
     float estimate;
     Node<V> prev;
-    int i;
+    int i, runID;
 
-    void resetAlgorithmAttribs() {
+    boolean resetAlgorithmAttribs(int runID) {
+        if (runID == this.runID) return false;
         visited = false;
         prev = null;
         distance = Float.MAX_VALUE;
         estimate = 0;
         i = 0;
         seen = false;
+        this.runID = runID;
+        return true;
     }
 
 
@@ -78,23 +75,9 @@ class Node<V> implements Suppliable {
 
     @Override
     public String toString() {
-        return "["+object + " (" +index +")]";
+        return "["+object+"]";
     }
 
-    @Override
-    public int getIndex() {
-        return index;
-    }
-
-    @Override
-    public boolean isFree() {
-        return isFree;
-    }
-
-    @Override
-    public void setIndex(int i) {
-        this.index = i;
-    }
 
     @Override
     public int hashCode() {

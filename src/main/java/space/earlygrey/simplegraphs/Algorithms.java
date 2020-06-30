@@ -15,9 +15,9 @@ import java.util.Set;
 class Algorithms<V> {
 
     private final Graph<V> graph;
-    boolean[] reset = new boolean[8];
     private final PriorityQueue<Node<V>> priorityQueueWithEstimate, priorityQueue;
     private final ArrayDeque<Node<V>> queue;
+    private int runID = 0;
 
     public Algorithms(Graph<V> graph) {
         this.graph = graph;
@@ -26,12 +26,12 @@ class Algorithms<V> {
         queue = new ArrayDeque<>();
     }
 
-    void ensureVertexCapacity(int capacity) {
-        if (reset.length < capacity) reset = new boolean[3 * capacity >>> 1]; // 3/2 of capacity
+    private void init() {
+        runID++;
     }
 
-    private void init() {
-        Arrays.fill(reset, 0, graph.nodes.objects.size(), false);
+    private boolean resetAttribs(Node<V> node) {
+        return node.resetAlgorithmAttribs(runID);
     }
 
     boolean isReachable(Node<V> start, Node<V> target) {
@@ -414,12 +414,6 @@ class Algorithms<V> {
         return false;
     }
 
-    private boolean resetAttribs(Node<V> node) {
-        if (reset[node.index]) return false;
-        node.resetAlgorithmAttribs();
-        reset[node.index] = true;
-        return true;
-    }
 
 }
 

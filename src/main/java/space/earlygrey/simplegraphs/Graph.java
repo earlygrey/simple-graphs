@@ -19,8 +19,8 @@ public abstract class Graph<V> {
     final Map<V, Node<V>> vertexMap;
     final Map<Connection<V>, Connection<V>> edgeMap;
 
-    final Nodes<V> nodes;
-    final Edges<V> edges;
+    final Supplier<Connection<V>> edgeSupplier;
+
     final Algorithms<V> algorithms;
 
     static final String
@@ -36,8 +36,7 @@ public abstract class Graph<V> {
         algorithms = new Algorithms<>(this);
         vertexMap = new LinkedHashMap<>();
         edgeMap = new LinkedHashMap<>();
-        nodes = new Nodes<>(this, () -> new Node<>(Graph.this));
-        edges = new Edges<>(this, getEdgeSupplier());
+        edgeSupplier = getEdgeSupplier();
     }
 
     protected Graph(Collection<V> vertices) {
@@ -71,7 +70,7 @@ public abstract class Graph<V> {
     public boolean addVertex(V v) {
         Node<V> node = getNode(v);
         if (node!=null) return false;
-        node = nodes.getNode(v);
+        node = new Node(v, this);
         vertexMap.put(v, node);
         return true;
     }
@@ -168,7 +167,6 @@ public abstract class Graph<V> {
     public void removeAllVertices() {
         edgeMap.clear();
         vertexMap.clear();
-        nodes.clear();
     }
 
     /**
@@ -209,7 +207,6 @@ public abstract class Graph<V> {
         }
         node.disconnect();
         vertexMap.remove(node.object);
-        nodes.free(node);
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
@@ -228,7 +225,6 @@ public abstract class Graph<V> {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
         edgeMap.remove(e);
-        edges.free(e);
         return true;
     }
 

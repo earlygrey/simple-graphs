@@ -60,7 +60,7 @@ class Algorithms<V> {
     }
 
     boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
-        Node<V> end = heuristic == null ? dijkstra(start, target) : aStarSearch(start, target, heuristic);
+        Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) {
             return false;
         }
@@ -74,47 +74,13 @@ class Algorithms<V> {
         return true;
     }
 
-    private Node<V> dijkstra(Node<V> start, Node<V> target) {
-        init();
-        
-        PriorityQueue<Node<V>> queue = priorityQueue;
-        queue.clear();
-
-        resetAttribs(start);
-        start.distance = 0;
-
-        queue.add(start);
-
-        while(!queue.isEmpty()) {
-            Node<V> u = queue.poll();
-            if (u == target) {
-                return u;
-            }
-            if (!u.visited) {
-                u.visited = true;
-                int n = u.outEdges.size();
-                for (int i = 0; i < n; i++) {
-                    Connection<V> e = u.outEdges.get(i);
-                    Node<V> v = e.b;
-                    resetAttribs(v);
-                    if (!v.visited) {
-                        float newDistance = u.distance + e.weight;
-                        if (newDistance < v.distance) {
-                            v.distance = newDistance;
-                            v.prev = u;
-                            queue.add(v);
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         init();
 
-        PriorityQueue<Node<V>> queue = priorityQueueWithEstimate;
+        boolean hasHeuristic = heuristic != null;
+
+        PriorityQueue<Node<V>> queue = hasHeuristic ? priorityQueueWithEstimate : priorityQueue;
         queue.clear();
         
         resetAttribs(start);
@@ -122,7 +88,7 @@ class Algorithms<V> {
 
         queue.add(start);
 
-        while(!queue.isEmpty()) {
+        while(queue.size() != 0) {
             Node<V> u = queue.poll();
             if (u == target) {
                 return u;
@@ -139,11 +105,11 @@ class Algorithms<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            if (!v.seen) {
+                            if (hasHeuristic && !v.seen) {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
                                 v.seen = true;
                             }
-                            queue.add(v); 
+                            queue.add(v);
                         }
                     }
                 }

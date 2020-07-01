@@ -1,41 +1,17 @@
 package space.earlygrey.simplegraphs;
 
-class Connection<V> extends Edge<V> implements Suppliable {
+class Connection<V> extends Edge<V> {
 
     static final float DEFAULT_WEIGHT = 1;
 
     Node<V> a, b;
     float weight = DEFAULT_WEIGHT;
-    int index;
-    boolean isFree;
-
-    @Override
-    public void free() {
-        a = null;
-        b = null;
-        isFree = true;
-    }
 
     @Override
     void set(Node<V> a, Node<V> b, float weight) {
         this.a = a;
         this.b = b;
         this.weight = weight;
-    }
-
-    @Override
-    public int getIndex() {
-        return index;
-    }
-
-    @Override
-    public boolean isFree() {
-        return isFree;
-    }
-
-    @Override
-    public void setIndex(int i) {
-        this.index = i;
     }
 
     @Override

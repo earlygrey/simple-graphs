@@ -1,11 +1,20 @@
 package space.earlygrey.simplegraphs;
 
+
 class Connection<V> extends Edge<V> {
+
+    //================================================================================
+    // Fields and constants
+    //================================================================================
 
     static final float DEFAULT_WEIGHT = 1;
 
     Node<V> a, b;
     float weight = DEFAULT_WEIGHT;
+
+    //================================================================================
+    // Constructor
+    //================================================================================
 
     @Override
     void set(Node<V> a, Node<V> b, float weight) {
@@ -13,6 +22,24 @@ class Connection<V> extends Edge<V> {
         this.b = b;
         this.weight = weight;
     }
+
+    //================================================================================
+    // Internal methods
+    //================================================================================
+
+    @Override
+    Node<V> getInternalNodeA() {
+        return a;
+    }
+
+    @Override
+    Node<V> getInternalNodeB() {
+        return b;
+    }
+
+    //================================================================================
+    // Public methods
+    //================================================================================
 
     @Override
     public V getA() {
@@ -34,15 +61,17 @@ class Connection<V> extends Edge<V> {
         this.weight = weight;
     }
 
-    @Override
-    Node<V> getNodeA() {
+    public Node<V> getNodeA() {
         return a;
     }
 
-    @Override
-    Node<V> getNodeB() {
+    public Node<V> getNodeB() {
         return b;
     }
+
+    //================================================================================
+    // Subclasses
+    //================================================================================
 
     static class DirectedConnection<V> extends Connection<V> {
 
@@ -89,4 +118,5 @@ class Connection<V> extends Edge<V> {
             return "{" + a + " <> " + b +'}';
         }
     }
+
 }

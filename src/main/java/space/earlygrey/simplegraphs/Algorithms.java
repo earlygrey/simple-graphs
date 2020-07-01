@@ -11,19 +11,33 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import space.earlygrey.simplegraphs.utils.Heuristic;
+
 class Algorithms<V> {
+
+    //================================================================================
+    // Fields
+    //================================================================================
 
     private final Graph<V> graph;
     private final PriorityQueue<Node<V>> priorityQueueWithEstimate, priorityQueue;
     private final ArrayDeque<Node<V>> queue;
     private int runID = 0;
 
-    public Algorithms(Graph<V> graph) {
+    //================================================================================
+    // Constructor
+    //================================================================================
+
+    Algorithms(Graph<V> graph) {
         this.graph = graph;
         priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
         priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
         queue = new ArrayDeque<>();
     }
+
+    //================================================================================
+    // Util
+    //================================================================================
 
     private void init() {
         runID++;
@@ -33,90 +47,17 @@ class Algorithms<V> {
         return node.resetAlgorithmAttribs(runID);
     }
 
+    //================================================================================
+    // Connectivity
+    //================================================================================
+
     boolean isReachable(Node<V> start, Node<V> target) {
         return findShortestPath(start, target, new ArrayList<>());
     }
 
-    float findMinimumDistance(Node<V> start, Node<V> target) {
-        Node<V> end = aStarSearch(start, target, null);
-        if (end==null) return Float.MAX_VALUE;
-        else return end.distance;
-    }
-
-    List<V> findShortestPath(Node<V> start, Node<V> target) {
-        ArrayList<V> path = new ArrayList<>();
-        findShortestPath(start, target, path);
-        return path;
-    }
-
-    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path) {
-        return findShortestPath(start, target, path, null);
-    }
-
-    List<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        ArrayList<V> path = new ArrayList<>();
-        findShortestPath(start, target, path, heuristic);
-        return path;
-    }
-
-    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
-        Node<V> end = aStarSearch(start, target, heuristic);
-        if (end==null) {
-            return false;
-        }
-        Node<V> v = end;
-        while(v.prev!=null) {
-            path.add(v.object);
-            v = v.prev;
-        }
-        path.add(start.object);
-        Collections.reverse(path);
-        return true;
-    }
-
-
-    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        init();
-
-        boolean hasHeuristic = heuristic != null;
-
-        PriorityQueue<Node<V>> queue = hasHeuristic ? priorityQueueWithEstimate : priorityQueue;
-        queue.clear();
-        
-        resetAttribs(start);
-        start.distance = 0;
-
-        queue.add(start);
-
-        while(queue.size() != 0) {
-            Node<V> u = queue.poll();
-            if (u == target) {
-                return u;
-            }
-            if (!u.visited) {
-                u.visited = true;
-                int n = u.outEdges.size();
-                for (int i = 0; i < n; i++) {
-                    Connection<V> e = u.outEdges.get(i);
-                    Node<V> v = e.b;
-                    resetAttribs(v);
-                    if (!v.visited) {
-                        float newDistance = u.distance + e.weight;
-                        if (newDistance < v.distance) {
-                            v.distance = newDistance;
-                            v.prev = u;
-                            if (hasHeuristic && !v.seen) {
-                                v.estimate = heuristic.getEstimate(v.object, target.object);
-                                v.seen = true;
-                            }
-                            queue.add(v);
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    //================================================================================
+    // Searches
+    //================================================================================
 
     void breadthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
         if (maxDepth <= 0 ) return;
@@ -178,6 +119,94 @@ class Algorithms<V> {
         }
     }
 
+    //================================================================================
+    // Shortest Paths
+    //================================================================================
+
+    float findMinimumDistance(Node<V> start, Node<V> target) {
+        Node<V> end = aStarSearch(start, target, null);
+        if (end==null) return Float.MAX_VALUE;
+        else return end.distance;
+    }
+
+    List<V> findShortestPath(Node<V> start, Node<V> target) {
+        ArrayList<V> path = new ArrayList<>();
+        findShortestPath(start, target, path);
+        return path;
+    }
+
+    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path) {
+        return findShortestPath(start, target, path, null);
+    }
+
+    List<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        ArrayList<V> path = new ArrayList<>();
+        findShortestPath(start, target, path, heuristic);
+        return path;
+    }
+
+    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
+        Node<V> end = aStarSearch(start, target, heuristic);
+        if (end==null) {
+            return false;
+        }
+        Node<V> v = end;
+        while(v.prev!=null) {
+            path.add(v.object);
+            v = v.prev;
+        }
+        path.add(start.object);
+        Collections.reverse(path);
+        return true;
+    }
+
+    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        init();
+
+        boolean hasHeuristic = heuristic != null;
+
+        PriorityQueue<Node<V>> queue = hasHeuristic ? priorityQueueWithEstimate : priorityQueue;
+        queue.clear();
+        
+        resetAttribs(start);
+        start.distance = 0;
+
+        queue.add(start);
+
+        while(queue.size() != 0) {
+            Node<V> u = queue.poll();
+            if (u == target) {
+                return u;
+            }
+            if (!u.visited) {
+                u.visited = true;
+                int n = u.outEdges.size();
+                for (int i = 0; i < n; i++) {
+                    Connection<V> e = u.outEdges.get(i);
+                    Node<V> v = e.b;
+                    resetAttribs(v);
+                    if (!v.visited) {
+                        float newDistance = u.distance + e.weight;
+                        if (newDistance < v.distance) {
+                            v.distance = newDistance;
+                            v.prev = u;
+                            if (hasHeuristic && !v.seen) {
+                                v.estimate = heuristic.getEstimate(v.object, target.object);
+                                v.seen = true;
+                            }
+                            queue.add(v);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    //================================================================================
+    // Topological sorting
+    //================================================================================
+
     boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
         init();
@@ -233,6 +262,10 @@ class Algorithms<V> {
         return true;
     }
 
+    //================================================================================
+    // Minimum spanning trees
+    //================================================================================
+
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
@@ -254,7 +287,7 @@ class Algorithms<V> {
         int edgeCount = 0;
 
         for (Connection<V> edge : edgeList) {
-            if (detectCycle(edge.a, edge.b)) {
+            if (doesEdgeCreateCycle(edge.a, edge.b)) {
                 continue;
             }
             spanningTree.addConnection(edge.a, edge.b, edge.weight);
@@ -293,7 +326,7 @@ class Algorithms<V> {
         }
     }
 
-    private boolean detectCycle(Node<V> u, Node<V> v) {
+    private boolean doesEdgeCreateCycle(Node<V> u, Node<V> v) {
         if (resetAttribs(u)) u.prev = u;
         if (resetAttribs(v)) v.prev = v;
         Node<V> rootU = pathCompressionFind(u);
@@ -302,6 +335,42 @@ class Algorithms<V> {
             return true;
         }
         unionByRank(rootU, rootV);
+        return false;
+    }
+
+    //================================================================================
+    // Cycle detection
+    //================================================================================
+
+    boolean containsCycle(Graph<V> graph) {
+        if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
+        init();
+        for (Node<V> v : graph.getNodes()) {
+            resetAttribs(v);
+            if (detectCycleDFS(v, null, new HashSet<>())) {
+                init();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
+        v.visited = true;
+        recursiveStack.add(v);
+        int n = v.outEdges.size();
+        for (int i = 0; i < n; i++) {
+            Connection<V> e = v.outEdges.get(i);
+            if (!graph.isDirected() && e.b.equals(parent)) continue;
+            resetAttribs(e.b);
+            if (recursiveStack.contains(e.b)) {
+                return true;
+            }
+            if (!e.b.visited) {
+                if (detectCycleDFS(e.b, v, recursiveStack)) return true;
+            }
+        }
+        recursiveStack.remove(v);
         return false;
     }
 
@@ -346,38 +415,6 @@ class Algorithms<V> {
         }
         return objectComponents;
     }*/
-
-    boolean containsCycle(Graph<V> graph) {
-        if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
-        init();
-        for (Node<V> v : graph.getNodes()) {
-            resetAttribs(v);
-            if (detectCycleDFS(v, null, new HashSet<>())) {
-                init();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
-        v.visited = true;
-        recursiveStack.add(v);
-        int n = v.outEdges.size();
-        for (int i = 0; i < n; i++) {
-            Connection<V> e = v.outEdges.get(i);
-            if (!graph.isDirected() && e.b.equals(parent)) continue;
-            resetAttribs(e.b);
-            if (recursiveStack.contains(e.b)) {
-                return true;
-            }
-            if (!e.b.visited) {
-                if (detectCycleDFS(e.b, v, recursiveStack)) return true;
-            }
-        }
-        recursiveStack.remove(v);
-        return false;
-    }
 
 
 }

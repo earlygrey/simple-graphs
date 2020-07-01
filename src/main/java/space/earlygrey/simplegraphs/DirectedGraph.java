@@ -8,6 +8,10 @@ import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
 public class DirectedGraph<V> extends Graph<V> {
 
+    //================================================================================
+    // Constructors
+    //================================================================================
+
     public DirectedGraph () {
         super();
     }
@@ -15,6 +19,11 @@ public class DirectedGraph<V> extends Graph<V> {
     public DirectedGraph (Collection<V> vertices) {
         super(vertices);
     }
+
+
+    //================================================================================
+    // Superclass implementations
+    //================================================================================
 
     @Override
     protected Supplier<Connection<V>> getEdgeSupplier() {
@@ -25,6 +34,11 @@ public class DirectedGraph<V> extends Graph<V> {
     Graph<V> createNew() {
         return new DirectedGraph<>();
     }
+
+
+    //================================================================================
+    // Directed specific algorithms
+    //================================================================================
 
     /**
      * Sort the vertices of this graph in topological order. That is, for every edge from vertex u to vertex v, u comes before v in the ordering.

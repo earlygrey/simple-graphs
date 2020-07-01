@@ -2,6 +2,7 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
+import space.earlygrey.simplegraphs.utils.Heuristic;
 
 import java.util.ArrayList;
 import java.util.List;

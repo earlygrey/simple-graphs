@@ -1,28 +1,28 @@
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.utils;
 
 import java.util.Arrays;
 
 class Array<T> {
 
-    Object[] items;
-    int size;
+    public Object[] items;
+    public int size;
 
-    Array() {
+    public Array() {
         this(8);
     }
 
-    Array(int capacity) {
+    public Array(int capacity) {
         items = new Object[capacity];
         this.size = 0;
     }
 
-    int add(T item) {
+    public int add(T item) {
         checkSize();
         items[size] = item;
         return size++;
     }
 
-    int getIndex(T item) {
+    public int getIndex(T item) {
         for (int i = size-1; i >= 0; i--) {
             if (item == items[i]) {
                 return i;
@@ -31,7 +31,7 @@ class Array<T> {
         return -1;
     }
 
-    void remove(int index) {
+    public void remove(int index) {
         if (index >= 0) {
             size--;
             for (int i = index; i < size; i++) {
@@ -41,35 +41,35 @@ class Array<T> {
         }
     }
 
-    void remove(T item) {
+    public void remove(T item) {
         remove(getIndex(item));
     }
 
-    void checkSize() {
+    public void checkSize() {
         if (items.length <= size) {
             items = Arrays.copyOf(items, 2*items.length);
         }
     }
 
-    void set(int index, T item) {
+    public void set(int index, T item) {
         items[index] = item;
     }
 
-    void clear() {
+    public void clear() {
         Arrays.fill(items, null);
         size = 0;
     }
 
     @SuppressWarnings("unchecked")
-    T get(int i) {
+    public T get(int i) {
         return (T) items[i];
     }
 
-    int size() {
+    public int size() {
         return size;
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return size==0;
     }
 

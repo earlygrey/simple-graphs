@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
+import space.earlygrey.simplegraphs.utils.Heuristic;
+
 public abstract class Graph<V> {
 
     //================================================================================
@@ -148,7 +150,7 @@ public abstract class Graph<V> {
     }
 
     public boolean removeEdge(Edge<V> edge) {
-        return removeConnection(edge.getNodeA(), edge.getNodeB());
+        return removeConnection(edge.getInternalNodeA(), edge.getInternalNodeB());
     }
 
     /**
@@ -202,8 +204,8 @@ public abstract class Graph<V> {
     //--------------------
 
     void removeNode(Node<V> node) {
-        for (Node<V> neighbour : node.neighbours.keySet()) {
-            neighbour.removeEdge(node);
+        for (Connection<V> connection : node.outEdges) {
+            connection.b.removeEdge(node);
         }
         node.disconnect();
         vertexMap.remove(node.object);
@@ -279,7 +281,7 @@ public abstract class Graph<V> {
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
-        return Collections.unmodifiableCollection(node.neighbours.values());
+        return Collections.unmodifiableCollection(node.outEdges);
     }
 
     /**
@@ -297,6 +299,7 @@ public abstract class Graph<V> {
     public Collection<V> getVertices() {
         return Collections.unmodifiableCollection(vertexMap.keySet());
     }
+
 
     /**
      * Check if the graph is directed, that is whether the edges form an ordered pair or a set.

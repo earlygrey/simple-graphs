@@ -1,4 +1,4 @@
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.utils;
 
 public interface Heuristic<V> {
 

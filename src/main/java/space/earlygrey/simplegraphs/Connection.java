@@ -1,7 +1,7 @@
 package space.earlygrey.simplegraphs;
 
 
-class Connection<V> extends Edge<V> {
+public class Connection<V> extends Edge<V> {
 
     //================================================================================
     // Fields and constants

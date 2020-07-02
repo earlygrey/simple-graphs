@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class Node<V> {
+public class Node<V> {
 
     //================================================================================
     // Graph structure related members
@@ -16,7 +16,7 @@ class Node<V> {
     final V object;
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
-    ArrayList<Connection<V>> outEdges = new ArrayList<>();
+    ArrayList<Connection<V>> outEdges = new ArrayList<>(); // List for fast iteration
 
     //================================================================================
     // Constructor

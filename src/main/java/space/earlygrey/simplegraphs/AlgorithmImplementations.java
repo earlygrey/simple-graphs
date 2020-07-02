@@ -30,8 +30,8 @@ class AlgorithmImplementations<V> {
 
     AlgorithmImplementations(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
-        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
+        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.attribs.distance + e.attribs.estimate));
+        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.attribs.distance));
         queue = new ArrayDeque<>();
     }
 
@@ -44,7 +44,7 @@ class AlgorithmImplementations<V> {
     }
 
     private boolean resetAttribs(Node<V> node) {
-        return node.resetAlgorithmAttribs(runID);
+        return node.attribs.reset(runID);
     }
 
     //================================================================================
@@ -64,7 +64,7 @@ class AlgorithmImplementations<V> {
         init();
 
         resetAttribs(vertex);
-        vertex.visited = true;
+        vertex.attribs.visited = true;
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
         queue.addLast(vertex);
@@ -72,18 +72,18 @@ class AlgorithmImplementations<V> {
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
             tree.addVertex(v.object);
-            if (v.prev != null) tree.addEdge(v.object, v.prev.object);
-            if (v.i == maxDepth) continue;
+            if (v.attribs.prev != null) tree.addEdge(v.object, v.attribs.prev.object);
+            if (v.attribs.i == maxDepth) continue;
             if (tree.size() == maxVertices) break;
             int n = v.outEdges.size();
             for (int i = 0; i < n; i++) {
                 Connection<V> e = v.outEdges.get(i);
                 Node<V> w = e.b;
                 resetAttribs(w);
-                if (!w.visited) {
-                    w.visited = true;
-                    w.i = v.i+1;
-                    w.prev = v;
+                if (!w.attribs.visited) {
+                    w.attribs.visited = true;
+                    w.attribs.i = v.attribs.i + 1;
+                    w.attribs.prev = v;
                     queue.addLast(w);
                 }
             }
@@ -100,19 +100,19 @@ class AlgorithmImplementations<V> {
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (!v.visited) {
+            if (!v.attribs.visited) {
                 tree.addVertex(v.object);
-                if (v.prev != null) tree.addEdge(v.object, v.prev.object);
-                if (v.i == maxDepth) continue;
+                if (v.attribs.prev != null) tree.addEdge(v.object, v.attribs.prev.object);
+                if (v.attribs.i == maxDepth) continue;
                 if (tree.size() == maxVertices) break;
-                v.visited = true;
+                v.attribs.visited = true;
                 int n = v.outEdges.size();
                 for (int i = 0; i < n; i++) {
                     Connection<V> e = v.outEdges.get(i);
                     Node<V> w = e.b;
                     resetAttribs(w);
-                    w.i = v.i+1;
-                    w.prev = v;
+                    w.attribs.i = v.attribs.i + 1;
+                    w.attribs.prev = v;
                     queue.addFirst(w);
                 }
             }
@@ -126,7 +126,7 @@ class AlgorithmImplementations<V> {
     float findMinimumDistance(Node<V> start, Node<V> target) {
         Node<V> end = aStarSearch(start, target, null);
         if (end==null) return Float.MAX_VALUE;
-        else return end.distance;
+        else return end.attribs.distance;
     }
 
     List<V> findShortestPath(Node<V> start, Node<V> target) {
@@ -151,9 +151,9 @@ class AlgorithmImplementations<V> {
             return false;
         }
         Node<V> v = end;
-        while(v.prev!=null) {
+        while(v.attribs.prev!=null) {
             path.add(v.object);
-            v = v.prev;
+            v = v.attribs.prev;
         }
         path.add(start.object);
         Collections.reverse(path);
@@ -167,9 +167,9 @@ class AlgorithmImplementations<V> {
 
         PriorityQueue<Node<V>> queue = hasHeuristic ? priorityQueueWithEstimate : priorityQueue;
         queue.clear();
-        
+
         resetAttribs(start);
-        start.distance = 0;
+        start.attribs.distance = 0;
 
         queue.add(start);
 
@@ -178,21 +178,21 @@ class AlgorithmImplementations<V> {
             if (u == target) {
                 return u;
             }
-            if (!u.visited) {
-                u.visited = true;
+            if (!u.attribs.visited) {
+                u.attribs.visited = true;
                 int n = u.outEdges.size();
                 for (int i = 0; i < n; i++) {
                     Connection<V> e = u.outEdges.get(i);
                     Node<V> v = e.b;
                     resetAttribs(v);
-                    if (!v.visited) {
-                        float newDistance = u.distance + e.weight;
-                        if (newDistance < v.distance) {
-                            v.distance = newDistance;
-                            v.prev = u;
-                            if (hasHeuristic && !v.seen) {
-                                v.estimate = heuristic.getEstimate(v.object, target.object);
-                                v.seen = true;
+                    if (!v.attribs.visited) {
+                        float newDistance = u.attribs.distance + e.weight;
+                        if (newDistance < v.attribs.distance) {
+                            v.attribs.distance = newDistance;
+                            v.attribs.prev = u;
+                            if (hasHeuristic && !v.attribs.seen) {
+                                v.attribs.estimate = heuristic.getEstimate(v.object, target.object);
+                                v.attribs.seen = true;
                             }
                             queue.add(v);
                         }
@@ -243,20 +243,20 @@ class AlgorithmImplementations<V> {
     private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v, Set<Node<V>> set) {
         resetAttribs(v);
 
-        if (v.visited) return true;
-        if (v.seen) {
+        if (v.attribs.visited) return true;
+        if (v.attribs.seen) {
             // not a DAG
             return false;
         }
-        v.seen = true;
+        v.attribs.seen = true;
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
             Connection<V> e = v.outEdges.get(i);
             boolean success = recursiveTopologicalSort(sortedVertices, e.b, set);
             if (!success) return false;
         }
-        v.seen = false;
-        v.visited = true;
+        v.attribs.seen = false;
+        v.attribs.visited = true;
         sortedVertices.add(v.object);
         set.remove(v);
         return true;
@@ -278,9 +278,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-           edgeList.sort(Comparator.comparing(e -> e.weight));
+            edgeList.sort(Comparator.comparing(e -> e.weight));
         } else {
-           edgeList.sort(Collections.reverseOrder(Comparator.comparing(e -> e.weight)));
+            edgeList.sort(Collections.reverseOrder(Comparator.comparing(e -> e.weight)));
         }
 
         int totalNodes = graph.size();
@@ -301,34 +301,34 @@ class AlgorithmImplementations<V> {
     }
 
     private void unionByRank(Node<V> rootU, Node<V> rootV) {
-        if (rootU.i < rootV.i) {
-            rootU.prev = rootV;
+        if (rootU.attribs.i < rootV.attribs.i) {
+            rootU.attribs.prev = rootV;
         } else {
-            rootV.prev = rootU;
-            if (rootU.i == rootV.i) rootU.i++;
+            rootV.attribs.prev = rootU;
+            if (rootU.attribs.i == rootV.attribs.i) rootU.attribs.i++;
         }
     }
 
     private Node<V> find(Node<V> node) {
-        if (node.prev.equals(node)) {
+        if (node.attribs.prev.equals(node)) {
             return node;
         } else {
-            return find(node.prev);
+            return find(node.attribs.prev);
         }
     }
     private Node<V> pathCompressionFind(Node<V> node) {
-        if (node.prev.equals(node)) {
+        if (node.attribs.prev.equals(node)) {
             return node;
         } else {
-            Node<V> parentNode = find(node.prev);
-            node.prev = parentNode;
+            Node<V> parentNode = find(node.attribs.prev);
+            node.attribs.prev = parentNode;
             return parentNode;
         }
     }
 
     private boolean doesEdgeCreateCycle(Node<V> u, Node<V> v) {
-        if (resetAttribs(u)) u.prev = u;
-        if (resetAttribs(v)) v.prev = v;
+        if (resetAttribs(u)) u.attribs.prev = u;
+        if (resetAttribs(v)) v.attribs.prev = v;
         Node<V> rootU = pathCompressionFind(u);
         Node<V> rootV = pathCompressionFind(v);
         if (rootU.equals(rootV)) {
@@ -356,7 +356,7 @@ class AlgorithmImplementations<V> {
     }
 
     private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
-        v.visited = true;
+        v.attribs.visited = true;
         recursiveStack.add(v);
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
@@ -366,7 +366,7 @@ class AlgorithmImplementations<V> {
             if (recursiveStack.contains(e.b)) {
                 return true;
             }
-            if (!e.b.visited) {
+            if (!e.b.attribs.visited) {
                 if (detectCycleDFS(e.b, v, recursiveStack)) return true;
             }
         }
@@ -384,13 +384,13 @@ class AlgorithmImplementations<V> {
     private void dfsRecursive(Node<V> v, List<V> vertices, float maxDistance, int maxDepth, int depth) {
         if (depth > maxDepth) return;
         resetAttribs(v);
-        v.visited = true;
+        v.attribs.visited = true;
         vertices.add(v.object);
         for (Connection e : v.connections.values()) {
             Node<V> w = e.b;
-            if (!w.visited) {
-                w.distance = v.distance + e.getWeight();
-                if (w.distance <= maxDistance) dfsRecursive(w, vertices, maxDistance, maxDepth, depth + 1);
+            if (!w.attribs.visited) {
+                w.attribs.distance = v.attribs.distance + e.getWeight();
+                if (w.attribs.distance <= maxDistance) dfsRecursive(w, vertices, maxDistance, maxDepth, depth + 1);
             }
         }
     }*/
@@ -418,4 +418,3 @@ class AlgorithmImplementations<V> {
 
 
 }
-

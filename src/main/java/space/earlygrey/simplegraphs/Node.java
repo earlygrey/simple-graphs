@@ -77,25 +77,27 @@ class Node<V> {
     // Algorithm fields and methods
     //================================================================================
 
-    //util fields for algorithms, don't store data in them
-    boolean visited, seen;
-    float distance;
-    float estimate;
-    Node<V> prev;
-    int i, runID;
+    static class AlgorithmAttributes<V> {
+        boolean visited, seen;
+        float distance;
+        float estimate;
+        Node<V> prev;
+        int i, runID;
 
-    boolean resetAlgorithmAttribs(int runID) {
-        if (runID == this.runID) return false;
-        visited = false;
-        prev = null;
-        distance = Float.MAX_VALUE;
-        estimate = 0;
-        i = 0;
-        seen = false;
-        this.runID = runID;
-        return true;
+        boolean reset(int runID) {
+            if (runID == this.runID) return false;
+            visited = false;
+            prev = null;
+            distance = Float.MAX_VALUE;
+            estimate = 0;
+            i = 0;
+            seen = false;
+            this.runID = runID;
+            return true;
+        }
     }
 
+    final AlgorithmAttributes<V> attribs = new AlgorithmAttributes<>();
 
     //================================================================================
     // Misc

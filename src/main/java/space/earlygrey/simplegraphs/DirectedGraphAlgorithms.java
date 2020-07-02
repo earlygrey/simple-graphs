@@ -2,12 +2,11 @@ package space.earlygrey.simplegraphs;
 
 import java.util.List;
 
-class DirectedGraphAlgorithms<V> extends Algorithms<V> {
+public class DirectedGraphAlgorithms<V> extends Algorithms<V> {
 
     DirectedGraphAlgorithms(DirectedGraph<V> graph) {
         super(graph);
     }
-
 
     /**
      * Sort the vertices of this graph in topological order. That is, for every edge from vertex u to vertex v, u comes before v in the ordering.

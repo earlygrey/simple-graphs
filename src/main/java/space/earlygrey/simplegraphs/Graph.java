@@ -176,11 +176,11 @@ public abstract class Graph<V> {
         }
     }
 
- //   /**
- //    * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
- //    * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
-//     * @param comparator a comparator for comparing edges
- //    */
+    /**
+     * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
+     * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
+     * @param comparator a comparator for comparing edges
+     */
     public void sortEdges(Comparator<Connection<V>> comparator) {
         List<Entry<Connection<V>, Connection<V>>> entryList = new ArrayList<>(edgeMap.entrySet());
         Collections.sort(entryList, Entry.comparingByKey(comparator));

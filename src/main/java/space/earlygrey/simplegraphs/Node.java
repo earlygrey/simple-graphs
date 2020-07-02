@@ -65,7 +65,7 @@ class Node<V> {
     // Public Methods
     //================================================================================
 
-    public Collection<? extends Edge<V>> getConnections() {
+    public Collection<Connection<V>> getConnections() {
         return outEdges;
     }
 

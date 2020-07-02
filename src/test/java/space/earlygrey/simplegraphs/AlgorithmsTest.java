@@ -20,24 +20,24 @@ public class AlgorithmsTest {
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
-        List<Vector2> path = undirectedGraph.findShortestPath(start, end);
+        List<Vector2> path = undirectedGraph.algorithms().findShortestPath(start, end);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, undirectedGraph));
 
-        path = diGraph.findShortestPath(start, end);
+        path = diGraph.algorithms().findShortestPath(start, end);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
         
         Heuristic<Vector2> h = Vector2::dst;
 
-        path = undirectedGraph.findShortestPath(start, end, h);
+        path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, undirectedGraph));
 
-        path = diGraph.findShortestPath(start, end, h);
+        path = diGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
@@ -62,13 +62,13 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.detectCycle());
+        assertTrue(!graph.algorithms().detectCycle());
 
         graph.addEdge(0,2);
-        assertTrue(!graph.detectCycle());
+        assertTrue(!graph.algorithms().detectCycle());
 
         graph.addEdge(2,0);
-        assertTrue(graph.detectCycle());
+        assertTrue(graph.algorithms().detectCycle());
 
         graph = new UndirectedGraph<>();
 
@@ -78,10 +78,10 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.detectCycle());
+        assertTrue(!graph.algorithms().detectCycle());
 
         graph.addEdge(0,2);
-        assertTrue(graph.detectCycle());
+        assertTrue(graph.algorithms().detectCycle());
 
     }
     
@@ -104,7 +104,7 @@ public class AlgorithmsTest {
     public void bfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        Graph<Integer> tree = graph.breadthFirstSearch(0);
+        Graph<Integer> tree = graph.algorithms().breadthFirstSearch(0);
         assertEquals(4, tree.size());
         assertEquals(3, tree.getEdgeCount());
 
@@ -127,7 +127,7 @@ public class AlgorithmsTest {
     public void dfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        Graph<Integer> tree = graph.depthFirstSearch(0);
+        Graph<Integer> tree = graph.algorithms().depthFirstSearch(0);
 
         assertEquals(4, tree.size());
         assertEquals(3, tree.getEdgeCount());
@@ -154,10 +154,10 @@ public class AlgorithmsTest {
         for (int i = 0; i < n-1; i++) graph.addEdge(i+1, i);
 
         List<Integer> sorted = new ArrayList<>(n);
-        boolean success = graph.topologicalSort(sorted);
+        boolean success = graph.algorithms().topologicalSort(sorted);
         assertTrue(success);
 
-        graph.topologicalSort();
+        graph.algorithms().topologicalSort();
         int i = n-1;
         for (Integer vertex : graph.getVertices()) {
             Integer expected = Integer.valueOf(i--);
@@ -167,7 +167,7 @@ public class AlgorithmsTest {
 
 
         graph.addEdge(0, n-1);
-        success = graph.topologicalSort();
+        success = graph.algorithms().topologicalSort();
         assertTrue(!success);
 
     }
@@ -180,11 +180,11 @@ public class AlgorithmsTest {
         for (int i = 0; i < n; i++) graph.addVertex(i);
         GraphBuilder.buildCompleteGraph(graph);
 
-        Graph<Integer> mwst = graph.findMinimumWeightSpanningTree();
+        Graph<Integer> mwst = graph.algorithms().findMinimumWeightSpanningTree();
 
         assertEquals(n, mwst.size());
         assertEquals(n-1, mwst.getEdgeCount());
 
-        assertTrue(!mwst.detectCycle());
+        assertTrue(!mwst.algorithms().detectCycle());
     }
 }

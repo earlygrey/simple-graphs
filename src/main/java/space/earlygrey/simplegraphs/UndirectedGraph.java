@@ -7,16 +7,20 @@ import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
 
 public class UndirectedGraph<V> extends Graph<V> {
 
+    UndirectedGraphAlgorithms<V> algorithms;
+
     //================================================================================
     // Constructors
     //================================================================================
 
     public UndirectedGraph() {
         super();
+        algorithms = new UndirectedGraphAlgorithms<>(this);
     }
 
     public UndirectedGraph(Collection<V> vertices) {
         super(vertices);
+        algorithms = new UndirectedGraphAlgorithms<>(this);
     }
 
 
@@ -69,19 +73,8 @@ public class UndirectedGraph<V> extends Graph<V> {
         return new UndirectedGraph<>();
     }
 
-
-    //================================================================================
-    // Undirected specific algorithms
-    //================================================================================
-
-    /**
-     * Find a minimum weight spanning tree using Kruskal's algorithm.
-     * @return a Graph object containing a minimum weight spanning tree (if this graph is connected -
-     * in general a minimum weight spanning forest)
-     */
-    public Graph<V> findMinimumWeightSpanningTree() {
-        return algorithms.kruskalsMinimumWeightSpanningTree(true);
+    @Override
+    public UndirectedGraphAlgorithms<V> algorithms() {
+        return algorithms;
     }
-
-
 }

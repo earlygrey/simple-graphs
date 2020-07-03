@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 
 class AlgorithmImplementations<V> {
@@ -20,7 +19,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     private final Graph<V> graph;
-    private final PriorityQueue<Node<V>> priorityQueueWithEstimate, priorityQueue;
+    private final BinaryHeap heap;
     private final ArrayDeque<Node<V>> queue;
     private int runID = 0;
 
@@ -30,29 +29,13 @@ class AlgorithmImplementations<V> {
 
     AlgorithmImplementations(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>(estimateComparator);
-        priorityQueue = new PriorityQueue<>(distanceComparator);
+        heap = new BinaryHeap();
         queue = new ArrayDeque<>();
     }
 
     //================================================================================
     // Util
     //================================================================================
-    
-    final Comparator<Node<V>> estimateComparator = new Comparator<Node<V>>() {
-
-        @Override
-        public int compare(Node<V> s, Node<V> e) {
-            return Float.floatToIntBits(s.distance + s.estimate - e.distance - e.estimate);
-        }
-    };
-    
-    final Comparator<Node<V>> distanceComparator = new Comparator<Node<V>>() {
-        @Override
-        public int compare(Node<V> o1, Node<V> o2) {
-            return Float.floatToIntBits(o1.distance - o2.distance);
-        }
-    };
 
     private void init() {
         runID++;
@@ -179,18 +162,16 @@ class AlgorithmImplementations<V> {
         init();
 
         boolean hasHeuristic = heuristic != null;
-
-        PriorityQueue<Node<V>> queue = hasHeuristic ? priorityQueueWithEstimate : priorityQueue;
-        queue.clear();
         
         resetAttribs(start);
         start.distance = 0;
 
-        queue.add(start);
+        heap.add(start);
 
-        while(queue.size() != 0) {
-            Node<V> u = queue.poll();
+        while(heap.size != 0) {
+            Node<V> u = heap.pop();
             if (u == target) {
+                heap.clear();
                 return u;
             }
             if (!u.visited) {
@@ -207,14 +188,19 @@ class AlgorithmImplementations<V> {
                             v.prev = u;
                             if (hasHeuristic && !v.seen) {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
-                                v.seen = true;
                             }
-                            queue.add(v);
+                            if (!v.seen) {
+                                heap.add(v, v.distance + v.estimate);
+                            } else {
+                                heap.setValue(v, v.distance + v.estimate);
+                            }
+                            v.seen = true;
                         }
                     }
                 }
             }
         }
+        heap.clear();
         return null;
     }
 

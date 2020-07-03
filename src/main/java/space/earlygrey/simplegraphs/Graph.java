@@ -16,6 +16,8 @@ public abstract class Graph<V> {
     // Members
     //================================================================================
 
+    final Internals<V> internals = new Internals<>(this);
+
     final Map<V, Node<V>> vertexMap;
     final Map<Connection<V>, Connection<V>> edgeMap;
 
@@ -316,6 +318,10 @@ public abstract class Graph<V> {
         return edgeMap.size();
     }
 
+
+    public Internals<V> internals() {
+        return internals;
+    }
 
 
     //--------------------

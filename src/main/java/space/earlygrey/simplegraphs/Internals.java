@@ -1,5 +1,7 @@
 package space.earlygrey.simplegraphs;
 
+import java.util.Collection;
+
 public class Internals<V> {
 
     final Graph<V> graph;
@@ -10,6 +12,14 @@ public class Internals<V> {
 
     public Node<V> getNode(V v) {
         return graph.getNode(v);
+    }
+
+    public Collection<Node<V>> getNodes() {
+        return graph.vertexMap.values();
+    }
+
+    public Collection<Connection<V>> getConnections() {
+        return graph.edgeMap.keySet();
     }
 
 

@@ -1,6 +1,8 @@
 package space.earlygrey.simplegraphs;
 
 
+import space.earlygrey.simplegraphs.utils.Heuristic;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
-
-import space.earlygrey.simplegraphs.utils.Heuristic;
 
 class AlgorithmImplementations<V> {
 
@@ -30,14 +30,29 @@ class AlgorithmImplementations<V> {
 
     AlgorithmImplementations(Graph<V> graph) {
         this.graph = graph;
-        priorityQueueWithEstimate = new PriorityQueue<>(Comparator.comparing(e -> e.distance + e.estimate));
-        priorityQueue = new PriorityQueue<>(Comparator.comparing(e -> e.distance));
+        priorityQueueWithEstimate = new PriorityQueue<>(estimateComparator);
+        priorityQueue = new PriorityQueue<>(distanceComparator);
         queue = new ArrayDeque<>();
     }
 
     //================================================================================
     // Util
     //================================================================================
+    
+    final Comparator<Node<V>> estimateComparator = new Comparator<Node<V>>() {
+
+        @Override
+        public int compare(Node<V> s, Node<V> e) {
+            return Float.floatToIntBits(s.distance + s.estimate - e.distance - e.estimate);
+        }
+    };
+    
+    final Comparator<Node<V>> distanceComparator = new Comparator<Node<V>>() {
+        @Override
+        public int compare(Node<V> o1, Node<V> o2) {
+            return Float.floatToIntBits(o1.distance - o2.distance);
+        }
+    };
 
     private void init() {
         runID++;
@@ -266,6 +281,20 @@ class AlgorithmImplementations<V> {
     // Minimum spanning trees
     //================================================================================
 
+    final Comparator<Connection<V>> weightComparator = new Comparator<Connection<V>>() {
+        @Override
+        public int compare(Connection<V> o1, Connection<V> o2) {
+            return Float.floatToIntBits(o1.weight - o2.weight);
+        }
+    };
+
+    final Comparator<Connection<V>> reverseWeightComparator = new Comparator<Connection<V>>() {
+        @Override
+        public int compare(Connection<V> o1, Connection<V> o2) {
+            return Float.floatToIntBits(o2.weight - o1.weight);
+        }
+    };
+    
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
@@ -278,9 +307,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-           edgeList.sort(Comparator.comparing(e -> e.weight));
+           edgeList.sort(weightComparator);
         } else {
-           edgeList.sort(Collections.reverseOrder(Comparator.comparing(e -> e.weight)));
+           edgeList.sort(reverseWeightComparator);
         }
 
         int totalNodes = graph.size();

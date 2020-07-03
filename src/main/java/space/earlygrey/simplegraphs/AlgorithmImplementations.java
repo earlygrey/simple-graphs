@@ -41,10 +41,6 @@ class AlgorithmImplementations<V> {
         runID++;
     }
 
-    private boolean resetAttribs(Node<V> node) {
-        return node.resetAlgorithmAttribs(runID);
-    }
-
     //================================================================================
     // Connectivity
     //================================================================================
@@ -61,7 +57,7 @@ class AlgorithmImplementations<V> {
         if (maxDepth <= 0 ) return;
         init();
 
-        resetAttribs(vertex);
+        vertex.resetAlgorithmAttribs(runID);
         vertex.visited = true;
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
@@ -77,7 +73,7 @@ class AlgorithmImplementations<V> {
             for (int i = 0; i < n; i++) {
                 Connection<V> e = v.outEdges.get(i);
                 Node<V> w = e.b;
-                resetAttribs(w);
+                w.resetAlgorithmAttribs(runID);
                 if (!w.visited) {
                     w.visited = true;
                     w.i = v.i+1;
@@ -91,7 +87,7 @@ class AlgorithmImplementations<V> {
     void depthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
         init();
 
-        resetAttribs(vertex);
+        vertex.resetAlgorithmAttribs(runID);
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
         queue.addLast(vertex);
@@ -108,7 +104,7 @@ class AlgorithmImplementations<V> {
                 for (int i = 0; i < n; i++) {
                     Connection<V> e = v.outEdges.get(i);
                     Node<V> w = e.b;
-                    resetAttribs(w);
+                    w.resetAlgorithmAttribs(runID);
                     w.i = v.i+1;
                     w.prev = v;
                     queue.addFirst(w);
@@ -163,7 +159,7 @@ class AlgorithmImplementations<V> {
 
         boolean hasHeuristic = heuristic != null;
         
-        resetAttribs(start);
+        start.resetAlgorithmAttribs(runID);
         start.distance = 0;
 
         heap.add(start);
@@ -180,7 +176,7 @@ class AlgorithmImplementations<V> {
                 for (int i = 0; i < n; i++) {
                     Connection<V> e = u.outEdges.get(i);
                     Node<V> v = e.b;
-                    resetAttribs(v);
+                    v.resetAlgorithmAttribs(runID);
                     if (!v.visited) {
                         float newDistance = u.distance + e.weight;
                         if (newDistance < v.distance) {
@@ -242,7 +238,7 @@ class AlgorithmImplementations<V> {
     }
 
     private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v, Set<Node<V>> set) {
-        resetAttribs(v);
+        v.resetAlgorithmAttribs(runID);
 
         if (v.visited) return true;
         if (v.seen) {
@@ -342,8 +338,8 @@ class AlgorithmImplementations<V> {
     }
 
     private boolean doesEdgeCreateCycle(Node<V> u, Node<V> v) {
-        if (resetAttribs(u)) u.prev = u;
-        if (resetAttribs(v)) v.prev = v;
+        if (u.resetAlgorithmAttribs(runID)) u.prev = u;
+        if (v.resetAlgorithmAttribs(runID)) v.prev = v;
         Node<V> rootU = pathCompressionFind(u);
         Node<V> rootV = pathCompressionFind(v);
         if (rootU.equals(rootV)) {
@@ -361,7 +357,7 @@ class AlgorithmImplementations<V> {
         if (graph.size() < 3 || graph.getEdgeCount() < 3) return false;
         init();
         for (Node<V> v : graph.getNodes()) {
-            resetAttribs(v);
+            v.resetAlgorithmAttribs(runID);
             if (detectCycleDFS(v, null, new HashSet<>())) {
                 init();
                 return true;
@@ -376,13 +372,14 @@ class AlgorithmImplementations<V> {
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
             Connection<V> e = v.outEdges.get(i);
-            if (!graph.isDirected() && e.b.equals(parent)) continue;
-            resetAttribs(e.b);
-            if (recursiveStack.contains(e.b)) {
+            Node<V> u = e.b;
+            if (!graph.isDirected() && u.equals(parent)) continue;
+            u.resetAlgorithmAttribs(runID);
+            if (recursiveStack.contains(u)) {
                 return true;
             }
-            if (!e.b.visited) {
-                if (detectCycleDFS(e.b, v, recursiveStack)) return true;
+            if (!u.visited) {
+                if (detectCycleDFS(u, v, recursiveStack)) return true;
             }
         }
         recursiveStack.remove(v);

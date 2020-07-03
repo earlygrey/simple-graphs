@@ -82,17 +82,17 @@ public class Node<V> {
     float distance;
     float estimate;
     Node<V> prev;
-    int i, runID;
+    int i, lastRunID;
 
     boolean resetAlgorithmAttribs(int runID) {
-        if (runID == this.runID) return false;
+        if (runID == this.lastRunID) return false;
         visited = false;
         prev = null;
         distance = Float.MAX_VALUE;
         estimate = 0;
         i = 0;
         seen = false;
-        this.runID = runID;
+        this.lastRunID = runID;
         return true;
     }
 

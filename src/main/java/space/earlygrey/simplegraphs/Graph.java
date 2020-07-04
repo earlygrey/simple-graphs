@@ -197,8 +197,8 @@ public abstract class Graph<V> {
     //--------------------
 
     void removeNode(Node<V> node) {
-        for (Connection<V> connection : node.outEdges) {
-            connection.b.removeEdge(node);
+        for (int i = node.outEdges.size()-1; i >= 0; i--) {
+            removeConnection(node.outEdges.get(i).b, node);
         }
         node.disconnect();
         vertexMap.remove(node.object);

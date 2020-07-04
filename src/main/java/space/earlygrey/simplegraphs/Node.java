@@ -52,7 +52,14 @@ public class Node<V> {
     Connection<V> removeEdge(Node<V> v) {
         Connection<V> edge = neighbours.remove(v);
         if (edge == null) return null;
-        outEdges.remove(edge);
+        // loop backwards to make Graph#removeNode faster
+        for (int j = outEdges.size()-1; j >= 0; j--) {
+            Connection<V> connection = outEdges.get(j);
+            if (connection.equals(edge)) {
+                outEdges.remove(j);
+                break;
+            }
+        }
         return edge;
     }
 

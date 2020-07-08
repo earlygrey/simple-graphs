@@ -19,7 +19,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     private final Graph<V> graph;
-    private final BinaryHeap heap;
+    private final BinaryHeap<V> heap;
     private final ArrayDeque<Node<V>> queue;
     private int runID = 0;
 
@@ -29,7 +29,7 @@ class AlgorithmImplementations<V> {
 
     AlgorithmImplementations(Graph<V> graph) {
         this.graph = graph;
-        heap = new BinaryHeap();
+        heap = new BinaryHeap<>();
         queue = new ArrayDeque<>();
     }
 

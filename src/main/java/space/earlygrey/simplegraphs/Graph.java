@@ -1,28 +1,40 @@
+/*
+MIT License
+
+Copyright (c) 2020 earlygrey
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
 
 public abstract class Graph<V> {
 
     //================================================================================
     // Members
     //================================================================================
-
-    final Internals<V> internals = new Internals<>(this);
-
+    
     final Map<V, Node<V>> vertexMap;
     final Map<Connection<V>, Connection<V>> edgeMap;
-
-    final Supplier<Connection<V>> edgeSupplier;
-
+    
     //================================================================================
     // Constructors
     //================================================================================
@@ -30,7 +42,6 @@ public abstract class Graph<V> {
     protected Graph() {
         vertexMap = new LinkedHashMap<>();
         edgeMap = new LinkedHashMap<>();
-        edgeSupplier = getEdgeSupplier();
     }
 
     protected Graph(Collection<V> vertices) {
@@ -48,7 +59,7 @@ public abstract class Graph<V> {
     //  Abstract Methods
     //--------------------
 
-    protected abstract Supplier<Connection<V>> getEdgeSupplier();
+    protected abstract Connection<V> obtainEdge();
     abstract Graph<V> createNew();
     public abstract Algorithms algorithms();
 
@@ -316,11 +327,6 @@ public abstract class Graph<V> {
      */
     public int getEdgeCount() {
         return edgeMap.size();
-    }
-
-
-    public Internals<V> internals() {
-        return internals;
     }
 
 

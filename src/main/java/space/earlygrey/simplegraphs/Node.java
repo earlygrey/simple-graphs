@@ -19,12 +19,22 @@ public class Node<V> {
     ArrayList<Connection<V>> outEdges = new ArrayList<>(); // List for fast iteration
 
     //================================================================================
+    // Node map fields
+    //================================================================================
+
+    final int objectHash;
+    int mapHash;
+    Node<V> nextInOrder = null, prevInOrder = null;
+    Node<V> nextInBucket = null;
+
+    //================================================================================
     // Constructor
     //================================================================================
 
-    Node(V v, Graph<V> graph) {
+    Node(V v, Graph<V> graph, int objectHash) {
         this.object = v;
         this.graph = graph;
+        this.objectHash = objectHash;
         idHash = System.identityHashCode(this);
     }
 
@@ -102,6 +112,7 @@ public class Node<V> {
         this.lastRunID = runID;
         return true;
     }
+
 
     //================================================================================
     // Heap fields

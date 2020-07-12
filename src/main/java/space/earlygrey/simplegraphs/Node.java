@@ -51,17 +51,6 @@ public class Node<V> {
         idHash = System.identityHashCode(this);
     }
 
-    /**
-     * Temporary; comment this out or remove it once BinaryHeapTest#testBinaryHeap() passes.
-     * @param heapWeight the weight of this node when used in a BinaryHeap
-     */
-    Node(float heapWeight){
-        this.object = null;
-        this.graph = null;
-        idHash = System.identityHashCode(this);
-        heapValue = heapWeight;
-    }
-
     //================================================================================
     // Internal methods
     //================================================================================

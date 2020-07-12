@@ -118,7 +118,7 @@ public class Node<V> {
         if (runID == this.lastRunID) return false;
         visited = false;
         prev = null;
-        distance = Float.POSITIVE_INFINITY;
+        distance = Float.MAX_VALUE;
         estimate = 0;
         i = 0;
         seen = false;

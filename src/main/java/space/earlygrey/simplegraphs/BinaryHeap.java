@@ -92,19 +92,11 @@ public class BinaryHeap {
      * configured as a max heap).
      */
     public Node pop() {
-        return remove(0);
-    }
-
-    public Node remove(Node node) {
-        return remove(node.heapIndex);
-    }
-
-    private Node remove(int index) {
         Node[] nodes = this.nodes;
-        Node removed = nodes[index];
-        nodes[index] = nodes[--size];
+        Node removed = nodes[0];
+        nodes[0] = nodes[--size];
         nodes[size] = null;
-        if (size > 0 && index < size) down(index);
+        if (size > 0) down(0);
         return removed;
     }
 

@@ -13,12 +13,9 @@ import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 class VertexCollection<V> implements Collection<V> {
 
     final NodeMap<V> nodeMap;
-    final Class<V> clazz;
 
-
-    VertexCollection(NodeMap<V> nodeMap, Class<V> clazz) {
+    VertexCollection(NodeMap<V> nodeMap) {
         this.nodeMap = nodeMap;
-        this.clazz = clazz;
     }
 
     @Override
@@ -33,7 +30,6 @@ class VertexCollection<V> implements Collection<V> {
 
     @Override
     public boolean contains(Object o) {
-        if (o==null || !o.getClass().equals(clazz)) return false;
         return nodeMap.contains((V) o);
     }
 
@@ -144,11 +140,9 @@ class VertexCollection<V> implements Collection<V> {
 
     static class VertexIterator<V> implements Iterator<V> {
 
-        private final NodeMap<V> nodeMap;
         private final NodeIterator<V> nodeIterator;
 
         public VertexIterator(NodeMap<V> nodeMap) {
-            this.nodeMap = nodeMap;
             nodeIterator = new NodeIterator<>(nodeMap);
         }
 
@@ -165,6 +159,28 @@ class VertexCollection<V> implements Collection<V> {
         @Override
         public void remove() {
             throw new UnsupportedOperationException("You cannot modify this list - use the Graph object.");
+        }
+    }
+
+
+    @Override
+    public String toString() {
+        Iterator<V> it = this.iterator();
+        if (!it.hasNext()) {
+            return "[]";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append('[');
+
+            while(true) {
+                V v = it.next();
+                sb.append(v == this ? "(this Collection)" : v);
+                if (!it.hasNext()) {
+                    return sb.append(']').toString();
+                }
+
+                sb.append(',').append(' ');
+            }
         }
     }
 }

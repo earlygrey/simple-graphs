@@ -2,6 +2,7 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 class NodeMap<V> {
@@ -15,12 +16,17 @@ class NodeMap<V> {
     int threshold = -1;
     static final int MIN_SIZE = 32;
 
+    VertexCollection<V> vertexCollection;
+    NodeCollection<V> nodeCollection;
+
     static final String MODIFY_EXCEPTION = "You cannot modify this list - use the Graph object.";
 
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
         table = new Node[MIN_SIZE / 2];
         checkLength();
+        vertexCollection = new VertexCollection<>(this);
+        nodeCollection = new NodeCollection<>(this);
     }
 
     Node<V> get(V v) {
@@ -45,18 +51,18 @@ class NodeMap<V> {
     Node<V> put(V v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
-        Node<V> head = table[i];
-        if (head == null) {
+        Node<V> bucketHead = table[i];
+        if (bucketHead == null) {
             if (checkLength()) i = getIndex(hash);
-            head = new Node<>(v, graph, objectHash);
-            head.mapHash = hash;
-            table[i] = head;
+            bucketHead = new Node<>(v, graph, objectHash);
+            bucketHead.mapHash = hash;
+            table[i] = bucketHead;
             size++;
-            addToList(head);
-            return head;
+            addToList(bucketHead);
+            return bucketHead;
         }
 
-        Node<V> currentNode = head, previousNode = null;
+        Node<V> currentNode = bucketHead, previousNode = null;
         while (currentNode != null) {
             if (v.equals(currentNode.object)) return null;
             previousNode = currentNode;
@@ -88,9 +94,13 @@ class NodeMap<V> {
         int i = getIndex(hash);
         Node<V> currentNode = table[i];
 
-        if (currentNode == null) {
+        // currentNode should not be null if v is in map
+
+        if (currentNode != null && v.equals(currentNode.object)) {
             table[i] = null;
-            return null;
+            size--;
+            removeFromList(currentNode);
+            return currentNode;
         }
 
         Node<V> previousNode = null;
@@ -98,6 +108,7 @@ class NodeMap<V> {
             if (v.equals(currentNode.object)) {
                 if (previousNode != null) previousNode.nextInBucket = currentNode.nextInBucket;
                 size--;
+                removeFromList(currentNode);
                 return currentNode;
             }
             previousNode = currentNode;
@@ -111,10 +122,12 @@ class NodeMap<V> {
         if (head == node) {
             head = node.nextInOrder;
             if (head != null) head.prevInOrder = null;
+            return;
         }
         if (tail == node) {
             tail = node.prevInOrder;
             if (tail != null) tail.nextInOrder = null;
+            return;
         }
         node.prevInOrder.nextInOrder = node.nextInOrder;
         node.nextInOrder.prevInOrder = node.prevInOrder;
@@ -138,7 +151,10 @@ class NodeMap<V> {
                             else tail2.nextInBucket = current;
                             tail2 = current;
                         }
+                        Node<V> next = current.nextInBucket;
                         current.nextInBucket = null;
+                        current = next;
+
                     }
                 }
             }
@@ -170,29 +186,26 @@ class NodeMap<V> {
     static class NodeIterator<V> implements Iterator<Node<V>> {
 
         final NodeMap<V> nodeMap;
-        private Node<V> lastReturned;
-        private Node<V> next;
-        private int nextIndex;
+        Node<V> current;
 
         NodeIterator(NodeMap<V> nodeMap) {
             this.nodeMap = nodeMap;
+            current = nodeMap.head;
         }
 
         @Override
         public boolean hasNext() {
-            return this.nextIndex < nodeMap.size;
+            return current != null;
         }
 
         @Override
         public Node<V> next() {
-            if (!this.hasNext()) {
-                throw new NoSuchElementException();
-            } else {
-                lastReturned = next;
-                next = next.nextInOrder;
-                nextIndex++;
-                return lastReturned;
+            if(hasNext()){
+                Node<V> next = current;
+                current = current.nextInOrder;
+                return next;
             }
+            return null;
         }
 
         @Override

@@ -6,11 +6,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
+
 public abstract class Graph<V> {
+
 
     //================================================================================
     // Members
@@ -18,8 +19,8 @@ public abstract class Graph<V> {
 
     final Internals<V> internals = new Internals<>(this);
 
-    final Map<V, Node<V>> vertexMap;
-    final Map<Connection<V>, Connection<V>> edgeMap;
+    final NodeMap<V> vertexMap;
+    final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
 
     final Supplier<Connection<V>> edgeSupplier;
 
@@ -28,7 +29,7 @@ public abstract class Graph<V> {
     //================================================================================
 
     protected Graph() {
-        vertexMap = new LinkedHashMap<>();
+        vertexMap = new NodeMap<>(this);
         edgeMap = new LinkedHashMap<>();
         edgeSupplier = getEdgeSupplier();
     }
@@ -63,11 +64,8 @@ public abstract class Graph<V> {
      */
 
     public boolean addVertex(V v) {
-        Node<V> node = getNode(v);
-        if (node!=null) return false;
-        node = new Node(v, this);
-        vertexMap.put(v, node);
-        return true;
+        Node<V> node = vertexMap.put(v);
+        return node != null;
     }
 
     /**
@@ -75,6 +73,12 @@ public abstract class Graph<V> {
      * @param vertices a collection of vertices to be added
      */
     public void addVertices(Collection<V> vertices) {
+        for (V v : vertices) {
+            addVertex(v);
+        }
+    }
+
+    public void addVertices(V... vertices) {
         for (V v : vertices) {
             addVertex(v);
         }
@@ -170,12 +174,13 @@ public abstract class Graph<V> {
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
-        List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
+        /*List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
         entryList.sort(Entry.comparingByKey(comparator));
         vertexMap.clear();
         for (Entry<V, Node<V>> entry : entryList) {
             vertexMap.put(entry.getKey(), entry.getValue());
-        }
+        }*/
+        vertexMap.sort(comparator);
     }
 
     /**
@@ -237,7 +242,7 @@ public abstract class Graph<V> {
      * @return true if the graph contains the vertex, false otherwise
      */
     public boolean contains(V v) {
-        return vertexMap.containsKey(v);
+        return vertexMap.contains(v);
     }
 
     /**
@@ -290,7 +295,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the vertices in the graph
      */
     public Collection<V> getVertices() {
-        return Collections.unmodifiableCollection(vertexMap.keySet());
+        return vertexMap.vertexCollection;
     }
 
 
@@ -307,7 +312,7 @@ public abstract class Graph<V> {
      * @return the number of vertices
      */
     public int size() {
-        return vertexMap.size();
+        return vertexMap.size;
     }
 
     /**
@@ -333,7 +338,7 @@ public abstract class Graph<V> {
     }
 
     Collection<Node<V>> getNodes() {
-        return vertexMap.values();
+        return vertexMap.nodeCollection;
     }
 
     boolean connectionExists(Node<V> u, Node<V> v) {

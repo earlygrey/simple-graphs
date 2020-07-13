@@ -1,6 +1,7 @@
 package space.earlygrey.simplegraphs;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -215,6 +216,60 @@ class NodeMap<V> {
             throw new UnsupportedOperationException("You cannot modify this list - use the Graph object.");
         }
 
+    }
+
+
+
+    // sorting
+    // adapted from https://www.geeksforgeeks.org/merge-sort-for-linked-list/
+
+    void sort(Comparator<V> comparator) {
+        head = mergeSort(head, comparator);
+    }
+
+    Node<V> mergeSort(Node<V> h, Comparator<V> comparator) {
+
+        if (h == null || h.nextInOrder == null) return h;
+
+        Node<V> middle = getMiddle(h);
+        Node<V> middleNext = middle.nextInOrder;
+
+        middle.nextInOrder = null;
+
+        Node<V> left = mergeSort(h, comparator);
+        Node<V> right = mergeSort(middleNext, comparator);
+
+        Node<V> newHead = sortedMerge(left, right, comparator);
+        return newHead;
+    }
+
+    Node<V> sortedMerge(Node<V> a, Node<V> b, Comparator<V> comparator) {
+
+        if (a == null) return b;
+        if (b == null) return a;
+
+        Node<V> newHead;
+
+        if (comparator.compare(a.object, b.object) < 0) {
+            newHead = a;
+            newHead.nextInOrder = sortedMerge(a.nextInOrder, b, comparator);
+        } else {
+            newHead = b;
+            newHead.nextInOrder = sortedMerge(a, b.nextInOrder, comparator);
+        }
+        return newHead;
+    }
+
+    Node<V> getMiddle(Node<V> head) {
+        if (head == null) return null;
+
+        Node<V> slow = head, fast = head;
+
+        while (fast.nextInOrder != null && fast.nextInOrder.nextInOrder != null) {
+            slow = slow.nextInOrder;
+            fast = fast.nextInOrder.nextInOrder;
+        }
+        return slow;
     }
 
 

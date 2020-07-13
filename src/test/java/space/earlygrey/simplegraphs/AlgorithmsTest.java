@@ -153,23 +153,36 @@ public class AlgorithmsTest {
         for (int i = 0; i < n; i++) graph.addVertex(i);
         for (int i = 0; i < n-1; i++) graph.addEdge(i+1, i);
 
-        List<Integer> sorted = new ArrayList<>(n);
-        boolean success = graph.algorithms().topologicalSort(sorted);
-        assertTrue(success);
-
         graph.algorithms().topologicalSort();
         int i = n-1;
         for (Integer vertex : graph.getVertices()) {
             Integer expected = Integer.valueOf(i--);
             assertEquals(expected, vertex);
-            assertEquals(expected, sorted.get(n-2-i));
         }
 
-
-        graph.addEdge(0, n-1);
-        success = graph.algorithms().topologicalSort();
+        graph.addEdge(n/2, n/2 + 1);
+        boolean success = graph.algorithms().topologicalSort();
         assertTrue(!success);
 
+        graph = new DirectedGraph<>();
+        graph.addVertices(0, 1, 2, 3, 4, 5);
+        graph.addEdge(2,0);
+        graph.addEdge(1,2);
+        graph.addEdge(4,1);
+        graph.addEdge(4,2);
+        graph.addEdge(3,5);
+        assertTrue(graph.algorithms().topologicalSort());
+
+        graph = new DirectedGraph<>();
+        graph.addVertices(0, 1, 2, 3, 4, 5);
+        graph.addEdge(2,0);
+        graph.addEdge(1,2);
+        graph.addEdge(4,1);
+        graph.addEdge(4,2);
+        graph.addEdge(3,5);
+
+        graph.addEdge(2,4);
+        assertTrue(!graph.algorithms().topologicalSort());
     }
 
     @Test

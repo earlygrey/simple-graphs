@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ class AlgorithmImplementations<V> {
     private final BinaryHeap heap;
     private final ArrayDeque<Node<V>> queue;
     private int runID = 0;
+    private int counter = 0;
 
     //================================================================================
     // Constructor
@@ -39,6 +41,7 @@ class AlgorithmImplementations<V> {
 
     private void init() {
         runID++;
+        counter = 0;
     }
 
     //================================================================================
@@ -204,10 +207,10 @@ class AlgorithmImplementations<V> {
     // Topological sorting
     //================================================================================
 
-    boolean topologicalSort(List<V> sortedVertices) {
+   /* boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
         init();
-        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
+        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.getNodes());
         boolean success = true;
         while (success && !set.isEmpty()) {
             success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
@@ -215,48 +218,55 @@ class AlgorithmImplementations<V> {
         if (success) {
             Collections.reverse(sortedVertices);
         }
-
         return success;
-    }
+    }*/
 
     boolean topologicalSort() {
-        List<V> sortedVertices = new ArrayList<>();
+        if (graph.size() < 2 || graph.getEdgeCount() < 2) return true;
+        //System.out.println("SORT "+graph.vertexMap.head+" -> "+graph.getVertices()+" -> "+graph.vertexMap.tail+"   ");
         init();
-        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
-        boolean success = true;
-        while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
+        Node<V> currentPosition = null;
+        boolean first = true;
+        while (first || (currentPosition != null && currentPosition.prevInOrder!=null)) {
+            currentPosition = recursiveTopologicalSort(first ? graph.vertexMap.tail : currentPosition.prevInOrder, currentPosition);
+            first = false;
         }
-        if (success) {
-            for (int i = sortedVertices.size()-1; i >= 0; i--) {
-                V v = sortedVertices.get(i);
-                Node<V> value = graph.vertexMap.remove(v);
-                graph.vertexMap.put(v, value);
-            }
-        }
-        return success;
+        return currentPosition != null;
     }
 
-    private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v, Set<Node<V>> set) {
+    private Node<V> recursiveTopologicalSort(Node<V> v, Node<V> currentPosition) {
+
         v.resetAlgorithmAttribs(runID);
 
-        if (v.visited) return true;
-        if (v.seen) {
-            // not a DAG
-            return false;
-        }
+        if (v.visited) return currentPosition;
+        if (v.seen) return null; // not a DAG
+
         v.seen = true;
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
             Connection<V> e = v.outEdges.get(i);
-            boolean success = recursiveTopologicalSort(sortedVertices, e.b, set);
-            if (!success) return false;
+            currentPosition = recursiveTopologicalSort(e.b, currentPosition);
+            if (currentPosition == null) return null;
         }
         v.seen = false;
         v.visited = true;
-        sortedVertices.add(v.object);
-        set.remove(v);
-        return true;
+
+        if (currentPosition!=null && currentPosition.prevInOrder != v) {
+            //System.out.println("   moving "+v+" to before "+currentPosition);
+
+            graph.vertexMap.removeFromList(v);
+
+            if (currentPosition != null) {
+                graph.vertexMap.insertIntoListBefore(v, currentPosition);
+            } else if (v != graph.vertexMap.tail) { // first iteration
+                v.nextInOrder = null;
+                v.prevInOrder = graph.vertexMap.tail;
+                graph.vertexMap.tail.nextInOrder = v;
+            }
+            //System.out.println("  moved "+graph.vertexMap.head+" -> "+graph.getVertices()+" -> "+graph.vertexMap.tail+"   ");
+        }
+
+        return v;
     }
 
     //================================================================================

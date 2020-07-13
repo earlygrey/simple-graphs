@@ -3,8 +3,6 @@ package space.earlygrey.simplegraphs;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 class NodeMap<V> {
 
@@ -90,6 +88,26 @@ class NodeMap<V> {
         node.prevInOrder = tail;
         tail.nextInOrder = node;
         tail = node;
+    }
+
+    void insertIntoList(Node<V> v, Node<V> at, boolean before) {
+        if (before) {
+            v.nextInOrder = at;
+            v.prevInOrder = at.prevInOrder;
+            at.prevInOrder = v;
+            if (v.prevInOrder != null) v.prevInOrder.nextInOrder = v;
+            else head = v;
+        } else {
+            v.prevInOrder = at;
+            v.nextInOrder = at.nextInOrder;
+            at.nextInOrder = v;
+            if (v.nextInOrder != null) v.nextInOrder.prevInOrder = v;
+            else tail = v;
+        }
+    }
+
+    void insertIntoListBefore(Node<V> v, Node<V> at) {
+        insertIntoList(v, at, true);
     }
 
     Node<V> remove(V v) {

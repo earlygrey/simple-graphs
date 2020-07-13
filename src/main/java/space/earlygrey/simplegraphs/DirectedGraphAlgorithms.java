@@ -25,9 +25,9 @@ public class DirectedGraphAlgorithms<V> extends Algorithms<V> {
      * terminate and the supplied list will only contain the vertices up until the point of termination.
      * @return true if the sort was successful, false if the graph contains a cycle
      */
-    public boolean topologicalSort(List<V> sortedVertices) {
+   /* public boolean topologicalSort(List<V> sortedVertices) {
         return implementations.topologicalSort(sortedVertices);
-    }
+    }*/
 
 
 }

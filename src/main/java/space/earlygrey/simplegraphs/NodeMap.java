@@ -137,9 +137,6 @@ class NodeMap<V> {
 
     boolean checkLength() {
         if (size > threshold) {
-            if (size > 0) {
-                System.out.println("hello");
-            }
             int newLength = 2 * table.length;
             Node<V>[] oldTable = table, newTable = new Node[newLength];
             for (int i = 0; i < oldTable.length; i++) {

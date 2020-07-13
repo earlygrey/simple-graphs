@@ -32,10 +32,12 @@ class NodeMap<V> {
     Node<V> get(V v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
-        Node<V> head = table[i];
-        if (head == null) return null;
+        Node<V> bucketHead = table[i];
+        if (bucketHead == null) {
+            return null;
+        }
 
-        Node<V> currentNode = head;
+        Node<V> currentNode = bucketHead;
         while (currentNode != null) {
             if (v.equals(currentNode.object)) return currentNode;
             currentNode = currentNode.nextInBucket;
@@ -135,13 +137,16 @@ class NodeMap<V> {
 
     boolean checkLength() {
         if (size > threshold) {
+            if (size > 0) {
+                System.out.println("hello");
+            }
             int newLength = 2 * table.length;
             Node<V>[] oldTable = table, newTable = new Node[newLength];
             for (int i = 0; i < oldTable.length; i++) {
                 if (oldTable[i] != null) {
                     Node<V> tail1 = null, tail2 = null, current = oldTable[i];
                     while (current != null) {
-                        int newIndex = getIndex(current.mapHash);
+                        int newIndex = getIndex(current.mapHash, newLength);
                         if (newIndex == i) {
                             if (tail1 == null) newTable[newIndex] = current;
                             else tail1.nextInBucket = current;

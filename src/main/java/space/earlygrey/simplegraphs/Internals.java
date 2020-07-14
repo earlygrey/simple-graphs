@@ -15,7 +15,7 @@ public class Internals<V> {
     }
 
     public Collection<Node<V>> getNodes() {
-        return graph.vertexMap.nodeCollection;
+        return graph.nodeMap.nodeCollection;
     }
 
     public Collection<Connection<V>> getConnections() {

@@ -7,14 +7,19 @@ import java.util.Iterator;
 class NodeMap<V> {
 
     final Graph<V> graph;
+
+    // array of "buckets"
     Node<V>[] table;
 
+    // linked list of map entries
     Node<V> head, tail;
 
     int size = 0;
     int threshold = -1;
     static final int MIN_SIZE = 32;
+    static final float RESIZE_THRESHOLD = 0.7f;
 
+    // collections for returning to the user
     VertexCollection<V> vertexCollection;
     NodeCollection<V> nodeCollection;
 
@@ -28,13 +33,14 @@ class NodeMap<V> {
         nodeCollection = new NodeCollection<>(this);
     }
 
+    /**
+     * Return the `Node<V>` to which the vertex v is mapped, or null if not in the map.
+     */
     Node<V> get(V v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
-        if (bucketHead == null) {
-            return null;
-        }
+        if (bucketHead == null) return null;
 
         Node<V> currentNode = bucketHead;
         while (currentNode != null) {
@@ -49,6 +55,10 @@ class NodeMap<V> {
         return get(v) != null;
     }
 
+    /**
+     * Create a Node<V> and associate the vertex v with it.
+     * @return the `Node<V>` if v is not in the map, or null if it already is.
+     */
     Node<V> put(V v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
@@ -79,6 +89,9 @@ class NodeMap<V> {
         return currentNode;
     }
 
+    /**
+     * Add the node to the tail of the linked list.
+     */
     void addToList(Node<V> node) {
         if (head == null) {
             head = node;
@@ -90,6 +103,9 @@ class NodeMap<V> {
         tail = node;
     }
 
+    /**
+     * Insert the node at a specific point in the linked list.
+     */
     void insertIntoList(Node<V> v, Node<V> at, boolean before) {
         if (before) {
             v.nextInOrder = at;
@@ -112,6 +128,10 @@ class NodeMap<V> {
         insertIntoList(v, at, true);
     }
 
+    /**
+     * Remove the vertex V from the map.
+     * @return the `Node<V>` that v was associated with, or null if v is not in the map.
+     */
     Node<V> remove(V v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
@@ -141,6 +161,9 @@ class NodeMap<V> {
         return null;
     }
 
+    /**
+     * Remove the node from the linked list.
+     */
     void removeFromList(Node<V> node) {
         if (head == node) {
             head = node.nextInOrder;
@@ -156,6 +179,10 @@ class NodeMap<V> {
         node.nextInOrder.prevInOrder = node.prevInOrder;
     }
 
+    /**
+     * Increase the length of the table if the size exceeds the capacity,
+     * and recalculate the indices.
+     */
     boolean checkLength() {
         if (size > threshold) {
             int newLength = 2 * table.length;
@@ -181,7 +208,7 @@ class NodeMap<V> {
                     }
                 }
             }
-            threshold = (int) (0.7 * newLength);
+            threshold = (int) (RESIZE_THRESHOLD * newLength);
             table = newTable;
             return true;
         }
@@ -193,19 +220,29 @@ class NodeMap<V> {
         size = 0;
     }
 
-
+    /**
+     * Get the table index of the Node<V> which has the given hash.
+     */
     int getIndex(int hash) {
         return getIndex(hash, table.length);
     }
+
     static int getIndex(int hash,  int length) {
         return hash & (length - 1);
     }
 
+    /**
+     * Get the hash used to calculate the index in the table at which the Node<V> associated with
+     * v would be held.
+     */
     static int hash(Object v) {
         int hashcode = v.hashCode();
         return hashcode ^ (hashcode >>> 16);
     }
 
+    /**
+     * Iterates in the order of the linked list. Used by teh vertex and Node<V> collections.
+     */
     static class NodeIterator<V> implements Iterator<Node<V>> {
 
         final NodeMap<V> nodeMap;

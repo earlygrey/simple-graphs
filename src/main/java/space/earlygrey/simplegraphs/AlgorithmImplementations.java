@@ -254,7 +254,7 @@ class AlgorithmImplementations<V> {
 
         // start the cursor at the tail and work towards the head,
         // so the list is sorted from head to tail
-        cursor = graph.vertexMap.tail;
+        cursor = graph.nodeMap.tail;
 
         boolean success = true;
         while (success && cursor != null) {
@@ -264,7 +264,7 @@ class AlgorithmImplementations<V> {
         cursor = null;
         return success;
     }
-    
+
     private boolean recursiveTopologicalSort(Node<V> v) {
 
         v.resetAlgorithmAttribs(runID);
@@ -286,8 +286,8 @@ class AlgorithmImplementations<V> {
 
         if (cursor != v) {
             // move v from its current position to just after the cursor
-                graph.vertexMap.removeFromList(v);
-                graph.vertexMap.insertIntoListAfter(v, cursor);
+            graph.nodeMap.removeFromList(v);
+            graph.nodeMap.insertIntoListAfter(v, cursor);
         } else {
             // v is already in the cursor position, just need to move the cursor along
             cursor = cursor.prevInOrder;

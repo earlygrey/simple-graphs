@@ -30,8 +30,8 @@ public class GraphBuilder{
     }
 
     public static <V, G extends Graph<V>> void buildCompleteGraph(G graph) {
-        for (Node<V> a : graph.vertexMap.nodeCollection) {
-            for (Node<V> b : graph.vertexMap.nodeCollection) {
+        for (Node<V> a : graph.nodeMap.nodeCollection) {
+            for (Node<V> b : graph.nodeMap.nodeCollection) {
                 if (!a.equals(b)) {
                     Connection<V> e = a.getEdge(b);
                     if (e == null) {

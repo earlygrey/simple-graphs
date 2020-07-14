@@ -41,7 +41,7 @@ public abstract class Graph<V> {
 
     //final Internals<V> internals = new Internals<>(this);
 
-    final NodeMap<V> vertexMap;
+    final NodeMap<V> nodeMap;
     final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
 
     //================================================================================
@@ -49,7 +49,7 @@ public abstract class Graph<V> {
     //================================================================================
 
     protected Graph() {
-        vertexMap = new NodeMap<>(this);
+        nodeMap = new NodeMap<>(this);
         edgeMap = new LinkedHashMap<>();
     }
 
@@ -83,7 +83,7 @@ public abstract class Graph<V> {
      */
 
     public boolean addVertex(V v) {
-        Node<V> node = vertexMap.put(v);
+        Node<V> node = nodeMap.put(v);
         return node != null;
     }
 
@@ -184,7 +184,7 @@ public abstract class Graph<V> {
      */
     public void removeAllVertices() {
         edgeMap.clear();
-        vertexMap.clear();
+        nodeMap.clear();
     }
 
     /**
@@ -199,7 +199,7 @@ public abstract class Graph<V> {
         for (Entry<V, Node<V>> entry : entryList) {
             vertexMap.put(entry.getKey(), entry.getValue());
         }*/
-        vertexMap.sort(comparator);
+        nodeMap.sort(comparator);
     }
 
     /**
@@ -225,7 +225,7 @@ public abstract class Graph<V> {
             removeConnection(node.outEdges.get(i).b, node);
         }
         node.disconnect();
-        vertexMap.remove(node.object);
+        nodeMap.remove(node.object);
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
@@ -261,7 +261,7 @@ public abstract class Graph<V> {
      * @return true if the graph contains the vertex, false otherwise
      */
     public boolean contains(V v) {
-        return vertexMap.contains(v);
+        return nodeMap.contains(v);
     }
 
     /**
@@ -314,7 +314,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the vertices in the graph
      */
     public Collection<V> getVertices() {
-        return vertexMap.vertexCollection;
+        return nodeMap.vertexCollection;
     }
 
 
@@ -331,7 +331,7 @@ public abstract class Graph<V> {
      * @return the number of vertices
      */
     public int size() {
-        return vertexMap.size;
+        return nodeMap.size;
     }
 
     /**
@@ -348,11 +348,11 @@ public abstract class Graph<V> {
     //--------------------
 
     Node<V> getNode(V v) {
-        return vertexMap.get(v);
+        return nodeMap.get(v);
     }
 
     Collection<Node<V>> getNodes() {
-        return vertexMap.nodeCollection;
+        return nodeMap.nodeCollection;
     }
 
     boolean connectionExists(Node<V> u, Node<V> v) {

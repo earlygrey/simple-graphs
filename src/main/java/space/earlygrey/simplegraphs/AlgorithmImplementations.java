@@ -264,24 +264,23 @@ class AlgorithmImplementations<V> {
         cursor = null;
         return success;
     }
-
+    
     private boolean recursiveTopologicalSort(Node<V> v) {
 
         v.resetAlgorithmAttribs(runID);
 
         if (v.visited) return true;
-
         if (v.seen) return false; // not a DAG
 
         v.seen = true;
+
         int n = v.outEdges.size();
-
-
         for (int i = 0; i < n; i++) {
-            Connection<V> e = v.outEdges.get(i);
-            if (!recursiveTopologicalSort(e.b)) return false;
+            Connection<V> edge = v.outEdges.get(i);
+            if (!recursiveTopologicalSort(edge.b)) return false;
 
         }
+
         v.seen = false;
         v.visited = true;
 
@@ -290,7 +289,7 @@ class AlgorithmImplementations<V> {
                 graph.vertexMap.removeFromList(v);
                 graph.vertexMap.insertIntoListAfter(v, cursor);
         } else {
-            // already in the position, just need to move the cursor along
+            // v is already in the cursor position, just need to move the cursor along
             cursor = cursor.prevInOrder;
         }
 

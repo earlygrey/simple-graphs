@@ -174,7 +174,7 @@ class VertexCollection<V> implements Collection<V> {
 
             while(true) {
                 V v = it.next();
-                sb.append(v == this ? "(this Collection)" : v);
+                sb.append(v);
                 if (!it.hasNext()) {
                     return sb.append(']').toString();
                 }

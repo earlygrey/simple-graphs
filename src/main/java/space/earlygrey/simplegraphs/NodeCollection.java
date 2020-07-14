@@ -139,4 +139,25 @@ class NodeCollection<V> implements Collection<Node<V>> {
     public Stream<Node<V>> parallelStream() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        Iterator<Node<V>> it = this.iterator();
+        if (!it.hasNext()) {
+            return "[]";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append('[');
+
+            while(true) {
+                Node<V> v = it.next();
+                sb.append(v);
+                if (!it.hasNext()) {
+                    return sb.append(']').toString();
+                }
+
+                sb.append(',').append(' ');
+            }
+        }
+    }
 }

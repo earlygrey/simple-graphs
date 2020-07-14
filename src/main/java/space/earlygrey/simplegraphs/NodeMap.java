@@ -105,7 +105,9 @@ class NodeMap<V> {
             else tail = v;
         }
     }
-
+    void insertIntoListAfter(Node<V> v, Node<V> at) {
+        insertIntoList(v, at, false);
+    }
     void insertIntoListBefore(Node<V> v, Node<V> at) {
         insertIntoList(v, at, true);
     }
@@ -242,7 +244,19 @@ class NodeMap<V> {
     // adapted from https://www.geeksforgeeks.org/merge-sort-for-linked-list/
 
     void sort(Comparator<V> comparator) {
+        if (size < 2) return;
+
         head = mergeSort(head, comparator);
+
+        // reverse list (I could also toggle a flag in the iterator to flip direction instead)
+        Iterator<Node<V>> iterator = nodeCollection.iterator();
+        Node<V> node = null, prev = null;
+        while (iterator.hasNext()) {
+            node = iterator.next();
+            node.prevInOrder = prev;
+            prev = node;
+        }
+        tail = node;
     }
 
     Node<V> mergeSort(Node<V> h, Comparator<V> comparator) {

@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -184,7 +182,7 @@ class AlgorithmImplementations<V> {
         init();
 
         boolean hasHeuristic = heuristic != null;
-        
+
         start.resetAlgorithmAttribs(runID);
         start.distance = 0;
 
@@ -244,52 +242,59 @@ class AlgorithmImplementations<V> {
         return success;
     }*/
 
+    // Keep track of the current position in the linked list,
+    // We traverse the graph via DFS, and when we hit a terminal node we move that node
+    // to the current cursor position, then move the cursor along one.
+    Node<V> cursor;
+
     boolean topologicalSort() {
         if (graph.size() < 2 || graph.getEdgeCount() < 2) return true;
-        //System.out.println("SORT "+graph.vertexMap.head+" -> "+graph.getVertices()+" -> "+graph.vertexMap.tail+"   ");
+
         init();
-        Node<V> currentPosition = null;
-        boolean first = true;
-        while (first || (currentPosition != null && currentPosition.prevInOrder!=null)) {
-            currentPosition = recursiveTopologicalSort(first ? graph.vertexMap.tail : currentPosition.prevInOrder, currentPosition);
-            first = false;
+
+        // start the cursor at the tail and work towards the head,
+        // so the list is sorted from head to tail
+        cursor = graph.vertexMap.tail;
+
+        boolean success = true;
+        while (success && cursor != null) {
+            success = recursiveTopologicalSort(cursor);
         }
-        return currentPosition != null;
+
+        cursor = null;
+        return success;
     }
 
-    private Node<V> recursiveTopologicalSort(Node<V> v, Node<V> currentPosition) {
+    private boolean recursiveTopologicalSort(Node<V> v) {
 
         v.resetAlgorithmAttribs(runID);
 
-        if (v.visited) return currentPosition;
-        if (v.seen) return null; // not a DAG
+        if (v.visited) return true;
+
+        if (v.seen) return false; // not a DAG
 
         v.seen = true;
         int n = v.outEdges.size();
+
+
         for (int i = 0; i < n; i++) {
             Connection<V> e = v.outEdges.get(i);
-            currentPosition = recursiveTopologicalSort(e.b, currentPosition);
-            if (currentPosition == null) return null;
+            if (!recursiveTopologicalSort(e.b)) return false;
+
         }
         v.seen = false;
         v.visited = true;
 
-        if (currentPosition!=null && currentPosition.prevInOrder != v) {
-            //System.out.println("   moving "+v+" to before "+currentPosition);
-
-            graph.vertexMap.removeFromList(v);
-
-            if (currentPosition != null) {
-                graph.vertexMap.insertIntoListBefore(v, currentPosition);
-            } else if (v != graph.vertexMap.tail) { // first iteration
-                v.nextInOrder = null;
-                v.prevInOrder = graph.vertexMap.tail;
-                graph.vertexMap.tail.nextInOrder = v;
-            }
-            //System.out.println("  moved "+graph.vertexMap.head+" -> "+graph.getVertices()+" -> "+graph.vertexMap.tail+"   ");
+        if (cursor != v) {
+            // move v from its current position to just after the cursor
+                graph.vertexMap.removeFromList(v);
+                graph.vertexMap.insertIntoListAfter(v, cursor);
+        } else {
+            // already in the position, just need to move the cursor along
+            cursor = cursor.prevInOrder;
         }
 
-        return v;
+        return true;
     }
 
     //================================================================================
@@ -309,7 +314,7 @@ class AlgorithmImplementations<V> {
             return Float.floatToIntBits(o2.weight - o1.weight);
         }
     };
-    
+
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
@@ -322,9 +327,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-           edgeList.sort(weightComparator);
+            edgeList.sort(weightComparator);
         } else {
-           edgeList.sort(reverseWeightComparator);
+            edgeList.sort(reverseWeightComparator);
         }
 
         int totalNodes = graph.size();

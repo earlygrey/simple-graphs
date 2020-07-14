@@ -28,6 +28,7 @@ import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -174,14 +175,22 @@ public class AlgorithmsTest {
         DirectedGraph<Integer> graph = new DirectedGraph<>();
         int n = 10;
         for (int i = 0; i < n; i++) graph.addVertex(i);
+
+        graph.addEdge(9,8);
+        graph.addEdge(6,7);
+        assertTrue(graph.algorithms().topologicalSort());
+
+        graph.removeAllEdges();
+
         for (int i = 0; i < n-1; i++) graph.addEdge(i+1, i);
 
-        graph.algorithms().topologicalSort();
+        assertTrue(graph.algorithms().topologicalSort());
         int i = n-1;
         for (Integer vertex : graph.getVertices()) {
             Integer expected = Integer.valueOf(i--);
             assertEquals(expected, vertex);
         }
+
 
         graph.addEdge(n/2, n/2 + 1);
         boolean success = graph.algorithms().topologicalSort();

@@ -3,10 +3,6 @@ package space.earlygrey.simplegraphs;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
@@ -38,10 +34,6 @@ class NodeCollection<V> implements Collection<Node<V>> {
         return new NodeIterator<>(nodeMap);
     }
 
-    @Override
-    public void forEach(Consumer<? super Node<V>> action) {
-
-    }
 
     @Override
     public Object[] toArray() {
@@ -101,11 +93,6 @@ class NodeCollection<V> implements Collection<Node<V>> {
     }
 
     @Override
-    public boolean removeIf(Predicate<? super Node<V>> filter) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
-    }
-
-    @Override
     public boolean retainAll(Collection<?> collection) {
         throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
     }
@@ -123,21 +110,6 @@ class NodeCollection<V> implements Collection<Node<V>> {
     @Override
     public int hashCode() {
         return 0;
-    }
-
-    @Override
-    public Spliterator<Node<V>> spliterator() {
-        return null;
-    }
-
-    @Override
-    public Stream<Node<V>> stream() {
-        return null;
-    }
-
-    @Override
-    public Stream<Node<V>> parallelStream() {
-        return null;
     }
 
     @Override

@@ -44,7 +44,6 @@ class AlgorithmImplementations<V> {
     private final BinaryHeap heap;
     private final ArrayDeque<Node<V>> queue;
     private int runID = 0;
-    private int counter = 0;
 
     //================================================================================
     // Constructor
@@ -62,7 +61,6 @@ class AlgorithmImplementations<V> {
 
     private void init() {
         runID++;
-        counter = 0;
     }
 
     //================================================================================
@@ -70,7 +68,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return findShortestPath(start, target, new ArrayList<>());
+        return findShortestPath(start, target, new ArrayList<V>());
     }
 
     //================================================================================
@@ -326,9 +324,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-            edgeList.sort(weightComparator);
+            Collections.sort(edgeList, weightComparator);
         } else {
-            edgeList.sort(reverseWeightComparator);
+            Collections.sort(edgeList, reverseWeightComparator);
         }
 
         int totalNodes = graph.size();
@@ -395,7 +393,7 @@ class AlgorithmImplementations<V> {
         init();
         for (Node<V> v : graph.getNodes()) {
             v.resetAlgorithmAttribs(runID);
-            if (detectCycleDFS(v, null, new HashSet<>())) {
+            if (detectCycleDFS(v, null, new HashSet<Node<V>>())) {
                 init();
                 return true;
             }

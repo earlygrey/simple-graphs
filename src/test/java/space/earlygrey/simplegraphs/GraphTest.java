@@ -26,9 +26,12 @@ package space.earlygrey.simplegraphs;
 import org.junit.Test;
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -38,17 +41,19 @@ public class GraphTest {
     @Test
     public void verticesCanBeAddedAndRemoved() {
         UndirectedGraph<Integer> graph = new UndirectedGraph<>();
-        int n = 10;
+        int n = 16;
+        List<Integer> list = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
             graph.addVertex(i);
+            list.add(i);
         }
 
         assertEquals(n, graph.size());
 
-        Integer i = 0;
+        Integer counter = 0;
         for (Integer v : graph.getVertices()) {
-            assertEquals(i++, v);
+            assertEquals(counter++, v);
             assertTrue(graph.contains(v));
         }
 
@@ -62,13 +67,39 @@ public class GraphTest {
 
         graph.removeAllVertices();
         assertEquals(0, graph.size());
+
+        Collections.shuffle(list, new Random(123));
+
+        for (Integer i : list) {
+            assertTrue(graph.addVertex(i));
+        }
+
+        assertEquals(n, graph.size());
+
+        counter = 0;
+        for (Integer v : graph.getVertices()) {
+            assertEquals(list.get(counter++), v);
+            assertTrue(graph.contains(v));
+        }
+
+        for (int j = 0; j < n/2; j++) {
+            assertFalse(graph.addVertex(list.get(j)));
+        }
+
+        graph.removeAllVertices();
+
+        for (int j = 0; j < n/2; j++) {
+            assertTrue(graph.addVertex(list.get(j)));
+        }
+
+        assertEquals(n - n/2, graph.size());
     }
 
     @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
-        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<Vector2>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<Vector2>(), n);
 
         int expectedUndirected = 2*n*(n-1), expectedDirected = 2 * 2*n*(n-1);
         assertEquals(expectedUndirected, undirectedGraph.getEdgeCount());

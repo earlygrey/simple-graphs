@@ -108,7 +108,7 @@ public class GraphTest {
         for (Integer i : list) {
             graph.addVertex(i);
         }
-        graph.sortVertices(Comparator.comparing(e -> e));
+        graph.sortVertices(Comparator.comparing(v -> v));
         int i = 0;
         for (Integer vertex : graph.getVertices()) {
             assertEquals(Integer.valueOf(i++), vertex);

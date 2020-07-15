@@ -24,11 +24,11 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
+
+import java.util.List;
+
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,8 +38,8 @@ public class AlgorithmsTest {
     @Test
     public void shortestPathShouldBeCorrect() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
-        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<Vector2>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<Vector2>(), n);
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
@@ -53,7 +53,12 @@ public class AlgorithmsTest {
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
         
-        Heuristic<Vector2> h = Vector2::dst;
+        Heuristic<Vector2> h = new Heuristic<Vector2>() {
+            @Override
+            public float getEstimate(Vector2 currentNode, Vector2 targetNode) {
+                return currentNode.dst(targetNode);
+            }
+        };
 
         path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());
@@ -174,25 +179,46 @@ public class AlgorithmsTest {
         DirectedGraph<Integer> graph = new DirectedGraph<>();
         int n = 10;
         for (int i = 0; i < n; i++) graph.addVertex(i);
+
+        graph.addEdge(9,8);
+        graph.addEdge(6,7);
+        assertTrue(graph.algorithms().topologicalSort());
+
+        graph.removeAllEdges();
+
         for (int i = 0; i < n-1; i++) graph.addEdge(i+1, i);
 
-        List<Integer> sorted = new ArrayList<>(n);
-        boolean success = graph.algorithms().topologicalSort(sorted);
-        assertTrue(success);
-
-        graph.algorithms().topologicalSort();
+        assertTrue(graph.algorithms().topologicalSort());
         int i = n-1;
         for (Integer vertex : graph.getVertices()) {
             Integer expected = Integer.valueOf(i--);
             assertEquals(expected, vertex);
-            assertEquals(expected, sorted.get(n-2-i));
         }
 
 
-        graph.addEdge(0, n-1);
-        success = graph.algorithms().topologicalSort();
+        graph.addEdge(n/2, n/2 + 1);
+        boolean success = graph.algorithms().topologicalSort();
         assertTrue(!success);
 
+        graph = new DirectedGraph<>();
+        graph.addVertices(0, 1, 2, 3, 4, 5);
+        graph.addEdge(2,0);
+        graph.addEdge(1,2);
+        graph.addEdge(4,1);
+        graph.addEdge(4,2);
+        graph.addEdge(3,5);
+        assertTrue(graph.algorithms().topologicalSort());
+
+        graph = new DirectedGraph<>();
+        graph.addVertices(0, 1, 2, 3, 4, 5);
+        graph.addEdge(2,0);
+        graph.addEdge(1,2);
+        graph.addEdge(4,1);
+        graph.addEdge(4,2);
+        graph.addEdge(3,5);
+
+        graph.addEdge(2,4);
+        assertTrue(!graph.algorithms().topologicalSort());
     }
 
     @Test

@@ -23,7 +23,6 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import java.util.Map.Entry;
 
 public class GraphBuilder{
 
@@ -31,9 +30,8 @@ public class GraphBuilder{
     }
 
     public static <V, G extends Graph<V>> void buildCompleteGraph(G graph) {
-        for (Entry<V, Node<V>> entry1 : graph.vertexMap.entrySet()) {
-            for (Entry<V, Node<V>> entry2 : graph.vertexMap.entrySet()) {
-                Node<V> a = entry1.getValue(), b = entry2.getValue();
+        for (Node<V> a : graph.nodeMap.nodeCollection) {
+            for (Node<V> b : graph.nodeMap.nodeCollection) {
                 if (!a.equals(b)) {
                     Connection<V> e = a.getEdge(b);
                     if (e == null) {

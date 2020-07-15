@@ -23,26 +23,33 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
+
 public abstract class Graph<V> {
+
 
     //================================================================================
     // Members
     //================================================================================
 
-    final Internals<V> internals = new Internals<>(this);
-    
-    final Map<V, Node<V>> vertexMap;
-    final Map<Connection<V>, Connection<V>> edgeMap;
-    
+    //final Internals<V> internals = new Internals<>(this);
+
+    final NodeMap<V> nodeMap;
+    final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
+
     //================================================================================
     // Constructors
     //================================================================================
 
     protected Graph() {
-        vertexMap = new LinkedHashMap<>();
+        nodeMap = new NodeMap<>(this);
         edgeMap = new LinkedHashMap<>();
     }
 
@@ -76,11 +83,8 @@ public abstract class Graph<V> {
      */
 
     public boolean addVertex(V v) {
-        Node<V> node = getNode(v);
-        if (node!=null) return false;
-        node = new Node(v, this);
-        vertexMap.put(v, node);
-        return true;
+        Node<V> node = nodeMap.put(v);
+        return node != null;
     }
 
     /**
@@ -88,6 +92,12 @@ public abstract class Graph<V> {
      * @param vertices a collection of vertices to be added
      */
     public void addVertices(Collection<V> vertices) {
+        for (V v : vertices) {
+            addVertex(v);
+        }
+    }
+
+    public void addVertices(V... vertices) {
         for (V v : vertices) {
             addVertex(v);
         }
@@ -174,7 +184,7 @@ public abstract class Graph<V> {
      */
     public void removeAllVertices() {
         edgeMap.clear();
-        vertexMap.clear();
+        nodeMap.clear();
     }
 
     /**
@@ -183,12 +193,13 @@ public abstract class Graph<V> {
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
-        List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
+        /*List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
         entryList.sort(Entry.comparingByKey(comparator));
         vertexMap.clear();
         for (Entry<V, Node<V>> entry : entryList) {
             vertexMap.put(entry.getKey(), entry.getValue());
-        }
+        }*/
+        nodeMap.sort(comparator);
     }
 
     /**
@@ -196,9 +207,14 @@ public abstract class Graph<V> {
      * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
      * @param comparator a comparator for comparing edges
      */
-    public void sortEdges(Comparator<Connection<V>> comparator) {
+    public void sortEdges(final Comparator<Connection<V>> comparator) {
         List<Entry<Connection<V>, Connection<V>>> entryList = new ArrayList<>(edgeMap.entrySet());
-        Collections.sort(entryList, Entry.comparingByKey(comparator));
+        Collections.sort(entryList, new Comparator<Entry<Connection<V>, Connection<V>>>() {
+            @Override
+            public int compare(Entry<Connection<V>, Connection<V>> e0, Entry<Connection<V>, Connection<V>> e1) {
+                return comparator.compare(e0.getKey(), e1.getKey());
+            }
+        });
         edgeMap.clear();
         for (Entry<Connection<V>, Connection<V>> entry : entryList) {
             edgeMap.put(entry.getKey(), entry.getValue());
@@ -214,7 +230,7 @@ public abstract class Graph<V> {
             removeConnection(node.outEdges.get(i).b, node);
         }
         node.disconnect();
-        vertexMap.remove(node.object);
+        nodeMap.remove(node.object);
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
@@ -250,7 +266,7 @@ public abstract class Graph<V> {
      * @return true if the graph contains the vertex, false otherwise
      */
     public boolean contains(V v) {
-        return vertexMap.containsKey(v);
+        return nodeMap.contains(v);
     }
 
     /**
@@ -284,7 +300,7 @@ public abstract class Graph<V> {
      * @param v the source vertex of all the edges
      * @return an unmodifiable collection of edges
      */
-    public Collection<Edge<V>> getEdges(V v) {
+    public Collection<? extends Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
         return Collections.unmodifiableCollection(node.outEdges);
@@ -294,7 +310,7 @@ public abstract class Graph<V> {
      * Get a collection containing all the edges in the graph.
      * @return an unmodifiable collection of all the edges in the graph
      */
-    public Collection<Edge<V>> getEdges() {
+    public Collection<? extends Edge<V>> getEdges() {
         return Collections.unmodifiableCollection(edgeMap.keySet());
     }
 
@@ -303,7 +319,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the vertices in the graph
      */
     public Collection<V> getVertices() {
-        return Collections.unmodifiableCollection(vertexMap.keySet());
+        return nodeMap.vertexCollection;
     }
 
 
@@ -320,7 +336,7 @@ public abstract class Graph<V> {
      * @return the number of vertices
      */
     public int size() {
-        return vertexMap.size();
+        return nodeMap.size;
     }
 
     /**
@@ -337,11 +353,11 @@ public abstract class Graph<V> {
     //--------------------
 
     Node<V> getNode(V v) {
-        return vertexMap.get(v);
+        return nodeMap.get(v);
     }
 
     Collection<Node<V>> getNodes() {
-        return vertexMap.values();
+        return nodeMap.nodeCollection;
     }
 
     boolean connectionExists(Node<V> u, Node<V> v) {

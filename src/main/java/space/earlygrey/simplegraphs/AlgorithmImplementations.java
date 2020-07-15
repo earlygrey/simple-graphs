@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +68,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return findShortestPath(start, target, new ArrayList<>());
+        return findShortestPath(start, target, new ArrayList<V>());
     }
 
     //================================================================================
@@ -181,7 +180,7 @@ class AlgorithmImplementations<V> {
         init();
 
         boolean hasHeuristic = heuristic != null;
-        
+
         start.resetAlgorithmAttribs(runID);
         start.distance = 0;
 
@@ -227,10 +226,10 @@ class AlgorithmImplementations<V> {
     // Topological sorting
     //================================================================================
 
-    boolean topologicalSort(List<V> sortedVertices) {
+   /* boolean topologicalSort(List<V> sortedVertices) {
         sortedVertices.clear();
         init();
-        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
+        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.getNodes());
         boolean success = true;
         while (success && !set.isEmpty()) {
             success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
@@ -238,47 +237,60 @@ class AlgorithmImplementations<V> {
         if (success) {
             Collections.reverse(sortedVertices);
         }
-
         return success;
-    }
+    }*/
+
+    // Keep track of the current position in the linked list,
+    // We traverse the graph via DFS, and when we hit a terminal node we move that node
+    // to the current cursor position, then move the cursor along one.
+    Node<V> cursor;
 
     boolean topologicalSort() {
-        List<V> sortedVertices = new ArrayList<>();
+        if (graph.size() < 2 || graph.getEdgeCount() < 2) return true;
+
         init();
-        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.vertexMap.values());
+
+        // start the cursor at the tail and work towards the head,
+        // so the list is sorted from head to tail
+        cursor = graph.nodeMap.tail;
+
         boolean success = true;
-        while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
+        while (success && cursor != null) {
+            success = recursiveTopologicalSort(cursor);
         }
-        if (success) {
-            for (int i = sortedVertices.size()-1; i >= 0; i--) {
-                V v = sortedVertices.get(i);
-                Node<V> value = graph.vertexMap.remove(v);
-                graph.vertexMap.put(v, value);
-            }
-        }
+
+        cursor = null;
         return success;
     }
 
-    private boolean recursiveTopologicalSort(List<V> sortedVertices, Node<V> v, Set<Node<V>> set) {
+    private boolean recursiveTopologicalSort(Node<V> v) {
+
         v.resetAlgorithmAttribs(runID);
 
         if (v.visited) return true;
-        if (v.seen) {
-            // not a DAG
-            return false;
-        }
+        if (v.seen) return false; // not a DAG
+
         v.seen = true;
+
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
-            Connection<V> e = v.outEdges.get(i);
-            boolean success = recursiveTopologicalSort(sortedVertices, e.b, set);
-            if (!success) return false;
+            Connection<V> edge = v.outEdges.get(i);
+            if (!recursiveTopologicalSort(edge.b)) return false;
+
         }
+
         v.seen = false;
         v.visited = true;
-        sortedVertices.add(v.object);
-        set.remove(v);
+
+        if (cursor != v) {
+            // move v from its current position to just after the cursor
+            graph.nodeMap.removeFromList(v);
+            graph.nodeMap.insertIntoListAfter(v, cursor);
+        } else {
+            // v is already in the cursor position, just need to move the cursor along
+            cursor = cursor.prevInOrder;
+        }
+
         return true;
     }
 
@@ -299,7 +311,7 @@ class AlgorithmImplementations<V> {
             return Float.floatToIntBits(o2.weight - o1.weight);
         }
     };
-    
+
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
@@ -312,9 +324,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-           edgeList.sort(weightComparator);
+            Collections.sort(edgeList, weightComparator);
         } else {
-           edgeList.sort(reverseWeightComparator);
+            Collections.sort(edgeList, reverseWeightComparator);
         }
 
         int totalNodes = graph.size();
@@ -381,7 +393,7 @@ class AlgorithmImplementations<V> {
         init();
         for (Node<V> v : graph.getNodes()) {
             v.resetAlgorithmAttribs(runID);
-            if (detectCycleDFS(v, null, new HashSet<>())) {
+            if (detectCycleDFS(v, null, new HashSet<Node<V>>())) {
                 init();
                 return true;
             }

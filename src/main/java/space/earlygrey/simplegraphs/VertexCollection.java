@@ -3,10 +3,7 @@ package space.earlygrey.simplegraphs;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
@@ -36,11 +33,6 @@ class VertexCollection<V> implements Collection<V> {
     @Override
     public Iterator<V> iterator() {
         return new VertexIterator<>(nodeMap);
-    }
-
-    @Override
-    public void forEach(Consumer<? super V> action) {
-
     }
 
     @Override
@@ -98,10 +90,6 @@ class VertexCollection<V> implements Collection<V> {
         throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
     }
 
-    @Override
-    public boolean removeIf(Predicate<? super V> filter) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
-    }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
@@ -115,27 +103,15 @@ class VertexCollection<V> implements Collection<V> {
 
     @Override
     public boolean equals(Object o) {
-        return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VertexCollection<?> that = (VertexCollection<?>) o;
+        return nodeMap.equals(that.nodeMap);
     }
 
     @Override
     public int hashCode() {
-        return 0;
-    }
-
-    @Override
-    public Spliterator<V> spliterator() {
-        return null;
-    }
-
-    @Override
-    public Stream<V> stream() {
-        return null;
-    }
-
-    @Override
-    public Stream<V> parallelStream() {
-        return null;
+        return Objects.hash(nodeMap);
     }
 
     static class VertexIterator<V> implements Iterator<V> {

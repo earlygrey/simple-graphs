@@ -3,6 +3,7 @@ package space.earlygrey.simplegraphs;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
@@ -104,12 +105,15 @@ class NodeCollection<V> implements Collection<Node<V>> {
 
     @Override
     public boolean equals(Object o) {
-        return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NodeCollection<?> that = (NodeCollection<?>) o;
+        return nodeMap.equals(that.nodeMap);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return Objects.hash(nodeMap);
     }
 
     @Override

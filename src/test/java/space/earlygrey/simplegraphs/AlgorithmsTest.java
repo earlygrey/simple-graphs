@@ -24,12 +24,11 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
+
+import java.util.List;
+
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,8 +38,8 @@ public class AlgorithmsTest {
     @Test
     public void shortestPathShouldBeCorrect() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
-        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<Vector2>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<Vector2>(), n);
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
@@ -54,7 +53,12 @@ public class AlgorithmsTest {
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
         
-        Heuristic<Vector2> h = Vector2::dst;
+        Heuristic<Vector2> h = new Heuristic<Vector2>() {
+            @Override
+            public float getEstimate(Vector2 currentNode, Vector2 targetNode) {
+                return currentNode.dst(targetNode);
+            }
+        };
 
         path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());

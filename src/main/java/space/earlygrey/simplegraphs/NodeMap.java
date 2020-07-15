@@ -60,6 +60,7 @@ class NodeMap<V> {
      * @return the `Node<V>` if v is not in the map, or null if it already is.
      */
     Node<V> put(V v) {
+        checkLength();
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
@@ -80,7 +81,6 @@ class NodeMap<V> {
             currentNode = currentNode.nextInBucket;
         }
 
-        checkLength();
         currentNode = new Node<>(v, graph, objectHash);
         currentNode.mapHash = hash;
         previousNode.nextInBucket = currentNode;

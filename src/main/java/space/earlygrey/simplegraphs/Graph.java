@@ -83,8 +83,7 @@ public abstract class Graph<V> {
      */
 
     public boolean addVertex(V v) {
-        Node<V> node = nodeMap.put(v);
-        return node != null;
+        return nodeMap.put(v) != null;
     }
 
     /**
@@ -109,9 +108,12 @@ public abstract class Graph<V> {
      * @return true if the vertex was in the graph, false otherwise
      */
     public boolean removeVertex(V v) {
-        Node<V> existing = getNode(v);
+        Node<V> existing = nodeMap.remove(v);
         if (existing==null) return false;
-        removeNode(existing);
+        for (int i = existing.outEdges.size()-1; i >= 0; i--) {
+            removeConnection(existing.outEdges.get(i).b, existing);
+        }
+        existing.disconnect();
         return true;
     }
 
@@ -224,14 +226,6 @@ public abstract class Graph<V> {
     //--------------------
     //  Internal Methods
     //--------------------
-
-    void removeNode(Node<V> node) {
-        for (int i = node.outEdges.size()-1; i >= 0; i--) {
-            removeConnection(node.outEdges.get(i).b, node);
-        }
-        node.disconnect();
-        nodeMap.remove(node.object);
-    }
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
         Connection<V> e = a.addEdge(b, Connection.DEFAULT_WEIGHT);

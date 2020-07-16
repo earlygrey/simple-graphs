@@ -1,6 +1,5 @@
 package space.earlygrey.simplegraphs;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -15,6 +14,7 @@ class NodeMap<V> {
     Node<V> head, tail;
 
     int size = 0;
+    int occupiedBuckets = 0;
     static final int MIN_SIZE = 32;
     static final float RESIZE_THRESHOLD = 0.7f;
     int threshold = (int) (RESIZE_THRESHOLD * MIN_SIZE);
@@ -68,6 +68,7 @@ class NodeMap<V> {
             bucketHead.mapHash = hash;
             table[i] = bucketHead;
             size++;
+            occupiedBuckets++;
             addToList(bucketHead);
             return bucketHead;
         }
@@ -181,8 +182,10 @@ class NodeMap<V> {
      * Increase the length of the table if the size exceeds the capacity,
      * and recalculate the indices.
      */
+
     boolean checkLength(int sizeChange) {
         if (size + sizeChange > threshold) {
+            occupiedBuckets = 0;
             int newLength = 2 * table.length;
             Node<V>[] oldTable = table, newTable = new Node[newLength];
             for (int i = 0; i < oldTable.length; i++) {
@@ -191,12 +194,22 @@ class NodeMap<V> {
                     while (current != null) {
                         int newIndex = getIndex(current.mapHash, newLength);
                         if (newIndex == i) {
-                            if (tail1 == null) newTable[newIndex] = current;
-                            else tail1.nextInBucket = current;
+                            if (tail1 == null) {
+                                newTable[newIndex] = current;
+                                occupiedBuckets++;
+                            }
+                            else {
+                                tail1.nextInBucket = current;
+                            }
                             tail1 = current;
                         } else {
-                            if (tail2 == null) newTable[newIndex] = current;
-                            else tail2.nextInBucket = current;
+                            if (tail2 == null) {
+                                newTable[newIndex] = current;
+                                occupiedBuckets++;
+                            }
+                            else {
+                                tail2.nextInBucket = current;
+                            }
                             tail2 = current;
                         }
                         Node<V> next = current.nextInBucket;
@@ -214,8 +227,11 @@ class NodeMap<V> {
     }
 
     void clear() {
-        Arrays.fill(table, null);
+        table = new Node[table.length];
         size = 0;
+        occupiedBuckets = 0;
+        head = null;
+        tail = null;
     }
 
     /**
@@ -337,6 +353,26 @@ class NodeMap<V> {
             fast = fast.nextInOrder.nextInOrder;
         }
         return slow;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NodeMap - size: "+size+", table length: "+table.length+", occupiedBuckets: "+occupiedBuckets+"\n");
+        sb.append("--------------\n");
+
+        for (int i = 0; i < table.length; i++) {
+            sb.append(i+"]  ");
+            Node<V> node = table[i];
+            while (node != null) {
+                sb.append(node);
+                if (node.nextInBucket != null) sb.append(" -> ");
+                node = node.nextInBucket;
+            }
+            sb.append("\n");
+        }
+
+        return sb.append("--------------").toString();
     }
 
 

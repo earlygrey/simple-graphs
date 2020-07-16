@@ -118,7 +118,7 @@ class VertexCollection<V> implements Collection<V> {
 
         private final NodeIterator<V> nodeIterator;
 
-        public VertexIterator(NodeMap<V> nodeMap) {
+        VertexIterator(NodeMap<V> nodeMap) {
             nodeIterator = new NodeIterator<>(nodeMap);
         }
 

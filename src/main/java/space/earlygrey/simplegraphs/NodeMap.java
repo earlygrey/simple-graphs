@@ -15,9 +15,9 @@ class NodeMap<V> {
 
     int size = 0;
     int occupiedBuckets = 0;
-    static final int MIN_SIZE = 32;
+    static final int MIN_TABLE_LENGTH = 32;
     static final float RESIZE_THRESHOLD = 0.7f;
-    int threshold = (int) (RESIZE_THRESHOLD * MIN_SIZE);
+    int threshold = (int) (RESIZE_THRESHOLD * MIN_TABLE_LENGTH);
 
     // collections for returning to the user
     VertexCollection<V> vertexCollection;
@@ -27,7 +27,7 @@ class NodeMap<V> {
 
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
-        table = new Node[MIN_SIZE];
+        table = new Node[MIN_TABLE_LENGTH];
         vertexCollection = new VertexCollection<>(this);
         nodeCollection = new NodeCollection<>(this);
     }
@@ -62,6 +62,7 @@ class NodeMap<V> {
         // checking the size before adding might resize even if v is already in the map,
         // but it will only be off by one
         checkLength(1);
+
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];

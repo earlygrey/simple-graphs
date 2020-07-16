@@ -35,12 +35,8 @@ if (JavaVersion.current().isJava8Compatible()) {
 repositories {
     mavenLocal()
     mavenCentral()
-    // when preparing a release to Maven Central, remove or comment this line:
-    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    // when preparing a release to Maven Central, remove or comment this line:
-    testImplementation 'com.github.SquidPony.SquidLib:squidlib-util:ae53eed80a'
 }

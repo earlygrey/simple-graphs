@@ -46,13 +46,15 @@ public class StructuresTest {
         int n = 16;
         List<Integer> list = new ArrayList<>();
 
-
-        for (int i = 0; i < n; i++) {
+        int threshold = nodeMap.threshold;
+        for (int i = 0; i < threshold; i++) {
             assertTrue(nodeMap.put(i) != null);
             list.add(i);
         }
 
-        assertEquals(n, nodeMap.size);
+        assertTrue(nodeMap.put(NodeMap.MIN_TABLE_LENGTH) != null);
+        assertTrue(nodeMap.contains(NodeMap.MIN_TABLE_LENGTH));
+        assertEquals(threshold+1, nodeMap.size);
 
         Graph<BadHashInteger> badGraph = new UndirectedGraph<>();
         for (int i = 0; i < n; i++) {

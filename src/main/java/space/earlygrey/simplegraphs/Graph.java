@@ -211,12 +211,7 @@ public abstract class Graph<V> {
      */
     public void sortEdges(final Comparator<Connection<V>> comparator) {
         List<Entry<Connection<V>, Connection<V>>> entryList = new ArrayList<>(edgeMap.entrySet());
-        Collections.sort(entryList, new Comparator<Entry<Connection<V>, Connection<V>>>() {
-            @Override
-            public int compare(Entry<Connection<V>, Connection<V>> e0, Entry<Connection<V>, Connection<V>> e1) {
-                return comparator.compare(e0.getKey(), e1.getKey());
-            }
-        });
+        Collections.sort(entryList, Entry.comparingByKey(comparator));
         edgeMap.clear();
         for (Entry<Connection<V>, Connection<V>> entry : entryList) {
             edgeMap.put(entry.getKey(), entry.getValue());
@@ -294,7 +289,7 @@ public abstract class Graph<V> {
      * @param v the source vertex of all the edges
      * @return an unmodifiable collection of edges
      */
-    public Collection<? extends Edge<V>> getEdges(V v) {
+    public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
         return Collections.unmodifiableCollection(node.outEdges);
@@ -304,7 +299,7 @@ public abstract class Graph<V> {
      * Get a collection containing all the edges in the graph.
      * @return an unmodifiable collection of all the edges in the graph
      */
-    public Collection<? extends Edge<V>> getEdges() {
+    public Collection<Edge<V>> getEdges() {
         return Collections.unmodifiableCollection(edgeMap.keySet());
     }
 

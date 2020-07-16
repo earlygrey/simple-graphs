@@ -393,7 +393,7 @@ class AlgorithmImplementations<V> {
         init();
         for (Node<V> v : graph.getNodes()) {
             v.resetAlgorithmAttribs(runID);
-            if (detectCycleDFS(v, null, new HashSet<Node<V>>())) {
+            if (detectCycleDFS(v, null, new HashSet<>())) {
                 init();
                 return true;
             }

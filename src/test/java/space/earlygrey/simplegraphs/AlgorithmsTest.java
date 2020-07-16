@@ -38,8 +38,8 @@ public class AlgorithmsTest {
     @Test
     public void shortestPathShouldBeCorrect() {
         int n = 5;
-        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<Vector2>(), n);
-        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<Vector2>(), n);
+        Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
+        Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
@@ -53,12 +53,7 @@ public class AlgorithmsTest {
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
         
-        Heuristic<Vector2> h = new Heuristic<Vector2>() {
-            @Override
-            public float getEstimate(Vector2 currentNode, Vector2 targetNode) {
-                return currentNode.dst(targetNode);
-            }
-        };
+        Heuristic<Vector2> h = Vector2::dst;
 
         path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());

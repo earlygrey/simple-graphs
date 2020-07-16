@@ -70,12 +70,14 @@ class NodeCollection<V> implements Collection<Node<V>> {
 
     @Override
     public boolean add(Node<V> v) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
@@ -85,22 +87,25 @@ class NodeCollection<V> implements Collection<Node<V>> {
 
     @Override
     public boolean addAll(Collection<? extends Node<V>> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
     }
 
     @Override

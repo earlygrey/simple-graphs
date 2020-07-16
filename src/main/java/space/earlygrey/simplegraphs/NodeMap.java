@@ -23,7 +23,7 @@ class NodeMap<V> {
     VertexCollection<V> vertexCollection;
     NodeCollection<V> nodeCollection;
 
-    static final String MODIFY_EXCEPTION = "You cannot modify this list - use the Graph object.";
+
 
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
@@ -59,6 +59,8 @@ class NodeMap<V> {
      * @return the `Node<V>` if v is not in the map, or null if it already is.
      */
     Node<V> put(V v) {
+        // checking the size before adding might resize even if v is already in the map,
+        // but it will only be off by one
         checkLength(1);
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);

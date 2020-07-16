@@ -67,12 +67,14 @@ class VertexCollection<V> implements Collection<V> {
 
     @Override
     public boolean add(V v) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public boolean remove(Object o) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
@@ -82,23 +84,26 @@ class VertexCollection<V> implements Collection<V> {
 
     @Override
     public boolean addAll(Collection<? extends V> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public boolean removeAll(Collection<?> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
 
     @Override
     public boolean retainAll(Collection<?> collection) {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
+        return false;
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+        Errors.throwModificationException();
     }
 
     @Override
@@ -134,7 +139,7 @@ class VertexCollection<V> implements Collection<V> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
+            Errors.throwModificationException();
         }
     }
 

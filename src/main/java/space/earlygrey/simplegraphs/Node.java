@@ -26,6 +26,7 @@ package space.earlygrey.simplegraphs;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Node<V> {
@@ -39,7 +40,7 @@ public class Node<V> {
     final V object;
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
-    ArrayList<Connection<V>> outEdges = new ArrayList<>(); // List for fast iteration
+    List<Connection<V>> outEdges = new ArrayList<>(); // List for fast iteration
 
     //================================================================================
     // Node map fields

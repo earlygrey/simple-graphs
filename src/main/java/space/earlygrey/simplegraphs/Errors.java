@@ -37,5 +37,9 @@ public class Errors {
         throw new IllegalArgumentException("At least one vertex is not in the graph");
     }
 
+    static void throwModificationException() {
+        throw new UnsupportedOperationException("You cannot modify this Collection - use the Graph object.");
+    }
+
 
 }

@@ -15,9 +15,9 @@ class NodeMap<V> {
     Node<V> head, tail;
 
     int size = 0;
-    int threshold = -1;
     static final int MIN_SIZE = 32;
     static final float RESIZE_THRESHOLD = 0.7f;
+    int threshold = (int) (RESIZE_THRESHOLD * MIN_SIZE);
 
     // collections for returning to the user
     VertexCollection<V> vertexCollection;
@@ -28,7 +28,6 @@ class NodeMap<V> {
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
         table = new Node[MIN_SIZE];
-        threshold = (int) (RESIZE_THRESHOLD * MIN_SIZE);
         vertexCollection = new VertexCollection<>(this);
         nodeCollection = new NodeCollection<>(this);
     }

@@ -27,8 +27,8 @@ class NodeMap<V> {
 
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
-        table = new Node[MIN_SIZE / 2];
-        checkLength();
+        table = new Node[MIN_SIZE];
+        threshold = (int) (RESIZE_THRESHOLD * MIN_SIZE);
         vertexCollection = new VertexCollection<>(this);
         nodeCollection = new NodeCollection<>(this);
     }
@@ -60,12 +60,11 @@ class NodeMap<V> {
      * @return the `Node<V>` if v is not in the map, or null if it already is.
      */
     Node<V> put(V v) {
-        checkLength();
+        checkLength(1);
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
         if (bucketHead == null) {
-            if (checkLength()) i = getIndex(hash);
             bucketHead = new Node<>(v, graph, objectHash);
             bucketHead.mapHash = hash;
             table[i] = bucketHead;
@@ -183,8 +182,8 @@ class NodeMap<V> {
      * Increase the length of the table if the size exceeds the capacity,
      * and recalculate the indices.
      */
-    boolean checkLength() {
-        if (size > threshold) {
+    boolean checkLength(int sizeChange) {
+        if (size + sizeChange > threshold) {
             int newLength = 2 * table.length;
             Node<V>[] oldTable = table, newTable = new Node[newLength];
             for (int i = 0; i < oldTable.length; i++) {

@@ -134,7 +134,7 @@ class VertexCollection<V> implements Collection<V> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("You cannot modify this list - use the Graph object.");
+            throw new UnsupportedOperationException(NodeMap.MODIFY_EXCEPTION);
         }
     }
 

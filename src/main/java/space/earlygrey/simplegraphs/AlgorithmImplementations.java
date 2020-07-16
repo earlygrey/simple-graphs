@@ -200,7 +200,7 @@ class AlgorithmImplementations<V> {
                     Node<V> v = e.b;
                     v.resetAlgorithmAttribs(runID);
                     if (!v.visited) {
-                        float newDistance = u.distance + e.weight;
+                        float newDistance = u.distance + e.getWeight();
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
@@ -301,14 +301,14 @@ class AlgorithmImplementations<V> {
     final Comparator<Connection<V>> weightComparator = new Comparator<Connection<V>>() {
         @Override
         public int compare(Connection<V> o1, Connection<V> o2) {
-            return Float.floatToIntBits(o1.weight - o2.weight);
+            return Float.floatToIntBits(o1.getWeight() - o2.getWeight());
         }
     };
 
     final Comparator<Connection<V>> reverseWeightComparator = new Comparator<Connection<V>>() {
         @Override
         public int compare(Connection<V> o1, Connection<V> o2) {
-            return Float.floatToIntBits(o2.weight - o1.weight);
+            return Float.floatToIntBits(o2.getWeight() - o1.getWeight());
         }
     };
 
@@ -336,7 +336,7 @@ class AlgorithmImplementations<V> {
             if (doesEdgeCreateCycle(edge.a, edge.b)) {
                 continue;
             }
-            spanningTree.addConnection(edge.a, edge.b, edge.weight);
+            spanningTree.addConnection(edge.a, edge.b, edge.getWeight());
             edgeCount++;
             if (edgeCount == totalNodes - 1) {
                 break;

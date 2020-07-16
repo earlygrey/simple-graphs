@@ -68,8 +68,9 @@ public abstract class Graph<V> {
     //  Abstract Methods
     //--------------------
 
-    protected abstract Connection<V> obtainEdge();
+    abstract Connection<V> obtainEdge();
     abstract Graph<V> createNew();
+
     public abstract Algorithms algorithms();
 
     //--------------------

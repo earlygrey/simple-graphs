@@ -21,6 +21,7 @@ Simple graphs uses Java 8 and the Java Collection interface. It has no dependenc
 
 If you're looking for a broader, more powerful library and don't care about java 8, GWT, or including a lot of extra dependencies, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more.
 
+---
 
 ## Usage
 
@@ -61,11 +62,11 @@ Graph<V> graph;
 UndirectedGraph<V> undirected;
 DirectedGraph<V> directed;
 
-List<V> path = graph.algorithms().findShortestPath(u, v);
+Path<V> path = graph.algorithms().findShortestPath(u, v);
 UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree();
 directed.algorithms().topologicalSort();
 ```
-
+---
 ## Wiki
 
 [See the wiki](https://github.com/earlygrey/simple-graphs/wiki) for more info.

@@ -68,7 +68,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return findShortestPath(start, target, new ArrayList<V>());
+        return findShortestPath(start, target, new Path<>());
     }
 
     //================================================================================
@@ -145,23 +145,23 @@ class AlgorithmImplementations<V> {
         else return end.distance;
     }
 
-    List<V> findShortestPath(Node<V> start, Node<V> target) {
-        ArrayList<V> path = new ArrayList<>();
+    Path<V> findShortestPath(Node<V> start, Node<V> target) {
+        Path<V> path = new Path<>();
         findShortestPath(start, target, path);
         return path;
     }
 
-    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path) {
+    boolean findShortestPath(Node<V> start, Node<V> target, Path<V> path) {
         return findShortestPath(start, target, path, null);
     }
 
-    List<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        ArrayList<V> path = new ArrayList<>();
+    Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        Path<V> path = new Path<>();
         findShortestPath(start, target, path, heuristic);
         return path;
     }
 
-    boolean findShortestPath(Node<V> start, Node<V> target, List<V> path, Heuristic<V> heuristic) {
+    boolean findShortestPath(Node<V> start, Node<V> target, Path<V> path, Heuristic<V> heuristic) {
         Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) {
             return false;
@@ -173,6 +173,7 @@ class AlgorithmImplementations<V> {
         }
         path.add(start.object);
         Collections.reverse(path);
+        path.length = end.distance;
         return true;
     }
 

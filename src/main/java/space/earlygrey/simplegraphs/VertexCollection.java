@@ -125,7 +125,7 @@ class VertexCollection<V> extends AbstractCollection<V> {
         private final NodeIterator<V> nodeIterator;
 
         VertexIterator(NodeMap<V> nodeMap) {
-            nodeIterator = new NodeIterator<>(nodeMap, true);
+            nodeIterator = new NodeIterator<>(nodeMap);
         }
 
         @Override

@@ -28,7 +28,7 @@ class NodeCollection<V> extends AbstractCollection<Node<V>> {
 
     @Override
     public Iterator<Node<V>> iterator() {
-        return new NodeIterator<>(nodeMap, true);
+        return new NodeIterator<>(nodeMap);
     }
 
 

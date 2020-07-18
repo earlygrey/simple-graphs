@@ -25,8 +25,6 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
-import java.util.List;
-
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
 
@@ -43,7 +41,7 @@ public class AlgorithmsTest {
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
 
-        List<Vector2> path = undirectedGraph.algorithms().findShortestPath(start, end);
+        Path<Vector2> path = undirectedGraph.algorithms().findShortestPath(start, end);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, undirectedGraph));
@@ -64,15 +62,16 @@ public class AlgorithmsTest {
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
+
     }
 
-    private static boolean pathIsConnected(List<Vector2> path, Graph<Vector2> graph) {
+
+    private static boolean pathIsConnected(Path<Vector2> path, Graph<Vector2> graph) {
         for (int i = 0; i < path.size()-1; i++) {
             if (!graph.edgeExists(path.get(i), path.get(i+1))) return false;
         }
         return true;
     }
-
 
     @Test
     public void cyclesShouldBeDetected() {

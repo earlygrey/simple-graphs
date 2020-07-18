@@ -25,9 +25,6 @@ package space.earlygrey.simplegraphs;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Algorithms<V> {
 
     final Graph<V> graph;
@@ -49,7 +46,9 @@ public class Algorithms<V> {
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target) {
-        return findShortestPath(start, target, null);
+        Path<V> path = findShortestPath(start, target, null);
+        path.setFixed(true);
+        return path;
     }
 
     /**
@@ -59,29 +58,12 @@ public class Algorithms<V> {
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
-        Path<V> list = new Path<>();
-        findShortestPath(start, target, list, heuristic);
-        return list;
-    }
-
-    /*public boolean findShortestPath(V start, V target, List<V> path) {
-        return findShortestPath(start, target, path, null);
-    }*/
-
-    /**
-     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
-     * @param start the starting vertex
-     * @param target the target vertex
-     * @param path the list of vertices to which the path vertices should be added
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
-     */
-    public boolean findShortestPath(V start, V target, Path<V> path, Heuristic<V> heuristic) {
-        path.clear();
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
-        implementations.findShortestPath(startNode, targetNode, path, heuristic);
-        return !path.isEmpty();
+        Path<V> path = implementations.findShortestPath(startNode, targetNode, heuristic);
+        path.setFixed(true);
+        return path;
     }
 
     /**

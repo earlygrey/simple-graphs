@@ -1,13 +1,14 @@
 package space.earlygrey.simplegraphs;
 
 import java.lang.reflect.Array;
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
-class VertexCollection<V> implements Collection<V> {
+class VertexCollection<V> extends AbstractCollection<V> {
 
     final NodeMap<V> nodeMap;
 
@@ -124,7 +125,7 @@ class VertexCollection<V> implements Collection<V> {
         private final NodeIterator<V> nodeIterator;
 
         VertexIterator(NodeMap<V> nodeMap) {
-            nodeIterator = new NodeIterator<>(nodeMap);
+            nodeIterator = new NodeIterator<>(nodeMap, true);
         }
 
         @Override
@@ -143,25 +144,4 @@ class VertexCollection<V> implements Collection<V> {
         }
     }
 
-
-    @Override
-    public String toString() {
-        Iterator<V> it = this.iterator();
-        if (!it.hasNext()) {
-            return "[]";
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append('[');
-
-            while(true) {
-                V v = it.next();
-                sb.append(v);
-                if (!it.hasNext()) {
-                    return sb.append(']').toString();
-                }
-
-                sb.append(',').append(' ');
-            }
-        }
-    }
 }

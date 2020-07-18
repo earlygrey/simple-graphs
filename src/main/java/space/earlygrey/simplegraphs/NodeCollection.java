@@ -1,13 +1,14 @@
 package space.earlygrey.simplegraphs;
 
 import java.lang.reflect.Array;
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
-class NodeCollection<V> implements Collection<Node<V>> {
+class NodeCollection<V> extends AbstractCollection<Node<V>> {
 
     NodeMap<V> nodeMap;
 
@@ -21,18 +22,13 @@ class NodeCollection<V> implements Collection<Node<V>> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return nodeMap.size == 0;
-    }
-
-    @Override
     public boolean contains(Object o) {
         return nodeMap.contains((V) o);
     }
 
     @Override
     public Iterator<Node<V>> iterator() {
-        return new NodeIterator<>(nodeMap);
+        return new NodeIterator<>(nodeMap, true);
     }
 
 
@@ -82,7 +78,10 @@ class NodeCollection<V> implements Collection<Node<V>> {
 
     @Override
     public boolean containsAll(Collection<?> collection) {
-        return false;
+        for (Object e : collection) {
+            if (!contains(e)) return false;
+        }
+        return true;
     }
 
     @Override
@@ -121,24 +120,4 @@ class NodeCollection<V> implements Collection<Node<V>> {
         return Objects.hash(nodeMap);
     }
 
-    @Override
-    public String toString() {
-        Iterator<Node<V>> it = this.iterator();
-        if (!it.hasNext()) {
-            return "[]";
-        } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append('[');
-
-            while(true) {
-                Node<V> v = it.next();
-                sb.append(v);
-                if (!it.hasNext()) {
-                    return sb.append(']').toString();
-                }
-
-                sb.append(',').append(' ');
-            }
-        }
-    }
 }

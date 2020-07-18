@@ -99,4 +99,14 @@ public class UndirectedGraph<V> extends Graph<V> {
     public UndirectedGraphAlgorithms<V> algorithms() {
         return algorithms;
     }
+
+
+    //================================================================================
+    // Misc
+    //================================================================================
+
+    public int getDegree(V v) {
+        Node<V> node = getNode(v);
+        return node == null ? -1 : node.getOutDegree();
+    }
 }

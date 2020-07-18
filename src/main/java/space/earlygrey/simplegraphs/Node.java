@@ -23,10 +23,8 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Node<V> {
@@ -40,7 +38,9 @@ public class Node<V> {
     final V object;
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
-    List<Connection<V>> outEdges = new ArrayList<>(); // List for fast iteration
+    Array<Connection<V>> outEdges = new Array<>();
+
+    int inDegree = 0;
 
     //================================================================================
     // Node map fields
@@ -77,6 +77,7 @@ public class Node<V> {
             edge.set(this, v, weight);
             neighbours.put(v, edge);
             outEdges.add(edge);
+            v.inDegree++;
             return edge;
         } else {
             edge.setWeight(weight);
@@ -112,6 +113,14 @@ public class Node<V> {
 
     public V getObject() {
         return object;
+    }
+
+    public int getInDegree() {
+        return inDegree;
+    }
+
+    public int getOutDegree() {
+        return outEdges.size();
     }
 
     //================================================================================

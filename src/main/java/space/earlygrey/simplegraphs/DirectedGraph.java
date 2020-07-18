@@ -65,4 +65,19 @@ public class DirectedGraph<V> extends Graph<V> {
         return algorithms;
     }
 
+
+    //================================================================================
+    // Misc
+    //================================================================================
+
+    public int getOutDegree(V v) {
+        Node<V> node = getNode(v);
+        return node == null ? -1 : node.getOutDegree();
+    }
+
+    public int getInDegree(V v) {
+        Node<V> node = getNode(v);
+        return node == null ? -1 : node.getInDegree();
+    }
+
 }

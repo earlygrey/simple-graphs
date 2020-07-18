@@ -68,7 +68,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return findShortestPath(start, target, new Path<>());
+        return !findShortestPath(start, target).isEmpty();
     }
 
     //================================================================================
@@ -80,7 +80,6 @@ class AlgorithmImplementations<V> {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
-        vertex.visited = true;
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
         queue.addLast(vertex);
@@ -107,6 +106,7 @@ class AlgorithmImplementations<V> {
     }
 
     void depthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
+        if (maxDepth <= 0 ) return;
         init();
 
         vertex.resetAlgorithmAttribs(runID);
@@ -146,35 +146,26 @@ class AlgorithmImplementations<V> {
     }
 
     Path<V> findShortestPath(Node<V> start, Node<V> target) {
-        Path<V> path = new Path<>();
-        findShortestPath(start, target, path);
-        return path;
+        return findShortestPath(start, target);
     }
 
-    boolean findShortestPath(Node<V> start, Node<V> target, Path<V> path) {
-        return findShortestPath(start, target, path, null);
-    }
 
     Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        Path<V> path = new Path<>();
-        findShortestPath(start, target, path, heuristic);
-        return path;
-    }
-
-    boolean findShortestPath(Node<V> start, Node<V> target, Path<V> path, Heuristic<V> heuristic) {
         Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) {
-            return false;
+            return new Path<>(0);
         }
+        int size = end.i + 1;
+        Path<V> path = new Path<>(size);
         Node<V> v = end;
-        while(v.prev!=null) {
-            path.add(v.object);
+        while(v.prev != null) {
+            path.set(v.i, v.object);
             v = v.prev;
         }
-        path.add(start.object);
-        Collections.reverse(path);
+        path.set(0, start.object);
         path.length = end.distance;
-        return true;
+
+        return path;
     }
 
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
@@ -213,6 +204,7 @@ class AlgorithmImplementations<V> {
                             } else {
                                 heap.setValue(v, v.distance + v.estimate);
                             }
+                            v.i = u.i+1;
                             v.seen = true;
                         }
                     }

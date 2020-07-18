@@ -17,7 +17,7 @@ Algorithms implemented are:
 - [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) for directed graphs (performed in-place)
 - [minimum weight spanning tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) for undirected graphs using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
 
-Simple graphs uses Java 8 and the Java Collection interface. It has no dependencies, and so should be GWT compatible (JGraphT and guava graphs are not). It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
+Simple graphs uses Java 8 and Java Collections. It has no dependencies, and so should be GWT compatible. It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
 
 If you're looking for a broader, more powerful library and don't care about java 8, GWT, or including a lot of extra dependencies, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more.
 
@@ -46,12 +46,13 @@ You can obtain `Collection<V>`s of the vertices and edges:
 Collection<Integer> vertices = graph.getVertices();
 Collection<Edge<Integer>> edges = graph.getEdges();
 ```
-Both collections cannot be modified directly - they are just to allow iteration over the vertices and edges. The iteration order is guaranteed for both collections and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
+Both collections cannot be modified directly - they provide a "read-only" iterable view of the vertices and edges and are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
 
 ```java
 Comparator<V> vertexComparator = ...;
 graph.sortVertices(vertexComparator);
 ```
+If you want to access elements by index, you need to convert to an array via the `toArray()` methods or add them to a `List` via eg `new ArrayList<>(graph.getVertices())`.
 
 ### Algorithms
 
@@ -66,6 +67,11 @@ Path<V> path = graph.algorithms().findShortestPath(u, v);
 UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree();
 directed.algorithms().topologicalSort();
 ```
+
+## Technical Considerations
+
+While vertices can be any type of `Object`, care must be taken that they are immutable, in the sense that while in the `Graph` their `hashCode()` method always returns the same value, and `equals` is consistent. In general, vertex objects are subject to the same requirements as keys in a java `Map`.
+
 ---
 ## Wiki
 

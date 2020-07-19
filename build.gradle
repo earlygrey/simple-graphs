@@ -1,16 +1,61 @@
-plugins {
-    id 'java-library'
-    id 'maven-publish'
-}
+apply plugin: 'java'
+apply plugin: 'maven'
 
 group 'space.earlygrey'
 version '1.0.0-SNAPSHOT'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name = 'Simple Graphs'
+            description = 'A simple graph library for java.'
+            url = 'https://github.com/earlygrey/simple-graphs'
+
+            licenses {
+                license {
+                    name 'MIT License'
+                    url 'https://mit-license.org/'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id 'earlygrey'
+                    name 'earlygrey'
+                    email 'nospam@earlygrey.space'
+                }
+            }
+            scm {
+                url 'https://github.com/earlygrey/simple-graphs'
+                connection 'scm:https://github.com/earlygrey/simple-graphs.git'
+                developerConnection 'scm:git://github.com/earlygrey/simple-graphs.git'
+            }
+        }
+    }
 }

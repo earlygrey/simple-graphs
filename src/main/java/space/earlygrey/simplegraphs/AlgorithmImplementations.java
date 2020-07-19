@@ -150,13 +150,24 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+    Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic, Path<V> path) {
         Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) {
-            return new Path<>(0);
+            if (path != null) {
+                path.setFixed(false);
+                path.clear();
+            } else {
+                path = new Path<>(0);
+            }
+            return path;
         }
         int size = end.i + 1;
-        Path<V> path = new Path<>(size);
+        if (path == null) {
+            path = new Path<>(size);
+        } else {
+            path.setFixed(false);
+            path.strictResize(size);
+        }
         Node<V> v = end;
         while(v.prev != null) {
             path.set(v.i, v.object);

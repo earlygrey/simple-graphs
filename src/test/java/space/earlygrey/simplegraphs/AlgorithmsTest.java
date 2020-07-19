@@ -63,6 +63,15 @@ public class AlgorithmsTest {
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
 
+        undirectedGraph.algorithms().findShortestPath(start, end, h, path);
+        assertEquals(2*(n-1) + 1, path.size());
+        assertEquals(start, path.get(0));
+        assertTrue(pathIsConnected(path, undirectedGraph));
+
+        undirectedGraph.disconnect(end);
+        undirectedGraph.algorithms().findShortestPath(start, end, h, path);
+        assertEquals(0, path.size());
+
     }
 
 

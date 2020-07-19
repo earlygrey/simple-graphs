@@ -118,6 +118,15 @@ public abstract class Graph<V> {
         return true;
     }
 
+    public void disconnect(V v) {
+        Node<V> existing = nodeMap.get(v);
+        if (existing==null) Errors.throwVertexNotInGraphVertexException();
+        for (int i = existing.outEdges.size()-1; i >= 0; i--) {
+            removeConnection(existing.outEdges.get(i).b, existing);
+        }
+        existing.disconnect();
+    }
+
     /**
      * Removes all the vertices in the collection from the graph, and any adjacent edges.
      * @param vertices vertices a collection of vertices to be removed
@@ -359,7 +368,5 @@ public abstract class Graph<V> {
         if (edge == null) return null;
         return edge;
     }
-
-
 
 }

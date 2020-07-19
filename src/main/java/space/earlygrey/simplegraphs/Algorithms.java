@@ -46,22 +46,44 @@ public class Algorithms<V> {
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target) {
-        Path<V> path = findShortestPath(start, target, null);
-        path.setFixed(true);
-        return path;
+        return findShortestPath(start, target, null, null);
+    }
+
+    /**
+     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param path a path object to reuse
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     */
+    public Path<V> findShortestPath(V start, V target, Path<V> path) {
+        return findShortestPath(start, target, null, path);
     }
 
     /**
      * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
+     * @param heuristic a heuristic to guide the search
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
+        return findShortestPath(start, target, heuristic, null);
+    }
+
+    /**
+     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param heuristic a heuristic to guide the search
+     * @param path a path object to reuse
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     */
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
-        Path<V> path = implementations.findShortestPath(startNode, targetNode, heuristic);
+        path = implementations.findShortestPath(startNode, targetNode, heuristic, path);
         path.setFixed(true);
         return path;
     }

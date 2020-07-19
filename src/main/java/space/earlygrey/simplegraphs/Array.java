@@ -111,9 +111,12 @@ class Array<T> extends AbstractCollection<T> {
 
     void resize(int newSize) {
         if (newSize > items.length) {
-            newSize = Math.max(2*items.length, newSize);
-            items = Arrays.copyOf(items, newSize);
+            strictResize(Math.max(2*items.length, newSize));
         }
+    }
+
+    void strictResize(int newSize) {
+        items = Arrays.copyOf(items, newSize);
     }
 
     @Override
@@ -121,7 +124,6 @@ class Array<T> extends AbstractCollection<T> {
         Arrays.fill(items, null);
         size = 0;
     }
-
 
     @SuppressWarnings("unchecked")
     public T get(int i) {

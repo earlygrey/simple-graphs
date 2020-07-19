@@ -1,8 +1,6 @@
 
 [![](https://jitpack.io/v/earlygrey/simple-graphs.svg)](https://jitpack.io/#space.earlygrey/simple-graphs)
 
-*note: still in "alpha"*
-
 # Simple Graphs
 
 Simple graphs is a Java library containing basic graph data structures and algorithms. It is lightweight, fast, and intuitive to use.

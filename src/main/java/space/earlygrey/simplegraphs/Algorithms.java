@@ -53,7 +53,7 @@ public class Algorithms<V> {
      * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @param path a path object to reuse
+     * @param path a path instance to reuse
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target, Path<V> path) {
@@ -76,7 +76,7 @@ public class Algorithms<V> {
      * @param start the starting vertex
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
-     * @param path a path object to reuse
+     * @param path a path instance to reuse
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path) {

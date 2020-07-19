@@ -21,6 +21,10 @@ If you're looking for a broader, more powerful library and don't care about java
 
 ---
 
+## Installation
+To include Simple Graphs in your project, follow the instructions on the [jitpack website](https://jitpack.io/#space.earlygrey/simple-graphs).
+
+
 ## Usage
 
 ### Construction

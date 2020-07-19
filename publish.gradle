@@ -1,15 +1,8 @@
 modifyPom {
     project {
-        name 'simple-graphs'
-        description 'Basic graph data structures and algorithms.'
-        url 'https://github.com/earlygrey/simple-graphs'
-        inceptionYear '2020'
-
-        scm {
-            url 'https://github.com/earlygrey/simple-graphs'
-            connection 'scm:https://github.com/earlygrey/simple-graphs.git'
-            developerConnection 'scm:git://github.com/earlygrey/simple-graphs.git'
-        }
+        name = 'Simple Graphs'
+        description = 'A simple graph library for java.'
+        url = 'https://github.com/earlygrey/simple-graphs'
 
         licenses {
             license {
@@ -18,7 +11,6 @@ modifyPom {
                 distribution 'repo'
             }
         }
-
         developers {
             developer {
                 id 'earlygrey'
@@ -26,9 +18,10 @@ modifyPom {
                 email 'nospam@earlygrey.space'
             }
         }
+        scm {
+            url 'https://github.com/earlygrey/simple-graphs'
+            connection 'scm:https://github.com/earlygrey/simple-graphs.git'
+            developerConnection 'scm:git://github.com/earlygrey/simple-graphs.git'
+        }
     }
-}
-
-nexusStaging {
-    packageGroup = 'space.earlygrey'
 }

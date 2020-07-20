@@ -166,7 +166,7 @@ class AlgorithmImplementations<V> {
             path = new Path<>(size);
         } else {
             path.setFixed(false);
-            path.strictResize(size);
+            if (path.items.length < size) path.strictResize(size);
         }
         Node<V> v = end;
         while(v.prev != null) {

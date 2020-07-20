@@ -68,7 +68,7 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return !findShortestPath(start, target).isEmpty();
+        return !findShortestPath(start, target, null, null).isEmpty();
     }
 
     //================================================================================
@@ -143,10 +143,6 @@ class AlgorithmImplementations<V> {
         Node<V> end = aStarSearch(start, target, null);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
-    }
-
-    Path<V> findShortestPath(Node<V> start, Node<V> target) {
-        return findShortestPath(start, target);
     }
 
 

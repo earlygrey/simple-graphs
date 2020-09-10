@@ -1,7 +1,38 @@
+/*
+MIT License
+
+Copyright (c) 2020 earlygrey
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
+
 package space.earlygrey.simplegraphs;
 
 import java.util.Comparator;
 import java.util.Iterator;
+
+/**
+ * A hash structure with objects of type V as keys and Node<V> objects as values.
+ * Keys assigned to the same bucket are chained in a singly linked list.
+ * All the Node<V> objects additionally form a separate doubly linked list to allow a consistent iteration order.
+ *
+ */
 
 class NodeMap<V> {
 
@@ -22,8 +53,6 @@ class NodeMap<V> {
     // collections for returning to the user
     VertexCollection<V> vertexCollection;
     NodeCollection<V> nodeCollection;
-
-
 
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
@@ -258,7 +287,7 @@ class NodeMap<V> {
     }
 
     /**
-     * Iterates in the order of the linked list. Used by teh vertex and Node<V> collections.
+     * Iterates in the order of the linked list. Used by the vertex and Node<V> collections.
      */
     static class NodeIterator<V> implements Iterator<Node<V>> {
 
@@ -302,7 +331,7 @@ class NodeMap<V> {
 
         head = mergeSort(head, comparator);
 
-        // reverse list (I could also toggle a flag in the iterator to flip direction instead)
+        // reverse list (I could also toggle a flag in the iterator to flip direction instead, would be faster)
         Iterator<Node<V>> iterator = nodeCollection.iterator();
         Node<V> node = null, prev = null;
         while (iterator.hasNext()) {

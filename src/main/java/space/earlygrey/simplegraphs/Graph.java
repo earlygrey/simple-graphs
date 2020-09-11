@@ -39,10 +39,10 @@ public abstract class Graph<V> {
     // Members
     //================================================================================
 
-    //final Internals<V> internals = new Internals<>(this);
-
     final NodeMap<V> nodeMap;
     final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
+
+    final Internals<V> internals = new Internals<>(this);
 
     //================================================================================
     // Constructors
@@ -344,6 +344,11 @@ public abstract class Graph<V> {
      */
     public int getEdgeCount() {
         return edgeMap.size();
+    }
+
+
+    public Internals<V> internals() {
+        return internals;
     }
 
 

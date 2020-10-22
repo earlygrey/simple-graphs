@@ -36,6 +36,9 @@ public class Path<V> extends Array<V> {
         super(size, true);
     }
 
+    /**
+     * @return the length of this path, that is, the sum of the edge weights of all edges contained in the path.
+     */
     public float getLength() {
         return length;
     }

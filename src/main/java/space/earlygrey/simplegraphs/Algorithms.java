@@ -62,6 +62,8 @@ public class Algorithms<V> {
 
     /**
      * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
+     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
      * @param start the starting vertex
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
@@ -73,6 +75,8 @@ public class Algorithms<V> {
 
     /**
      * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
+     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
      * @param start the starting vertex
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search

@@ -140,8 +140,8 @@ public abstract class Graph<V> {
     /**
      * Add an edge to the graph, from v to w. The edge will have a default weight of 1.
      * If there is already an edge between v and w, its weight will be set to 1.
-     * @param v the source vertex of the edge
-     * @param w the destination vertex of the edge
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
      * @return the edge
      */
     public Connection<V> addEdge(V v, V w) {
@@ -151,8 +151,8 @@ public abstract class Graph<V> {
     /**
      * Add an edge to the graph, from v to w and with the specified weight.
      * If there is already an edge between v and w, its weight will be set to the specified weight.
-     * @param v the source vertex of the edge
-     * @param w the destination vertex of the edge
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
      * @param weight the weight of the edge
      * @return the edge
      */
@@ -167,8 +167,8 @@ public abstract class Graph<V> {
 
     /**
      * Removes the edge from v to w from the graph.
-     * @param v the source vertex of the edge
-     * @param w the destination vertex of the edge
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
      * @return the edge if there exists an edge from v to w, or null if there is no edge
      */
     public boolean removeEdge(V v, V w) {
@@ -205,12 +205,6 @@ public abstract class Graph<V> {
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
-        /*List<Entry<V, Node<V>>> entryList = new ArrayList<>(vertexMap.entrySet());
-        entryList.sort(Entry.comparingByKey(comparator));
-        vertexMap.clear();
-        for (Entry<V, Node<V>> entry : entryList) {
-            vertexMap.put(entry.getKey(), entry.getValue());
-        }*/
         nodeMap.sort(comparator);
     }
 
@@ -270,8 +264,8 @@ public abstract class Graph<V> {
 
     /**
      * Retrieve the edge which is from v to w.
-     * @param v the source vertex of the edge
-     * @param w the destination vertex of the edge
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
      * @return the edge if it is in the graph, otherwise null
      */
     public Edge<V> getEdge(V v, V w) {
@@ -284,8 +278,8 @@ public abstract class Graph<V> {
 
     /**
      * Check if the graph contains an edge from v to w.
-     * @param v the source vertex of the edge
-     * @param w the destination vertex of the edge
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
      * @return true if the edge is in the graph, false otherwise
      */
     public boolean edgeExists(V v, V w) {
@@ -295,8 +289,9 @@ public abstract class Graph<V> {
     }
 
     /**
-     * Get a collection containing all the edges which have v as a source.
-     * @param v the source vertex of all the edges
+     * Get a collection containing all the edges which have v as a tail.
+     * That is, for every edge e in the collection, e = (v, u) for some vertex u.
+     * @param v the vertex which all edges will have as a tail
      * @return an unmodifiable collection of edges
      */
     public Collection<Edge<V>> getEdges(V v) {

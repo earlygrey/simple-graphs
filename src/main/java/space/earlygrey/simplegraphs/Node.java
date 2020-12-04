@@ -39,8 +39,7 @@ public class Node<V> {
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
     Array<Connection<V>> outEdges = new Array<>();
-
-    int inDegree = 0;
+    Array<Connection<V>> inEdges;
 
     //================================================================================
     // Node map fields
@@ -60,6 +59,7 @@ public class Node<V> {
         this.graph = graph;
         this.objectHash = objectHash;
         idHash = System.identityHashCode(this);
+        if (graph instanceof DirectedGraph) inEdges = new Array<>();
     }
 
     //================================================================================
@@ -77,29 +77,26 @@ public class Node<V> {
             edge.set(this, v, weight);
             neighbours.put(v, edge);
             outEdges.add(edge);
-            v.inDegree++;
+            if (v.inEdges != null) v.inEdges.add(edge);
             return edge;
         } else {
             edge.setWeight(weight);
         }
         return edge;
     }
+
     Connection<V> removeEdge(Node<V> v) {
         Connection<V> edge = neighbours.remove(v);
         if (edge == null) return null;
-        for (int j = outEdges.size()-1; j >= 0; j--) {
-            Connection<V> connection = outEdges.get(j);
-            if (connection.equals(edge)) {
-                outEdges.remove(j);
-                break;
-            }
-        }
+        outEdges.remove(edge);
+        if (v.inEdges != null) v.inEdges.remove(edge);
         return edge;
     }
 
     void disconnect() {
         neighbours.clear();
         outEdges.clear();
+        if (inEdges != null) inEdges.clear();
     }
 
     //================================================================================
@@ -115,7 +112,7 @@ public class Node<V> {
     }
 
     public int getInDegree() {
-        return inDegree;
+        return inEdges == null ? getOutDegree() : inEdges.size();
     }
 
     public int getOutDegree() {
@@ -126,7 +123,7 @@ public class Node<V> {
     // Algorithm fields and methods
     //================================================================================
 
-    //util fields for algorithms, don't store data in them
+    // util fields for algorithms, don't store data in them
     boolean visited, seen;
     float distance;
     float estimate;

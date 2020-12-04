@@ -90,7 +90,7 @@ public class DirectedGraph<V> extends Graph<V> {
     public Collection<Edge<V>> getInEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
-        return Collections.unmodifiableCollection(node.outEdges);
+        return Collections.unmodifiableCollection(node.inEdges);
     }
 
 

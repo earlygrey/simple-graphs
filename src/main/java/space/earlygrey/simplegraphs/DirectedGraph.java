@@ -26,6 +26,7 @@ package space.earlygrey.simplegraphs;
 import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class DirectedGraph<V> extends Graph<V> {
 
@@ -79,5 +80,18 @@ public class DirectedGraph<V> extends Graph<V> {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getInDegree();
     }
+
+    /**
+     * Get a collection containing all the edges which have v as a head.
+     * That is, for every edge e in the collection, e = (u, v) for some vertex u.
+     * @param v the vertex which all edges will have as a head
+     * @return an unmodifiable collection of edges
+     */
+    public Collection<Edge<V>> getInEdges(V v) {
+        Node<V> node = getNode(v);
+        if (node==null) return null;
+        return Collections.unmodifiableCollection(node.outEdges);
+    }
+
 
 }

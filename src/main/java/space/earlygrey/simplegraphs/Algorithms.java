@@ -40,7 +40,7 @@ public class Algorithms<V> {
     //--------------------
 
     /**
-     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
@@ -51,7 +51,7 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
      * @param path a path instance to reuse
@@ -63,7 +63,7 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
      * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
      * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
      * @param start the starting vertex
@@ -77,7 +77,7 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
      * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
      * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
      * @param start the starting vertex
@@ -97,7 +97,7 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the length of a shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * Find the length of a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
      * @return the sum of the weights in a shortest path from the starting vertex to the target vertex.
@@ -108,7 +108,7 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the length of a shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * Find the length of a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
      * @return the sum of the weights in a shortest path from the starting vertex to the target vertex.
@@ -116,6 +116,16 @@ public class Algorithms<V> {
      */
     public float findMinimumDistance(V start, V target, Heuristic<V> heuristic) {
         return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target), heuristic);
+    }
+
+    /**
+     * Checks whether there exists a path from the start vertex to target vertex, using Dijkstra's algorithm implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @return whether there exists a path from the start vertex to target vertex
+     */
+    public boolean isConnected(V start, V target) {
+        return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target)) < Float.MAX_VALUE;
     }
 
     //--------------------

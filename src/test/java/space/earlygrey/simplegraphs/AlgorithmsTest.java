@@ -35,13 +35,15 @@ public class AlgorithmsTest {
 
     @Test
     public void shortestPathShouldBeCorrect() {
-        int n = 5;
+        int n = 20;
         Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);
         Graph<Vector2> diGraph = TestUtils.makeGridGraph(new DirectedGraph<>(), n);
 
         Vector2 start = new Vector2(0, 0), end = new Vector2(n - 1, n - 1);
+        Path<Vector2> path;
 
-        Path<Vector2> path = undirectedGraph.algorithms().findShortestPath(start, end);
+        // without heuristic
+        path = undirectedGraph.algorithms().findShortestPath(start, end);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, undirectedGraph));
@@ -50,7 +52,8 @@ public class AlgorithmsTest {
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
-        
+
+        // with heuristic
         Heuristic<Vector2> h = Vector2::dst;
 
         path = undirectedGraph.algorithms().findShortestPath(start, end, h);
@@ -62,16 +65,29 @@ public class AlgorithmsTest {
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, diGraph));
+        assertTrue(diGraph.algorithms().isConnected(start, end));
 
-        undirectedGraph.algorithms().findShortestPath(start, end, h, path);
+        path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(2*(n-1) + 1, path.size());
         assertEquals(start, path.get(0));
         assertTrue(pathIsConnected(path, undirectedGraph));
+        assertTrue(undirectedGraph.algorithms().isConnected(start, end));
 
+
+        // no path exists
         undirectedGraph.disconnect(end);
-        undirectedGraph.algorithms().findShortestPath(start, end, h, path);
+        path = undirectedGraph.algorithms().findShortestPath(start, end, h);
         assertEquals(0, path.size());
+        path = undirectedGraph.algorithms().findShortestPath(start, end);
+        assertEquals(0, path.size());
+        assertTrue(!undirectedGraph.algorithms().isConnected(start, end));
 
+        diGraph.disconnect(end);
+        path = diGraph.algorithms().findShortestPath(start, end, h);
+        assertEquals(0, path.size());
+        path = diGraph.algorithms().findShortestPath(start, end);
+        assertEquals(0, path.size());
+        assertTrue(!diGraph.algorithms().isConnected(start, end));
     }
 
 

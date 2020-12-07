@@ -43,7 +43,8 @@ public class Algorithms<V> {
      * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target) {
         return findShortestPath(start, target, null, null);
@@ -54,7 +55,8 @@ public class Algorithms<V> {
      * @param start the starting vertex
      * @param target the target vertex
      * @param path a path instance to reuse
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Path<V> path) {
         return findShortestPath(start, target, null, path);
@@ -67,7 +69,8 @@ public class Algorithms<V> {
      * @param start the starting vertex
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
         return findShortestPath(start, target, heuristic, null);
@@ -81,7 +84,8 @@ public class Algorithms<V> {
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
      * @param path a path instance to reuse
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path) {
         Node<V> startNode = graph.getNode(start);
@@ -93,13 +97,25 @@ public class Algorithms<V> {
     }
 
     /**
-     * Find the shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
+     * Find the length of a shortest path between the start and target vertices, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @return the sum of the weights in a shortest path from the starting vertex to the target vertex
+     * @return the sum of the weights in a shortest path from the starting vertex to the target vertex.
+     * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target) {
         return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target));
+    }
+
+    /**
+     * Find the length of a shortest path between the start and target vertices, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @return the sum of the weights in a shortest path from the starting vertex to the target vertex.
+     * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
+     */
+    public float findMinimumDistance(V start, V target, Heuristic<V> heuristic) {
+        return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target), heuristic);
     }
 
     //--------------------

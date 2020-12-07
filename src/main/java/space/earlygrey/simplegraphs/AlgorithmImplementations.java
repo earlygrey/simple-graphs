@@ -140,7 +140,11 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     float findMinimumDistance(Node<V> start, Node<V> target) {
-        Node<V> end = aStarSearch(start, target, null);
+        return findMinimumDistance(start, target, null);
+    }
+
+    float findMinimumDistance(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+        Node<V> end = aStarSearch(start, target, heuristic);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
     }
@@ -148,7 +152,7 @@ class AlgorithmImplementations<V> {
 
     Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic, Path<V> path) {
         Node<V> end = aStarSearch(start, target, heuristic);
-        if (end==null) {
+        if (end == null) {
             if (path != null) {
                 path.setFixed(false);
                 path.clear();
@@ -175,10 +179,17 @@ class AlgorithmImplementations<V> {
         return path;
     }
 
+    /**
+     *
+     * @param start
+     * @param target
+     * @param heuristic
+     * @return the target Node if reachable, otherwise null
+     */
     private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
         init();
 
-        boolean hasHeuristic = heuristic != null;
+        final boolean hasHeuristic = heuristic != null;
 
         start.resetAlgorithmAttribs(runID);
         start.distance = 0;

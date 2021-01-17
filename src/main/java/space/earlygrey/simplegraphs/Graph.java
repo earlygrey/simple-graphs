@@ -71,7 +71,7 @@ public abstract class Graph<V> {
     abstract Connection<V> obtainEdge();
     abstract Graph<V> createNew();
 
-    public abstract Algorithms algorithms();
+    public abstract Algorithms<V> algorithms();
 
     //--------------------
     //  Public Methods

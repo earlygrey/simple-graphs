@@ -128,12 +128,14 @@ public class Node<V> {
     float distance;
     float estimate;
     Node<V> prev;
+    Connection<V> connection;
     int i, lastRunID;
 
     boolean resetAlgorithmAttribs(int runID) {
         if (runID == this.lastRunID) return false;
         visited = false;
         prev = null;
+        connection = null;
         distance = Float.MAX_VALUE;
         estimate = 0;
         i = 0;

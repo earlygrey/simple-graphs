@@ -24,6 +24,8 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.SearchProcessor;
+import space.earlygrey.simplegraphs.utils.ShortestPathProcessor;
 
 public class Algorithms<V> {
 
@@ -48,6 +50,18 @@ public class Algorithms<V> {
      */
     public Path<V> findShortestPath(V start, V target) {
         return findShortestPath(start, target, null, null);
+    }
+
+    /**
+     * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param processor see {@link ShortestPathProcessor}
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
+     */
+    public Path<V> findShortestPath(V start, V target, ShortestPathProcessor<V> processor) {
+        return findShortestPath(start, target, null, null, processor);
     }
 
     /**
@@ -88,13 +102,30 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path) {
+        return findShortestPath(start, target, heuristic, path, null);
+    }
+
+    /**
+     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
+     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param heuristic a heuristic to guide the search
+     * @param path a path instance to reuse
+     * @param processor see {@link ShortestPathProcessor}
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
+     */
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, ShortestPathProcessor<V> processor) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
-        path = implementations.findShortestPath(startNode, targetNode, heuristic, path);
+        path = implementations.findShortestPath(startNode, targetNode, heuristic, path, processor);
         path.setFixed(true);
         return path;
     }
+
 
     /**
      * Find the length of a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
@@ -135,61 +166,23 @@ public class Algorithms<V> {
     /**
      * Perform a breadth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param maxVertices the maximum number of vertices to process before terminating the search
-     * @param maxDepth the maximum edge distance (the number of edges in a shortest path between vertices) a vertex should have to be
-     *                 considered for processing. If a vertex has a distance larger than the maxDepth, it will not be added to the
-     *                 returned graph
-     * @return a Graph object containing all the processed vertices, and the edges from which each vertex was encountered.
-     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
-     * reflected in the iteration order of the collections returned by {@link Graph#getVertices()} and {@link Graph#getEdges()}.
+     * @param searchProcessor see {@link SearchProcessor}
      */
-    public Graph<V> breadthFirstSearch(V v, int maxVertices, int maxDepth) {
+    public void breadthFirstSearch(V v, SearchProcessor<V> searchProcessor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
-        Graph<V> tree = graph.createNew();
-        implementations.breadthFirstSearch(node, tree, maxVertices, maxDepth);
-        return tree;
-    }
-
-    /**
-     * Perform a breadth first search starting from the specified vertex.
-     * @param v the vertex at which to start the search
-     * @return a Graph object containing all the processed vertices (all the vertices in this graph), and the edges from which each vertex was encountered.
-     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
-     * reflected in the iteration order of the collections returned by {@link Graph#getVertices()} and {@link Graph#getEdges()}.
-     */
-    public Graph<V> breadthFirstSearch(V v) {
-        return breadthFirstSearch(v, graph.size(), graph.size());
+        implementations.search(node, searchProcessor, true);
     }
 
     /**
      * Perform a depth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param maxVertices the maximum number of vertices to process before terminating the search
-     * @param maxDepth the maximum edge distance (the number of edges in a shortest path between vertices) a vertex should have to be
-     *                 considered for processing. If a vertex has a distance larger than the maxDepth, it will not be added to the
-     *                 returned graph
-     * @return a Graph object containing all the processed vertices, and the edges from which each vertex was encountered.
-     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
-     * reflected in the iteration order of the collections returned by {@link Graph#getVertices()} and {@link Graph#getEdges()}.
+     * @param searchProcessor see {@link SearchProcessor}
      */
-    public Graph<V> depthFirstSearch(V v, int maxVertices, int maxDepth) {
+    public void depthFirstSearch(V v, SearchProcessor<V> searchProcessor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
-        Graph<V> tree = graph.createNew();
-        implementations.depthFirstSearch(node, tree, maxVertices, maxDepth);
-        return tree;
-    }
-
-    /**
-     * Perform a depth first search starting from the specified vertex.
-     * @param v the vertex at which to start the search
-     * @return a Graph object containing all the processed vertices (all the vertices in this graph), and the edges from which each vertex was encountered.
-     * The vertices and edges in the returned graph will be in the order they were encountered in the search, and this will be
-     * reflected in the iteration order of the collections returned by {@link Graph#getVertices()} and {@link Graph#getEdges()}.
-     */
-    public Graph<V> depthFirstSearch(V v) {
-        return depthFirstSearch(v, graph.size(), graph.size());
+        implementations.search(node, searchProcessor, false);
     }
 
 

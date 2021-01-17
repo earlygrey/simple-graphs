@@ -30,6 +30,13 @@ package space.earlygrey.simplegraphs.utils;
  */
 public interface Heuristic<V> {
 
-    float getEstimate(V currentNode, V targetNode);
+    /**
+     *
+     * @param u
+     * @param v
+     * @return an estimation of the distance from u to v.
+     * This value should always be at most the actual distance of a shortest path from x to y.
+     */
+    float getEstimate(V u, V v);
 
 }

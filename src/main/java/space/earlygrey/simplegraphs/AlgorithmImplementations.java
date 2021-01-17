@@ -24,8 +24,6 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 
-import space.earlygrey.simplegraphs.utils.Heuristic;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +31,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.SearchProcessor;
+import space.earlygrey.simplegraphs.utils.ShortestPathProcessor;
 
 class AlgorithmImplementations<V> {
 
@@ -68,59 +70,27 @@ class AlgorithmImplementations<V> {
     //================================================================================
 
     boolean isReachable(Node<V> start, Node<V> target) {
-        return !findShortestPath(start, target, null, null).isEmpty();
+        return !findShortestPath(start, target, null, null, null).isEmpty();
     }
 
     //================================================================================
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
-        if (maxDepth <= 0 ) return;
+
+    void search(Node<V> vertex, SearchProcessor<V> searchProcessor, final boolean breadthFirst) {
+
         init();
 
         vertex.resetAlgorithmAttribs(runID);
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
-        queue.addLast(vertex);
-
-        while(!queue.isEmpty()) {
-            Node<V> v = queue.poll();
-            tree.addVertex(v.object);
-            if (v.prev != null) tree.addEdge(v.object, v.prev.object);
-            if (v.i == maxDepth) continue;
-            if (tree.size() == maxVertices) break;
-            int n = v.outEdges.size();
-            for (int i = 0; i < n; i++) {
-                Connection<V> e = v.outEdges.get(i);
-                Node<V> w = e.b;
-                w.resetAlgorithmAttribs(runID);
-                if (!w.visited) {
-                    w.visited = true;
-                    w.i = v.i+1;
-                    w.prev = v;
-                    queue.addLast(w);
-                }
-            }
-        }
-    }
-
-    void depthFirstSearch(Node<V> vertex, Graph<V> tree, int maxVertices, int maxDepth) {
-        if (maxDepth <= 0 ) return;
-        init();
-
-        vertex.resetAlgorithmAttribs(runID);
-        ArrayDeque<Node<V>> queue = this.queue;
-        queue.clear();
-        queue.addLast(vertex);
+        queue.add(vertex);
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
             if (!v.visited) {
-                tree.addVertex(v.object);
-                if (v.prev != null) tree.addEdge(v.object, v.prev.object);
-                if (v.i == maxDepth) continue;
-                if (tree.size() == maxVertices) break;
+                if (searchProcessor != null && searchProcessor.process(v.object, v.connection, v.i)) break;
                 v.visited = true;
                 int n = v.outEdges.size();
                 for (int i = 0; i < n; i++) {
@@ -129,7 +99,12 @@ class AlgorithmImplementations<V> {
                     w.resetAlgorithmAttribs(runID);
                     w.i = v.i+1;
                     w.prev = v;
-                    queue.addFirst(w);
+                    w.connection = e;
+                    if (breadthFirst) {
+                        queue.addLast(w);
+                    } else {
+                        queue.addFirst(w);
+                    }
                 }
             }
         }
@@ -144,14 +119,14 @@ class AlgorithmImplementations<V> {
     }
 
     float findMinimumDistance(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
-        Node<V> end = aStarSearch(start, target, heuristic);
+        Node<V> end = aStarSearch(start, target, heuristic, null);
         if (end==null) return Float.MAX_VALUE;
         else return end.distance;
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, Heuristic<V> heuristic, Path<V> path) {
-        Node<V> end = aStarSearch(start, target, heuristic);
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, ShortestPathProcessor<V> processor) {
+        Node<V> end = aStarSearch(start, target, heuristic, processor);
         if (end == null) {
             if (path != null) {
                 path.setFixed(false);
@@ -186,10 +161,8 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(Node<V> start, Node<V> target, Heuristic<V> heuristic) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final ShortestPathProcessor<V> processor) {
         init();
-
-        final boolean hasHeuristic = heuristic != null;
 
         start.resetAlgorithmAttribs(runID);
         start.distance = 0;
@@ -198,7 +171,7 @@ class AlgorithmImplementations<V> {
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();
-            if (u == target) {
+            if (u == target || (processor != null && processor.process(u.object, u.connection, u.distance))) {
                 heap.clear();
                 return u;
             }
@@ -214,7 +187,8 @@ class AlgorithmImplementations<V> {
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
                             v.prev = u;
-                            if (hasHeuristic && !v.seen) {
+                            v.connection = e;
+                            if (heuristic != null && !v.seen) {
                                 v.estimate = heuristic.getEstimate(v.object, target.object);
                             }
                             if (!v.seen) {

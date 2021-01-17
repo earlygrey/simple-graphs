@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -151,7 +152,15 @@ public class AlgorithmsTest {
     public void bfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        Graph<Integer> tree = graph.algorithms().breadthFirstSearch(0);
+        Graph<Integer> tree = graph.createNew();
+
+        SearchProcessor<Integer> processor = (i, e, d) -> {
+            tree.addVertex(i);
+            tree.addEdge(e.getA(), e.getB());
+            return false;
+        };
+        
+        graph.algorithms().breadthFirstSearch(0, processor);
         assertEquals(4, tree.size());
         assertEquals(3, tree.getEdgeCount());
 
@@ -174,7 +183,15 @@ public class AlgorithmsTest {
     public void dfsShouldWork() {
         Graph<Integer> graph = createSearchGraph();
 
-        Graph<Integer> tree = graph.algorithms().depthFirstSearch(0);
+        Graph<Integer> tree = graph.createNew();
+
+        SearchProcessor<Integer> processor = (i, e, d) -> {
+            tree.addVertex(i);
+            tree.addEdge(e.getA(), e.getB());
+            return false;
+        };
+
+        graph.algorithms().depthFirstSearch(0, processor);
 
         assertEquals(4, tree.size());
         assertEquals(3, tree.getEdgeCount());

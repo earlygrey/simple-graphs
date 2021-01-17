@@ -23,8 +23,6 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import java.util.List;
-
 public class DirectedGraphAlgorithms<V> extends Algorithms<V> {
 
     DirectedGraphAlgorithms(DirectedGraph<V> graph) {

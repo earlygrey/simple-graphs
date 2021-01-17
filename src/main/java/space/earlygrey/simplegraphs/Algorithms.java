@@ -23,6 +23,8 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
+import java.util.function.Consumer;
+
 import space.earlygrey.simplegraphs.utils.Heuristic;
 import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
@@ -175,6 +177,19 @@ public class Algorithms<V> {
     }
 
     /**
+     * Perform a breadth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param consumer called just before each node is processed
+     */
+    public void breadthFirstSearch(V v, Consumer<V> consumer) {
+        SearchPreprocessor<V> preprocessor = (v1, edge, depth) -> {
+            consumer.accept(v1);
+            return false;
+        };
+        breadthFirstSearch(v, preprocessor);
+    }
+
+    /**
      * Perform a depth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
      * @param preprocessor see {@link SearchPreprocessor}
@@ -184,6 +199,20 @@ public class Algorithms<V> {
         if (node==null) Errors.throwVertexNotInGraphVertexException();
         implementations.depthFirstSearch(node, preprocessor);
     }
+
+    /**
+     * Perform a depth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param consumer called just before each node is processed
+     */
+    public void depthFirstSearch(V v, Consumer<V> consumer) {
+        SearchPreprocessor<V> preprocessor = (v1, edge, depth) -> {
+            consumer.accept(v1);
+            return false;
+        };
+        depthFirstSearch(v, preprocessor);
+    }
+
 
 
     //--------------------

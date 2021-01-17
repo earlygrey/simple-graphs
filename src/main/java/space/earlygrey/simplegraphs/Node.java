@@ -124,7 +124,7 @@ public class Node<V> {
     //================================================================================
 
     // util fields for algorithms, don't store data in them
-    boolean visited, seen;
+    boolean processed, seen;
     float distance;
     float estimate;
     Node<V> prev;
@@ -133,7 +133,7 @@ public class Node<V> {
 
     boolean resetAlgorithmAttribs(int runID) {
         if (runID == this.lastRunID) return false;
-        visited = false;
+        processed = false;
         prev = null;
         connection = null;
         distance = Float.MAX_VALUE;

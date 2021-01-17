@@ -24,8 +24,8 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.SearchProcessor;
-import space.earlygrey.simplegraphs.utils.ShortestPathProcessor;
+import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
+import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 public class Algorithms<V> {
 
@@ -56,12 +56,12 @@ public class Algorithms<V> {
      * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @param processor see {@link ShortestPathProcessor}
+     * @param preprocessor see {@link ShortestPathPreProcessor}
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, ShortestPathProcessor<V> processor) {
-        return findShortestPath(start, target, null, null, processor);
+    public Path<V> findShortestPath(V start, V target, ShortestPathPreProcessor<V> preprocessor) {
+        return findShortestPath(start, target, null, null, preprocessor);
     }
 
     /**
@@ -113,15 +113,15 @@ public class Algorithms<V> {
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
      * @param path a path instance to reuse
-     * @param processor see {@link ShortestPathProcessor}
+     * @param preprocessor see {@link ShortestPathPreProcessor}
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, ShortestPathProcessor<V> processor) {
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, ShortestPathPreProcessor<V> preprocessor) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
-        path = implementations.findShortestPath(startNode, targetNode, heuristic, path, processor);
+        path = implementations.findShortestPath(startNode, targetNode, heuristic, path, preprocessor);
         path.setFixed(true);
         return path;
     }
@@ -166,23 +166,23 @@ public class Algorithms<V> {
     /**
      * Perform a breadth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param searchProcessor see {@link SearchProcessor}
+     * @param preprocessor see {@link SearchPreprocessor}
      */
-    public void breadthFirstSearch(V v, SearchProcessor<V> searchProcessor) {
+    public void breadthFirstSearch(V v, SearchPreprocessor<V> preprocessor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
-        implementations.search(node, searchProcessor, true);
+        implementations.breadthFirstSearch(node, preprocessor);
     }
 
     /**
      * Perform a depth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param searchProcessor see {@link SearchProcessor}
+     * @param preprocessor see {@link SearchPreprocessor}
      */
-    public void depthFirstSearch(V v, SearchProcessor<V> searchProcessor) {
+    public void depthFirstSearch(V v, SearchPreprocessor<V> preprocessor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
-        implementations.search(node, searchProcessor, false);
+        implementations.depthFirstSearch(node, preprocessor);
     }
 
 

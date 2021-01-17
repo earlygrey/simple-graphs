@@ -70,6 +70,18 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
+Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step on each vertex as an algorithm is running. These can be used for side effects (for example to construct another graph as the algorithm runs), and can also be used to decide whether to cancel processing that vertex. For example
+```java
+List<V> vertices = new ArrayList<>();
+SearchProcessor<V> processor = (v, edge, depth) -> {
+    vertices.add(v); // keep track of processed vertices
+    return depth > 4; // terminate search if depth is greater than 4
+};
+graph.algorithms().breadthFirstSearch(u, processor);
+
+graph.algorithms().depthFirstSearch(u, (v, e, d) -> {System.out.println("processing" + v); return false;});
+```
+
 ## Technical Considerations
 
 While vertices can be any type of `Object`, care must be taken that they are immutable, in the sense that while in the `Graph` their `hashCode()` method always returns the same value, and `equals` is consistent. In general, vertex objects are subject to the same requirements as keys in a java `Map`.

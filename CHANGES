@@ -1,3 +1,4 @@
 [unreleased]
- - add processor functional interfaces
-  SearchProcessor and ShortestPathProcessor can be used to perform checks during search algorithms and decide whether to terminate. These replace the maxDepth and maxDistance arguments.
+ - add preprocessor functional interfaces
+  Preprocessors can be used to perform checks during search algorithms and decide whether to continue processsing the vertex.
+  These replace the maxDepth and maxDistance arguments.

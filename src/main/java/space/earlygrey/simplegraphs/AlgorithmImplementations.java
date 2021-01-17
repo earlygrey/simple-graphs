@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.SearchProcessor;
-import space.earlygrey.simplegraphs.utils.ShortestPathProcessor;
+import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
+import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 class AlgorithmImplementations<V> {
 
@@ -77,35 +77,49 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-
-    void search(Node<V> vertex, SearchProcessor<V> searchProcessor, final boolean breadthFirst) {
-
+    void breadthFirstSearch(Node<V> vertex, SearchPreprocessor<V> preprocessor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
         ArrayDeque<Node<V>> queue = this.queue;
         queue.clear();
         queue.add(vertex);
+        vertex.seen = true;
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (!v.visited) {
-                if (searchProcessor != null && searchProcessor.process(v.object, v.connection, v.i)) break;
-                v.visited = true;
-                int n = v.outEdges.size();
-                for (int i = 0; i < n; i++) {
-                    Connection<V> e = v.outEdges.get(i);
-                    Node<V> w = e.b;
-                    w.resetAlgorithmAttribs(runID);
-                    w.i = v.i+1;
-                    w.prev = v;
+            if (preprocessor != null && preprocessor.process(v.object, v.connection, v.i)) continue;
+            int n = v.outEdges.size();
+            for (int i = 0; i < n; i++) {
+                Connection<V> e = v.outEdges.get(i);
+                Node<V> w = e.b;
+                w.resetAlgorithmAttribs(runID);
+                if (!w.seen) {
+                    w.i = v.i + 1;
                     w.connection = e;
-                    if (breadthFirst) {
-                        queue.addLast(w);
-                    } else {
-                        queue.addFirst(w);
-                    }
+                    w.seen = true;
+                    queue.addLast(w);
                 }
+            }
+        }
+    }
+
+    void depthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor) {
+        init();
+        v.resetAlgorithmAttribs(runID);
+        recursiveDepthFirstSearch(v, preprocessor, null, 0);
+    }
+
+    void recursiveDepthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor, Connection<V> edge, int depth) {
+        if (preprocessor != null && preprocessor.process(v.object, edge, depth)) return;
+        v.processed = true;
+        int n = v.outEdges.size();
+        for (int i = 0; i < n; i++) {
+            Connection<V> e = v.outEdges.get(i);
+            Node<V> w = e.b;
+            w.resetAlgorithmAttribs(runID);
+            if (!w.processed) {
+                recursiveDepthFirstSearch(w, preprocessor, e, depth + 1);
             }
         }
     }
@@ -125,8 +139,8 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, ShortestPathProcessor<V> processor) {
-        Node<V> end = aStarSearch(start, target, heuristic, processor);
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, ShortestPathPreProcessor<V> preprocessor) {
+        Node<V> end = aStarSearch(start, target, heuristic, preprocessor);
         if (end == null) {
             if (path != null) {
                 path.setFixed(false);
@@ -161,7 +175,7 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final ShortestPathProcessor<V> processor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final ShortestPathPreProcessor<V> preprocessor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
@@ -171,18 +185,19 @@ class AlgorithmImplementations<V> {
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();
-            if (u == target || (processor != null && processor.process(u.object, u.connection, u.distance))) {
+            if (u == target) {
                 heap.clear();
                 return u;
             }
-            if (!u.visited) {
-                u.visited = true;
+            if (!u.processed) {
+                if (preprocessor != null && preprocessor.process(u.object, u.connection, u.distance)) continue;
+                u.processed = true;
                 int n = u.outEdges.size();
                 for (int i = 0; i < n; i++) {
                     Connection<V> e = u.outEdges.get(i);
                     Node<V> v = e.b;
                     v.resetAlgorithmAttribs(runID);
-                    if (!v.visited) {
+                    if (!v.processed) {
                         float newDistance = u.distance + e.getWeight();
                         if (newDistance < v.distance) {
                             v.distance = newDistance;
@@ -252,7 +267,7 @@ class AlgorithmImplementations<V> {
 
         v.resetAlgorithmAttribs(runID);
 
-        if (v.visited) return true;
+        if (v.processed) return true;
         if (v.seen) return false; // not a DAG
 
         v.seen = true;
@@ -265,7 +280,7 @@ class AlgorithmImplementations<V> {
         }
 
         v.seen = false;
-        v.visited = true;
+        v.processed = true;
 
         if (cursor != v) {
             // move v from its current position to just after the cursor
@@ -387,7 +402,7 @@ class AlgorithmImplementations<V> {
     }
 
     private boolean detectCycleDFS(Node<V> v, Node<V> parent, Set<Node<V>> recursiveStack) {
-        v.visited = true;
+        v.processed = true;
         recursiveStack.add(v);
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
@@ -398,7 +413,7 @@ class AlgorithmImplementations<V> {
             if (recursiveStack.contains(u)) {
                 return true;
             }
-            if (!u.visited) {
+            if (!u.processed) {
                 if (detectCycleDFS(u, v, recursiveStack)) return true;
             }
         }

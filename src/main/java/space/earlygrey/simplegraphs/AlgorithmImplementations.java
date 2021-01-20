@@ -85,30 +85,23 @@ class AlgorithmImplementations<V> {
         queue.clear();
         queue.add(vertex);
         vertex.seen = true;
-        if (preprocessor != null) {
-            switch (preprocessor.process(vertex.object, null, 0)) {
-                case IGNORE:
-                case TERMINATE:
-                    return;
-            }
-        }
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
+            if (preprocessor != null) {
+                switch (preprocessor.process(v.object, v.connection, v.i + 1)) {
+                    case IGNORE:
+                        continue;
+                    case TERMINATE:
+                        return;
+                }
+            }
             int n = v.outEdges.size();
             for (int i = 0; i < n; i++) {
                 Connection<V> e = v.outEdges.get(i);
                 Node<V> w = e.b;
                 w.resetAlgorithmAttribs(runID);
                 if (!w.seen) {
-                    if (preprocessor != null) {
-                        switch (preprocessor.process(w.object, e, v.i + 1)) {
-                            case IGNORE:
-                                continue;
-                            case TERMINATE:
-                                return;
-                        }
-                    }
                     w.i = v.i + 1;
                     w.connection = e;
                     w.seen = true;

@@ -1,4 +1,4 @@
 [unreleased]
  - add preprocessor functional interfaces
-  Preprocessors can be used to perform checks during search algorithms and decide whether to continue processsing the vertex.
+  Preprocessors can be used to perform checks during search algorithms and decide whether to continue processing the vertex or terminate the algorithm.
   These replace the maxDepth and maxDistance arguments.

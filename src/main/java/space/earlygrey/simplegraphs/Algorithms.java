@@ -24,9 +24,11 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
 import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
+import space.earlygrey.simplegraphs.utils.ProcessorOutcome;
 import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 public class Algorithms<V> {
@@ -182,10 +184,20 @@ public class Algorithms<V> {
      * @param consumer called just before each node is processed
      */
     public void breadthFirstSearch(V v, Consumer<V> consumer) {
-        SearchPreprocessor<V> preprocessor = (v1, edge, depth) -> {
-            consumer.accept(v1);
-            return false;
+        SearchPreprocessor<V> preprocessor = (u, edge, depth) -> {
+            consumer.accept(u);
+            return ProcessorOutcome.CONTINUE;
         };
+        breadthFirstSearch(v, preprocessor);
+    }
+
+    /**
+     * Perform a breadth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param ignore predicate deciding whether to process the vertex or ignore it
+     */
+    public void breadthFirstSearch(V v, Predicate<V> ignore) {
+        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
         breadthFirstSearch(v, preprocessor);
     }
 
@@ -206,14 +218,22 @@ public class Algorithms<V> {
      * @param consumer called just before each node is processed
      */
     public void depthFirstSearch(V v, Consumer<V> consumer) {
-        SearchPreprocessor<V> preprocessor = (v1, edge, depth) -> {
-            consumer.accept(v1);
-            return false;
+        SearchPreprocessor<V> preprocessor = (u, edge, depth) -> {
+            consumer.accept(u);
+            return ProcessorOutcome.CONTINUE;
         };
         depthFirstSearch(v, preprocessor);
     }
 
-
+    /**
+     * Perform a depth first search starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param ignore predicate deciding whether to process the vertex or ignore it
+     */
+    public void depthFirstSearch(V v, Predicate<V> ignore) {
+        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
+        depthFirstSearch(v, preprocessor);
+    }
 
     //--------------------
     //  Structures

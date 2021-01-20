@@ -85,16 +85,30 @@ class AlgorithmImplementations<V> {
         queue.clear();
         queue.add(vertex);
         vertex.seen = true;
+        if (preprocessor != null) {
+            switch (preprocessor.process(vertex.object, null, 0)) {
+                case IGNORE:
+                case TERMINATE:
+                    return;
+            }
+        }
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (preprocessor != null && preprocessor.process(v.object, v.connection, v.i)) continue;
             int n = v.outEdges.size();
             for (int i = 0; i < n; i++) {
                 Connection<V> e = v.outEdges.get(i);
                 Node<V> w = e.b;
                 w.resetAlgorithmAttribs(runID);
                 if (!w.seen) {
+                    if (preprocessor != null) {
+                        switch (preprocessor.process(w.object, e, v.i + 1)) {
+                            case IGNORE:
+                                continue;
+                            case TERMINATE:
+                                return;
+                        }
+                    }
                     w.i = v.i + 1;
                     w.connection = e;
                     w.seen = true;
@@ -107,11 +121,17 @@ class AlgorithmImplementations<V> {
     void depthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor) {
         init();
         v.resetAlgorithmAttribs(runID);
-        recursiveDepthFirstSearch(v, preprocessor, null, 0);
+        if (preprocessor != null) {
+            switch (preprocessor.process(v.object, null, 0)) {
+                case IGNORE:
+                case TERMINATE:
+                    return;
+            }
+        }
+        recursiveDepthFirstSearch(v, preprocessor, 0);
     }
 
-    void recursiveDepthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor, Connection<V> edge, int depth) {
-        if (preprocessor != null && preprocessor.process(v.object, edge, depth)) return;
+    boolean recursiveDepthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor, int depth) {
         v.processed = true;
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
@@ -119,9 +139,22 @@ class AlgorithmImplementations<V> {
             Node<V> w = e.b;
             w.resetAlgorithmAttribs(runID);
             if (!w.processed) {
-                recursiveDepthFirstSearch(w, preprocessor, e, depth + 1);
+                if (preprocessor != null) {
+                    switch (preprocessor.process(w.object, e, depth + 1)) {
+                        case IGNORE:
+                            return false;
+                        case TERMINATE:
+                            return true;
+                        case CONTINUE:
+                        default:
+                            if (recursiveDepthFirstSearch(w, preprocessor, depth + 1)) {
+                                return true;
+                            }
+                    }
+                }
             }
         }
+        return false;
     }
 
     //================================================================================
@@ -190,7 +223,16 @@ class AlgorithmImplementations<V> {
                 return u;
             }
             if (!u.processed) {
-                if (preprocessor != null && preprocessor.process(u.object, u.connection, u.distance)) continue;
+                if (preprocessor != null) {
+                    if (preprocessor != null) {
+                        switch (preprocessor.process(u.object, u.connection, u.distance)) {
+                            case IGNORE:
+                                continue;
+                            case TERMINATE:
+                                return null;
+                        }
+                    }
+                }
                 u.processed = true;
                 int n = u.outEdges.size();
                 for (int i = 0; i < n; i++) {
@@ -420,28 +462,6 @@ class AlgorithmImplementations<V> {
         recursiveStack.remove(v);
         return false;
     }
-
-    /*void dfs(Node<V> vertex, List<V> vertices, float maxDistance, int maxDepth) {
-        vertices.clear();
-        clear();
-        dfsRecursive(vertex, vertices, maxDistance, maxDepth, 0);
-        clear();
-    }
-
-    private void dfsRecursive(Node<V> v, List<V> vertices, float maxDistance, int maxDepth, int depth) {
-        if (depth > maxDepth) return;
-        resetAttribs(v);
-        v.visited = true;
-        vertices.add(v.object);
-        for (Connection e : v.connections.values()) {
-            Node<V> w = e.b;
-            if (!w.visited) {
-                w.distance = v.distance + e.getWeight();
-                if (w.distance <= maxDistance) dfsRecursive(w, vertices, maxDistance, maxDepth, depth + 1);
-            }
-        }
-    }*/
-
 
     /*List<List<V>> getComponents(Graph<V> graph) {
         Set<Node<V>> nodeSet = new HashSet();

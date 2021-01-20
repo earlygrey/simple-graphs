@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.ProcessorOutcome;
 import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 
 import static org.junit.Assert.assertEquals;
@@ -157,7 +158,7 @@ public class AlgorithmsTest {
         SearchPreprocessor<Integer> processor = (i, e, d) -> {
             tree.addVertex(i);
             if (e != null) tree.addEdge(e.getA(), e.getB());
-            return false;
+            return ProcessorOutcome.CONTINUE;
         };
         
         graph.algorithms().breadthFirstSearch(0, processor);
@@ -187,7 +188,7 @@ public class AlgorithmsTest {
         SearchPreprocessor<Integer> processor = (i, e, d) -> {
             tree.addVertex(i);
             if (e != null) tree.addEdge(e.getA(), e.getB());
-            return false;
+            return ProcessorOutcome.CONTINUE;
         };
 
         graph.algorithms().depthFirstSearch(0, processor);

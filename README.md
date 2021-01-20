@@ -70,16 +70,18 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
-Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step on each vertex as an algorithm is running. These can be used for side effects (for example to construct another graph as the algorithm runs), and for deciding whether to cancel processing that vertex. For example:
+Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step on each vertex as an algorithm is running. These can be used for side effects (for example to construct another graph as the algorithm runs), and for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
 ```java
-List<V> vertices = new ArrayList<>();
-SearchProcessor<V> processor = (v, edge, depth) -> {
-    vertices.add(v); // keep track of processed vertices
-    return depth > 4; // terminate search if depth is greater than 4
-};
-graph.algorithms().breadthFirstSearch(u, processor);
+graph.algorithms().breadthFirstSearch(u, v -> System.out.println("processing " + v));
 
-graph.algorithms().depthFirstSearch(u, (v) -> System.out.println("processing " + v));
+Graph<Integer> tree = graph.createNew();
+SearchPreprocessor<V> processor = (v, edge, depth) -> {
+    if (depth > 6)  return ProcessorOutcome.IGNORE;
+    tree.addVertex(v);
+    if (edge != null) tree.addEdge(edge.getA(), edge.getB());
+    return ProcessorOutcome.CONTINUE;
+};
+graph.algorithms().depthFirstSearch(0, processor);
 ```
 
 ## Technical Considerations

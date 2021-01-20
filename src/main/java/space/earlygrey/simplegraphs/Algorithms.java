@@ -23,12 +23,13 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 import space.earlygrey.simplegraphs.utils.ProcessorOutcome;
+import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 public class Algorithms<V> {
@@ -196,8 +197,8 @@ public class Algorithms<V> {
      * @param v the vertex at which to start the search
      * @param ignore predicate deciding whether to process the vertex or ignore it
      */
-    public void breadthFirstSearch(V v, Predicate<V> ignore) {
-        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
+    public void breadthFirstSearch(V v, BiPredicate<V, Edge<V>> ignore) {
+        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u, e) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
         breadthFirstSearch(v, preprocessor);
     }
 
@@ -230,8 +231,8 @@ public class Algorithms<V> {
      * @param v the vertex at which to start the search
      * @param ignore predicate deciding whether to process the vertex or ignore it
      */
-    public void depthFirstSearch(V v, Predicate<V> ignore) {
-        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
+    public void depthFirstSearch(V v, BiPredicate<V, Edge<V>> ignore) {
+        SearchPreprocessor<V> preprocessor = (u, e, d) -> ignore.test(u, e) ? ProcessorOutcome.IGNORE : ProcessorOutcome.CONTINUE;
         depthFirstSearch(v, preprocessor);
     }
 

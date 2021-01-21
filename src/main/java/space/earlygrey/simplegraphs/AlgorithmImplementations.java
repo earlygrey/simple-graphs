@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import space.earlygrey.simplegraphs.AlgorithmStep.SearchStep;
-import space.earlygrey.simplegraphs.AlgorithmStep.ShortestPathStep;
 import space.earlygrey.simplegraphs.utils.Heuristic;
 
 class AlgorithmImplementations<V> {
@@ -78,7 +76,7 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(Node<V> vertex, Consumer<SearchStep<V>> preprocessor) {
+    void breadthFirstSearch(Node<V> vertex, Consumer<AlgorithmStep<V>> preprocessor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
@@ -87,7 +85,7 @@ class AlgorithmImplementations<V> {
         queue.add(vertex);
         vertex.seen = true;
 
-        final SearchStep<V> step = preprocessor != null ? new SearchStep<>() : null;
+        final AlgorithmStep<V> step = preprocessor != null ? new AlgorithmStep<>() : null;
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
@@ -104,6 +102,7 @@ class AlgorithmImplementations<V> {
                 w.resetAlgorithmAttribs(runID);
                 if (!w.seen) {
                     w.i = v.i + 1;
+                    w.distance = v.distance + e.weight;
                     w.connection = e;
                     w.seen = true;
                     queue.addLast(w);
@@ -112,13 +111,13 @@ class AlgorithmImplementations<V> {
         }
     }
 
-    void depthFirstSearch(Node<V> v, Consumer<SearchStep<V>> preprocessor) {
+    void depthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> preprocessor) {
         init();
         v.resetAlgorithmAttribs(runID);
-        recursiveDepthFirstSearch(v, preprocessor, 0, preprocessor != null ? new SearchStep<>() : null);
+        recursiveDepthFirstSearch(v, preprocessor, 0, preprocessor != null ? new AlgorithmStep<>() : null);
     }
 
-    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<SearchStep<V>> preprocessor, int depth, SearchStep<V> step) {
+    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> preprocessor, int depth, AlgorithmStep<V> step) {
         if (preprocessor != null) {
             step.prepare(v);
             preprocessor.accept(step);
@@ -133,6 +132,7 @@ class AlgorithmImplementations<V> {
             w.resetAlgorithmAttribs(runID);
             if (!w.processed) {
                 w.i = depth + 1;
+                w.distance = v.distance + e.weight;
                 w.connection = e;
                 if (recursiveDepthFirstSearch(w, preprocessor, depth + 1, step)) {
                     return true;
@@ -157,7 +157,7 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<ShortestPathStep<V>> preprocessor) {
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<AlgorithmStep<V>> preprocessor) {
         Node<V> end = aStarSearch(start, target, heuristic, preprocessor);
         if (end == null) {
             if (path != null) {
@@ -193,7 +193,7 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<ShortestPathStep<V>> preprocessor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<AlgorithmStep<V>> preprocessor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
@@ -201,7 +201,7 @@ class AlgorithmImplementations<V> {
 
         heap.add(start);
 
-        final ShortestPathStep<V> step = preprocessor != null ? new ShortestPathStep<>() : null;
+        final AlgorithmStep<V> step = preprocessor != null ? new AlgorithmStep<>() : null;
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();

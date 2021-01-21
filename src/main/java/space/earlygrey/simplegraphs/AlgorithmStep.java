@@ -1,9 +1,10 @@
 package space.earlygrey.simplegraphs;
 
-public abstract class AlgorithmStep<V> {
+public class AlgorithmStep<V> {
 
     boolean terminate, ignore;
     Node<V> node;
+    int count;
 
     AlgorithmStep() {
 
@@ -13,6 +14,7 @@ public abstract class AlgorithmStep<V> {
         this.node = node;
         terminate = false;
         ignore = false;
+        count++;
     }
 
     public void terminate() {
@@ -31,20 +33,20 @@ public abstract class AlgorithmStep<V> {
         return node.connection;
     }
 
-    public static class SearchStep<V> extends AlgorithmStep<V> {
+    public V previous() {
+        return node.connection.getA();
+    }
 
-        public int depth() {
+    public int depth() {
             return node.i;
         }
 
-    }
-
-    public static class ShortestPathStep<V> extends AlgorithmStep<V> {
-
-        public float distance() {
+    public float distance() {
             return node.distance;
         }
 
+    public int count() {
+        return count;
     }
 
 }

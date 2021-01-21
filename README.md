@@ -17,7 +17,7 @@ Algorithms implemented are:
 
 Simple graphs uses Java 8 and Java Collections. It has no dependencies, and so should be GWT compatible. It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
 
-If you're looking for a broader, more powerful library and don't care about java 8, GWT, or including a lot of extra dependencies, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more.
+If you're looking for a broader, more powerful library and don't care about Java 8, GWT, or including a lot of extra dependencies, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more (though it's not really "simple").
 
 ---
 
@@ -70,18 +70,20 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
-Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step on each vertex as an algorithm is running. These can be used for side effects (for example to construct another graph as the algorithm runs), and for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
+Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step before each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), and for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
 ```java
-graph.algorithms().breadthFirstSearch(u, v -> System.out.println("processing " + v));
+graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing " + step.vertex()));
 
 Graph<Integer> tree = graph.createNew();
-SearchPreprocessor<V> processor = (v, edge, depth) -> {
-    if (depth > 6)  return ProcessorOutcome.IGNORE;
-    tree.addVertex(v);
-    if (edge != null) tree.addEdge(edge.getA(), edge.getB());
-    return ProcessorOutcome.CONTINUE;
+Consumer<AlgorithmStep<V>> processor = (step) -> {
+    if (step.depth() > 4) {
+        step.ignore();
+    } else {
+        tree.addVertex(step.vertex());
+        if (step.edge() != null) tree.addEdge(step.edge());  
+    }
 };
-graph.algorithms().depthFirstSearch(0, processor);
+graph.algorithms().depthFirstSearch(u, processor);
 ```
 
 ## Technical Considerations

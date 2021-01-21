@@ -26,8 +26,8 @@ package space.earlygrey.simplegraphs;
 import java.util.function.Consumer;
 
 import space.earlygrey.simplegraphs.AlgorithmStep.SearchStep;
+import space.earlygrey.simplegraphs.AlgorithmStep.ShortestPathStep;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 public class Algorithms<V> {
 
@@ -58,11 +58,11 @@ public class Algorithms<V> {
      * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @param preprocessor see {@link ShortestPathPreProcessor}
+     * @param preprocessor
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, ShortestPathPreProcessor<V> preprocessor) {
+    public Path<V> findShortestPath(V start, V target, Consumer<ShortestPathStep<V>> preprocessor) {
         return findShortestPath(start, target, null, null, preprocessor);
     }
 
@@ -115,11 +115,11 @@ public class Algorithms<V> {
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
      * @param path a path instance to reuse
-     * @param preprocessor see {@link ShortestPathPreProcessor}
+     * @param preprocessor
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, ShortestPathPreProcessor<V> preprocessor) {
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, Consumer<ShortestPathStep<V>> preprocessor) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();

@@ -39,4 +39,12 @@ public abstract class AlgorithmStep<V> {
 
     }
 
+    public static class ShortestPathStep<V> extends AlgorithmStep<V> {
+
+        public float distance() {
+            return node.distance;
+        }
+
+    }
+
 }

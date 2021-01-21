@@ -34,8 +34,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import space.earlygrey.simplegraphs.AlgorithmStep.SearchStep;
+import space.earlygrey.simplegraphs.AlgorithmStep.ShortestPathStep;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 class AlgorithmImplementations<V> {
 
@@ -157,7 +157,7 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, ShortestPathPreProcessor<V> preprocessor) {
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<ShortestPathStep<V>> preprocessor) {
         Node<V> end = aStarSearch(start, target, heuristic, preprocessor);
         if (end == null) {
             if (path != null) {
@@ -193,13 +193,15 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final ShortestPathPreProcessor<V> preprocessor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<ShortestPathStep<V>> preprocessor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
         start.distance = 0;
 
         heap.add(start);
+
+        final ShortestPathStep<V> step = preprocessor != null ? new ShortestPathStep<>() : null;
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();
@@ -209,14 +211,10 @@ class AlgorithmImplementations<V> {
             }
             if (!u.processed) {
                 if (preprocessor != null) {
-                    if (preprocessor != null) {
-                        switch (preprocessor.process(u.object, u.connection, u.distance)) {
-                            case IGNORE:
-                                continue;
-                            case TERMINATE:
-                                return null;
-                        }
-                    }
+                    step.prepare(u);
+                    preprocessor.accept(step);
+                    if (step.terminate) return null;
+                    if (step.ignore) continue;
                 }
                 u.processed = true;
                 int n = u.outEdges.size();

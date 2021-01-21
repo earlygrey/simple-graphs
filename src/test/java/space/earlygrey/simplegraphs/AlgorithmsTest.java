@@ -25,10 +25,11 @@ package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
 
+import java.util.function.Consumer;
+
+import space.earlygrey.simplegraphs.AlgorithmStep.SearchStep;
 import space.earlygrey.simplegraphs.TestUtils.Vector2;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.ProcessorOutcome;
-import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -155,10 +156,9 @@ public class AlgorithmsTest {
 
         Graph<Integer> tree = graph.createNew();
 
-        SearchPreprocessor<Integer> processor = (i, e, d) -> {
-            tree.addVertex(i);
-            if (e != null) tree.addEdge(e.getA(), e.getB());
-            return ProcessorOutcome.CONTINUE;
+        Consumer<SearchStep<Integer>> processor = (step) -> {
+            tree.addVertex(step.vertex());
+            if (step.edge() != null) tree.addEdge(step.edge().getA(), step.edge().getB());
         };
         
         graph.algorithms().breadthFirstSearch(0, processor);
@@ -177,7 +177,6 @@ public class AlgorithmsTest {
             }
             count++;
         }
-
     }
 
     @Test
@@ -185,10 +184,10 @@ public class AlgorithmsTest {
         Graph<Integer> graph = createSearchGraph();
         Graph<Integer> tree = graph.createNew();
 
-        SearchPreprocessor<Integer> processor = (i, e, d) -> {
-            tree.addVertex(i);
-            if (e != null) tree.addEdge(e.getA(), e.getB());
-            return ProcessorOutcome.CONTINUE;
+        Consumer<SearchStep<Integer>> processor = (step) -> {
+            tree.addVertex(step.vertex());
+            System.out.println(step.edge());
+            if (step.edge() != null) tree.addEdge(step.edge().getA(), step.edge().getB());
         };
 
         graph.algorithms().depthFirstSearch(0, processor);

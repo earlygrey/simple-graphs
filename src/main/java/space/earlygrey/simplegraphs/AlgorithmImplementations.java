@@ -31,9 +31,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import space.earlygrey.simplegraphs.AlgorithmStep.SearchStep;
 import space.earlygrey.simplegraphs.utils.Heuristic;
-import space.earlygrey.simplegraphs.utils.SearchPreprocessor;
 import space.earlygrey.simplegraphs.utils.ShortestPathPreProcessor;
 
 class AlgorithmImplementations<V> {
@@ -77,7 +78,7 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(Node<V> vertex, SearchPreprocessor<V> preprocessor) {
+    void breadthFirstSearch(Node<V> vertex, Consumer<SearchStep<V>> preprocessor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
@@ -86,15 +87,15 @@ class AlgorithmImplementations<V> {
         queue.add(vertex);
         vertex.seen = true;
 
+        final SearchStep<V> step = preprocessor != null ? new SearchStep<>() : null;
+
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
             if (preprocessor != null) {
-                switch (preprocessor.process(v.object, v.connection, v.i + 1)) {
-                    case IGNORE:
-                        continue;
-                    case TERMINATE:
-                        return;
-                }
+                step.prepare(v);
+                preprocessor.accept(step);
+                if (step.terminate) return;
+                if (step.ignore) continue;
             }
             int n = v.outEdges.size();
             for (int i = 0; i < n; i++) {
@@ -111,20 +112,19 @@ class AlgorithmImplementations<V> {
         }
     }
 
-    void depthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor) {
+    void depthFirstSearch(Node<V> v, Consumer<SearchStep<V>> preprocessor) {
         init();
         v.resetAlgorithmAttribs(runID);
-        if (preprocessor != null) {
-            switch (preprocessor.process(v.object, null, 0)) {
-                case IGNORE:
-                case TERMINATE:
-                    return;
-            }
-        }
-        recursiveDepthFirstSearch(v, preprocessor, 0);
+        recursiveDepthFirstSearch(v, preprocessor, 0, preprocessor != null ? new SearchStep<>() : null);
     }
 
-    boolean recursiveDepthFirstSearch(Node<V> v, SearchPreprocessor<V> preprocessor, int depth) {
+    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<SearchStep<V>> preprocessor, int depth, SearchStep<V> step) {
+        if (preprocessor != null) {
+            step.prepare(v);
+            preprocessor.accept(step);
+            if (step.terminate) return true;
+            if (step.ignore) return false;
+        }
         v.processed = true;
         int n = v.outEdges.size();
         for (int i = 0; i < n; i++) {
@@ -132,18 +132,10 @@ class AlgorithmImplementations<V> {
             Node<V> w = e.b;
             w.resetAlgorithmAttribs(runID);
             if (!w.processed) {
-                if (preprocessor != null) {
-                    switch (preprocessor.process(w.object, e, depth + 1)) {
-                        case IGNORE:
-                            return false;
-                        case TERMINATE:
-                            return true;
-                        case CONTINUE:
-                        default:
-                            if (recursiveDepthFirstSearch(w, preprocessor, depth + 1)) {
-                                return true;
-                            }
-                    }
+                w.i = depth + 1;
+                w.connection = e;
+                if (recursiveDepthFirstSearch(w, preprocessor, depth + 1, step)) {
+                    return true;
                 }
             }
         }

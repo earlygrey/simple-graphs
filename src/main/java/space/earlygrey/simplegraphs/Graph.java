@@ -149,6 +149,16 @@ public abstract class Graph<V> {
     }
 
     /**
+     * Add an edge to the graph, with the same endpoints as the given edge.
+     * If there is already an edge between v and w, its weight will be set to the weight of given edge.
+     * @param edge an edge (possibly from another graph)
+     * @return the edge belonging to this graph
+     */
+    public Connection<V> addEdge(Edge<V> edge) {
+        return addEdge(edge.getA(), edge.getB(), edge.getWeight());
+    }
+
+    /**
      * Add an edge to the graph, from v to w and with the specified weight.
      * If there is already an edge between v and w, its weight will be set to the specified weight.
      * @param v the tail vertex of the edge

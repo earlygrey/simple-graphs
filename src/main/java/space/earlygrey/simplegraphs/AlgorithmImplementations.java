@@ -168,20 +168,12 @@ class AlgorithmImplementations<V> {
             }
             return path;
         }
-        int size = end.i + 1;
+
         if (path == null) {
-            path = new Path<>(size);
+            path = new Path<>(end);
         } else {
-            path.setFixed(false);
-            if (path.items.length < size) path.strictResize(size);
+            path.setByBacktracking(end);
         }
-        Node<V> v = end;
-        while(v.prev != null) {
-            path.set(v.i, v.object);
-            v = v.prev;
-        }
-        path.set(0, start.object);
-        path.length = end.distance;
 
         return path;
     }

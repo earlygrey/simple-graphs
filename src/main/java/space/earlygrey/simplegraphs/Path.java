@@ -36,6 +36,11 @@ public class Path<V> extends Array<V> {
         super(size, true);
     }
 
+    Path(Node<V> v) {
+        super(v.i + 1, true);
+        setByBacktracking(v);
+    }
+
     /**
      * @return the length of this path, that is, the sum of the edge weights of all edges contained in the path.
      */
@@ -50,6 +55,21 @@ public class Path<V> extends Array<V> {
     void checkFixed() {
         if (fixed) throw new UnsupportedOperationException("You cannot modify this path.");
     }
+
+    void setByBacktracking(Node<V> node) {
+        int nodeCount = node.i + 1;
+        setFixed(false);
+        if (items.length < nodeCount) strictResize(nodeCount);
+
+        Node<V> v = node;
+        while(v != null) {
+            set(v.i, v.object);
+            v = v.prev;
+        }
+
+        length = node.distance;
+    }
+
 
     @Override
     public boolean add(V item) {

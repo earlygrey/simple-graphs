@@ -49,4 +49,8 @@ public class AlgorithmStep<V> {
         return count;
     }
 
+    public Path<V> createPath() {
+        return new Path<>(node);
+    }
+
 }

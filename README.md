@@ -70,9 +70,9 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
-Additionally, simple graphs provides a few functional interfaces that can be used to run a preprocessing step before each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), and for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
+Additionally, some algorithms accept a Consumer which can be used to run a preprocessing step before each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
 ```java
-graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing " + step.vertex()));
+graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing vertex " + step.vertex()));
 
 Graph<Integer> tree = graph.createNew();
 Consumer<AlgorithmStep<V>> processor = (step) -> {

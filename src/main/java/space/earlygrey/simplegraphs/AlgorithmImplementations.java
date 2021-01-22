@@ -76,7 +76,7 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(Node<V> vertex, Consumer<AlgorithmStep<V>> preprocessor) {
+    void breadthFirstSearch(final Node<V> vertex, final Consumer<AlgorithmStep<V>> processor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
@@ -85,14 +85,17 @@ class AlgorithmImplementations<V> {
         queue.add(vertex);
         vertex.seen = true;
 
-        final AlgorithmStep<V> step = preprocessor != null ? new AlgorithmStep<>() : null;
+        final AlgorithmStep<V> step = processor != null ? new AlgorithmStep<>() : null;
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (preprocessor != null) {
+            if (processor != null) {
                 step.prepare(v);
-                preprocessor.accept(step);
-                if (step.terminate) return;
+                processor.accept(step);
+                if (step.terminate) {
+                    queue.clear();
+                    return;
+                }
                 if (step.ignore) continue;
             }
             int n = v.outEdges.size();
@@ -111,16 +114,16 @@ class AlgorithmImplementations<V> {
         }
     }
 
-    void depthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> preprocessor) {
+    void depthFirstSearch(final Node<V> v, final Consumer<AlgorithmStep<V>> processor) {
         init();
         v.resetAlgorithmAttribs(runID);
-        recursiveDepthFirstSearch(v, preprocessor, 0, preprocessor != null ? new AlgorithmStep<>() : null);
+        recursiveDepthFirstSearch(v, processor, 0, processor != null ? new AlgorithmStep<>() : null);
     }
 
-    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> preprocessor, int depth, AlgorithmStep<V> step) {
-        if (preprocessor != null) {
+    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> processor, int depth, AlgorithmStep<V> step) {
+        if (processor != null) {
             step.prepare(v);
-            preprocessor.accept(step);
+            processor.accept(step);
             if (step.terminate) return true;
             if (step.ignore) return false;
         }
@@ -134,7 +137,7 @@ class AlgorithmImplementations<V> {
                 w.i = depth + 1;
                 w.distance = v.distance + e.weight;
                 w.connection = e;
-                if (recursiveDepthFirstSearch(w, preprocessor, depth + 1, step)) {
+                if (recursiveDepthFirstSearch(w, processor, depth + 1, step)) {
                     return true;
                 }
             }
@@ -157,8 +160,8 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<AlgorithmStep<V>> preprocessor) {
-        Node<V> end = aStarSearch(start, target, heuristic, preprocessor);
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<AlgorithmStep<V>> processor) {
+        Node<V> end = aStarSearch(start, target, heuristic, processor);
         if (end == null) {
             if (path != null) {
                 path.setFixed(false);
@@ -185,7 +188,7 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<AlgorithmStep<V>> preprocessor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<AlgorithmStep<V>> processor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
@@ -193,7 +196,7 @@ class AlgorithmImplementations<V> {
 
         heap.add(start);
 
-        final AlgorithmStep<V> step = preprocessor != null ? new AlgorithmStep<>() : null;
+        final AlgorithmStep<V> step = processor != null ? new AlgorithmStep<>() : null;
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();
@@ -202,10 +205,13 @@ class AlgorithmImplementations<V> {
                 return u;
             }
             if (!u.processed) {
-                if (preprocessor != null) {
+                if (processor != null) {
                     step.prepare(u);
-                    preprocessor.accept(step);
-                    if (step.terminate) return null;
+                    processor.accept(step);
+                    if (step.terminate) {
+                        heap.clear();
+                        return null;
+                    }
                     if (step.ignore) continue;
                 }
                 u.processed = true;

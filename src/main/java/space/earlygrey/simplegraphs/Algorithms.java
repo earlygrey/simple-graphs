@@ -56,11 +56,11 @@ public class Algorithms<V> {
      * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
      * @param start the starting vertex
      * @param target the target vertex
-     * @param processor
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Consumer<AlgorithmStep<V>> processor) {
+    public Path<V> findShortestPath(V start, V target, Consumer<SearchStep<V>> processor) {
         return findShortestPath(start, target, null, null, processor);
     }
 
@@ -113,11 +113,11 @@ public class Algorithms<V> {
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
      * @param path a path instance to reuse
-     * @param processor
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, Consumer<AlgorithmStep<V>> processor) {
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, Consumer<SearchStep<V>> processor) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
@@ -166,9 +166,9 @@ public class Algorithms<V> {
     /**
      * Perform a breadth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param processor
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
-    public void breadthFirstSearch(V v, Consumer<AlgorithmStep<V>> processor) {
+    public void breadthFirstSearch(V v, Consumer<SearchStep<V>> processor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
         implementations.breadthFirstSearch(node, processor);
@@ -178,9 +178,9 @@ public class Algorithms<V> {
     /**
      * Perform a depth first search starting from the specified vertex.
      * @param v the vertex at which to start the search
-     * @param processor
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
-    public void depthFirstSearch(V v, Consumer<AlgorithmStep<V>> processor) {
+    public void depthFirstSearch(V v, Consumer<SearchStep<V>> processor) {
         Node<V> node = graph.getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException();
         implementations.depthFirstSearch(node, processor);

@@ -155,7 +155,7 @@ public class AlgorithmsTest {
 
         Graph<Integer> tree = graph.createNew();
 
-        Consumer<AlgorithmStep<Integer>> processor = (step) -> {
+        Consumer<SearchStep<Integer>> processor = (step) -> {
             tree.addVertex(step.vertex());
             if (step.edge() != null) tree.addEdge(step.edge().getA(), step.edge().getB());
         };
@@ -183,7 +183,7 @@ public class AlgorithmsTest {
         Graph<Integer> graph = createSearchGraph();
         Graph<Integer> tree = graph.createNew();
 
-        Consumer<AlgorithmStep<Integer>> processor = (step) -> {
+        Consumer<SearchStep<Integer>> processor = (step) -> {
             if (step.depth() > 4) {
                 step.ignore();
                 return;

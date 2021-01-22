@@ -70,7 +70,7 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
-Additionally, some algorithms accept a Consumer which can be used to run a preprocessing step before each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to cancel processing that vertex or terminate the algorithm. For example:
+Additionally, some algorithms allow a processing step at each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to skip processing that vertex or terminate the algorithm. For example:
 ```java
 graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing vertex " + step.vertex()));
 

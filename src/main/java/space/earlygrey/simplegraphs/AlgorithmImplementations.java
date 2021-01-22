@@ -76,7 +76,7 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(final Node<V> vertex, final Consumer<AlgorithmStep<V>> processor) {
+    void breadthFirstSearch(final Node<V> vertex, final Consumer<SearchStep<V>> processor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
@@ -85,7 +85,7 @@ class AlgorithmImplementations<V> {
         queue.add(vertex);
         vertex.seen = true;
 
-        final AlgorithmStep<V> step = processor != null ? new AlgorithmStep<>() : null;
+        final SearchStep<V> step = processor != null ? new SearchStep<>() : null;
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
@@ -114,13 +114,13 @@ class AlgorithmImplementations<V> {
         }
     }
 
-    void depthFirstSearch(final Node<V> v, final Consumer<AlgorithmStep<V>> processor) {
+    void depthFirstSearch(final Node<V> v, final Consumer<SearchStep<V>> processor) {
         init();
         v.resetAlgorithmAttribs(runID);
-        recursiveDepthFirstSearch(v, processor, 0, processor != null ? new AlgorithmStep<>() : null);
+        recursiveDepthFirstSearch(v, processor, 0, processor != null ? new SearchStep<>() : null);
     }
 
-    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<AlgorithmStep<V>> processor, int depth, AlgorithmStep<V> step) {
+    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<SearchStep<V>> processor, int depth, SearchStep<V> step) {
         if (processor != null) {
             step.prepare(v);
             processor.accept(step);
@@ -160,7 +160,7 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<AlgorithmStep<V>> processor) {
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<SearchStep<V>> processor) {
         Node<V> end = aStarSearch(start, target, heuristic, processor);
         if (end == null) {
             if (path != null) {
@@ -188,7 +188,7 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<AlgorithmStep<V>> processor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<SearchStep<V>> processor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
@@ -196,7 +196,7 @@ class AlgorithmImplementations<V> {
 
         heap.add(start);
 
-        final AlgorithmStep<V> step = processor != null ? new AlgorithmStep<>() : null;
+        final SearchStep<V> step = processor != null ? new SearchStep<>() : null;
 
         while(heap.size != 0) {
             Node<V> u = heap.pop();

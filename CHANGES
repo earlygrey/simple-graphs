@@ -2,3 +2,4 @@
  - add SearchStep class
   Can be used to perform a processing step at each algorithm iteration, and decide whether to continue processing the vertex or terminate.
   These replace the maxDepth and maxDistance arguments.
+  BFS and DFS now take a Consumer<SearchStep<V>> argument instead of returning a tree.

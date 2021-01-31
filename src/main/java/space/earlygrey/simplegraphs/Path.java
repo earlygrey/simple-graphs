@@ -124,4 +124,15 @@ public class Path<V> extends Array<V> {
         checkFixed();
         return false;
     }
+
+    public V getFirst() {
+        if (isEmpty()) throw new IllegalStateException("Path has no vertices.");
+        return get(0);
+    }
+
+    public V getLast() {
+        if (isEmpty()) throw new IllegalStateException("Path has no vertices.");
+        return get(size-1);
+    }
+
 }

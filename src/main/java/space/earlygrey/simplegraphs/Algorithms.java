@@ -49,7 +49,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target) {
-        return findShortestPath(start, target, null, null);
+        return findShortestPath(start, target, null, null, null);
     }
 
     /**
@@ -87,7 +87,11 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
-        return findShortestPath(start, target, heuristic, null);
+        return findShortestPath(start, target, heuristic, null, null);
+    }
+
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Consumer<SearchStep<V>> processor) {
+        return findShortestPath(start, target, heuristic, null, processor);
     }
 
     /**

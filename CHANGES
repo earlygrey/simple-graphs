@@ -1,4 +1,5 @@
-[unreleased]
+[2.0.0]
+Breaking changes
  - add SearchStep class
   Can be used to perform a processing step at each algorithm iteration, and decide whether to continue processing the vertex or terminate.
   These replace the maxDepth and maxDistance arguments.

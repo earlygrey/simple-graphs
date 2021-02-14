@@ -23,6 +23,8 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
+import space.earlygrey.simplegraphs.utils.WeightFunction;
+
 public abstract class Edge<V> {
 
 
@@ -33,9 +35,12 @@ public abstract class Edge<V> {
 
     public abstract float getWeight();
     public abstract void setWeight(float weight);
+    public abstract void setWeight(WeightFunction<V> weightFunction);
+    abstract WeightFunction<V> getWeightFunction();
 
     abstract Node<V> getInternalNodeA();
     abstract Node<V> getInternalNodeB();
 
-    abstract void set(Node<V> a, Node<V> b, float weight);
+    //abstract void set(Node<V> a, Node<V> b);
+    abstract void set(Node<V> a, Node<V> b, WeightFunction<V> weightFunction);
 }

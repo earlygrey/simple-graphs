@@ -51,8 +51,8 @@ class TestUtils {
 
         @Override
         public int hashCode() {
-            return (int)(Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
-                    + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
+            return (int) (Float.floatToIntBits(x) * 0xC13FA9A902A6328FL
+                                + Float.floatToIntBits(y) * 0x91E10DA5C79E7B1DL >>> 32);
         }
 
         @Override

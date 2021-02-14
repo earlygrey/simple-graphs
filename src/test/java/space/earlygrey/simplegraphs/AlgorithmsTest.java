@@ -156,9 +156,10 @@ public class AlgorithmsTest {
 
         SearchProcessor<Integer> processor = (step) -> {
             tree.addVertex(step.vertex());
-            if (step.edge() != null) tree.addEdge(step.edge().getA(), step.edge().getB());
+            tree.addEdge(step.edge().getA(), step.edge().getB());
         };
-        
+
+        tree.addVertex(0);
         graph.algorithms().breadthFirstSearch(0, processor);
         assertEquals(4, tree.size());
         assertEquals(3, tree.getEdgeCount());
@@ -188,9 +189,10 @@ public class AlgorithmsTest {
                 return;
             }
             tree.addVertex(step.vertex());
-            if (step.edge() != null) tree.addEdge(step.edge().getA(), step.edge().getB());
+            tree.addEdge(step.edge().getA(), step.edge().getB());
         };
 
+        tree.addVertex(0);
         graph.algorithms().depthFirstSearch(0, processor);
 
         assertEquals(4, tree.size());

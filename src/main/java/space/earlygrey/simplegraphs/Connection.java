@@ -23,16 +23,17 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
+import space.earlygrey.simplegraphs.utils.WeightFunction;
+
 public class Connection<V> extends Edge<V> {
 
     //================================================================================
     // Fields and constants
     //================================================================================
 
-    static final float DEFAULT_WEIGHT = 1;
-
     Node<V> a, b;
-    float weight = DEFAULT_WEIGHT;
+
+    WeightFunction<V> weight;
 
     //================================================================================
     // Constructor
@@ -47,7 +48,7 @@ public class Connection<V> extends Edge<V> {
     //================================================================================
 
     @Override
-    void set(Node<V> a, Node<V> b, float weight) {
+    void set(Node<V> a, Node<V> b, WeightFunction<V> weight) {
         this.a = a;
         this.b = b;
         this.weight = weight;
@@ -79,12 +80,22 @@ public class Connection<V> extends Edge<V> {
 
     @Override
     public float getWeight() {
-        return weight;
+        return weight.getWeight(this);
     }
 
     @Override
     public void setWeight(float weight) {
+        this.weight = edge -> weight;
+    }
+
+    @Override
+    public void setWeight(WeightFunction<V> weight) {
         this.weight = weight;
+    }
+
+    @Override
+    WeightFunction<V> getWeightFunction() {
+        return weight;
     }
 
     public Node<V> getNodeA() {

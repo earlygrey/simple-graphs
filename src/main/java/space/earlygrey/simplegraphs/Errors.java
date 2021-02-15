@@ -33,8 +33,9 @@ public class Errors {
         throw new IllegalArgumentException("Self loops are not allowed");
     }
 
-    static void throwVertexNotInGraphVertexException() {
-        throw new IllegalArgumentException("At least one vertex is not in the graph");
+    static void throwVertexNotInGraphVertexException(boolean multiple) {
+        if (multiple) throw new IllegalArgumentException("At least one vertex is not in the graph");
+        else throw new IllegalArgumentException("Vertex is not in the graph");
     }
 
     static void throwModificationException() {

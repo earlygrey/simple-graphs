@@ -23,9 +23,8 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import java.util.function.Consumer;
-
 import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
 public class Algorithms<V> {
 
@@ -60,7 +59,7 @@ public class Algorithms<V> {
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Consumer<SearchStep<V>> processor) {
+    public Path<V> findShortestPath(V start, V target, SearchProcessor<V> processor) {
         return findShortestPath(start, target, null, null, processor);
     }
 
@@ -90,7 +89,7 @@ public class Algorithms<V> {
         return findShortestPath(start, target, heuristic, null, null);
     }
 
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Consumer<SearchStep<V>> processor) {
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
         return findShortestPath(start, target, heuristic, null, processor);
     }
 
@@ -121,10 +120,10 @@ public class Algorithms<V> {
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, Consumer<SearchStep<V>> processor) {
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, SearchProcessor<V> processor) {
         Node<V> startNode = graph.getNode(start);
         Node<V> targetNode = graph.getNode(target);
-        if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException();
+        if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
         path = implementations.findShortestPath(startNode, targetNode, heuristic, path, processor);
         path.setFixed(true);
         return path;
@@ -172,9 +171,9 @@ public class Algorithms<V> {
      * @param v the vertex at which to start the search
      * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
-    public void breadthFirstSearch(V v, Consumer<SearchStep<V>> processor) {
+    public void breadthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.getNode(v);
-        if (node==null) Errors.throwVertexNotInGraphVertexException();
+        if (node==null) Errors.throwVertexNotInGraphVertexException(false);
         implementations.breadthFirstSearch(node, processor);
     }
 
@@ -184,9 +183,9 @@ public class Algorithms<V> {
      * @param v the vertex at which to start the search
      * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
-    public void depthFirstSearch(V v, Consumer<SearchStep<V>> processor) {
+    public void depthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.getNode(v);
-        if (node==null) Errors.throwVertexNotInGraphVertexException();
+        if (node==null) Errors.throwVertexNotInGraphVertexException(false);
         implementations.depthFirstSearch(node, processor);
     }
 

@@ -1,3 +1,11 @@
+[3.0.0]
+Breaking changes
+ - allow WeightFunction<V> to be used to calculate edge weights
+ - BFS and DFS take a SearchProcessor<V> extends Consumer<SearchStep<V>> instead of Consumer<SearchStep<V>>
+ - search processor is not called on starting vertex
+Fixes
+ - fixed SearchStep#distance() in BFS and DFS
+
 [2.0.0]
 Breaking changes
  - add SearchStep class

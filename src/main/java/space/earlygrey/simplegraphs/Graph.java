@@ -31,9 +31,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import space.earlygrey.simplegraphs.utils.WeightFunction;
+
 
 public abstract class Graph<V> {
-
 
     //================================================================================
     // Members
@@ -43,6 +44,8 @@ public abstract class Graph<V> {
     final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
 
     final Internals<V> internals = new Internals<>(this);
+
+    private WeightFunction<V> defaultEdgeWeight = edge -> 1;
 
     //================================================================================
     // Constructors
@@ -70,7 +73,6 @@ public abstract class Graph<V> {
 
     abstract Connection<V> obtainEdge();
     abstract Graph<V> createNew();
-
     public abstract Algorithms<V> algorithms();
 
     //--------------------
@@ -120,7 +122,7 @@ public abstract class Graph<V> {
 
     public void disconnect(V v) {
         Node<V> existing = nodeMap.get(v);
-        if (existing==null) Errors.throwVertexNotInGraphVertexException();
+        if (existing==null) Errors.throwVertexNotInGraphVertexException(false);
         for (int i = existing.outEdges.size()-1; i >= 0; i--) {
             removeConnection(existing.outEdges.get(i).b, existing);
         }
@@ -145,17 +147,20 @@ public abstract class Graph<V> {
      * @return the edge
      */
     public Connection<V> addEdge(V v, V w) {
-        return addEdge(v, w, Connection.DEFAULT_WEIGHT);
+        return addEdge(v, w, getDefaultEdgeWeight());
     }
 
     /**
-     * Add an edge to the graph, with the same endpoints as the given edge.
+     * Add an edge to the graph, with the same endpoints as the given edge. If the endpoints are not in the graph they
+     * will be added.
      * If there is already an edge between v and w, its weight will be set to the weight of given edge.
      * @param edge an edge (possibly from another graph)
      * @return the edge belonging to this graph
      */
     public Connection<V> addEdge(Edge<V> edge) {
-        return addEdge(edge.getA(), edge.getB(), edge.getWeight());
+        addVertex(edge.getA());
+        addVertex(edge.getB());
+        return addEdge(edge.getA(), edge.getB(), edge.getWeightFunction());
     }
 
     /**
@@ -167,12 +172,24 @@ public abstract class Graph<V> {
      * @return the edge
      */
     public Connection<V> addEdge(V v, V w, float weight) {
+        return addEdge(v, w, edge -> weight);
+    }
+
+    /**
+     * Add an edge to the graph, from v to w and with the specified weight.
+     * If there is already an edge between v and w, its weight will be set to the specified weight.
+     * @param v the tail vertex of the edge
+     * @param w the head vertex of the edge
+     * @param weightFunction a function which will return the weight of the edge
+     * @return the edge
+     */
+    public Connection<V> addEdge(V v, V w, WeightFunction<V> weightFunction) {
         if (v == null || w == null) Errors.throwNullVertexException();
         if (v.equals(w)) Errors.throwSameVertexException();
         Node<V> a = getNode(v);
         Node<V> b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException();
-        return addConnection(a, b, weight);
+        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
+        return addConnection(a, b, weightFunction);
     }
 
     /**
@@ -183,7 +200,7 @@ public abstract class Graph<V> {
      */
     public boolean removeEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException();
+        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
         return removeConnection(a, b);
     }
 
@@ -237,12 +254,12 @@ public abstract class Graph<V> {
     //--------------------
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
-        Connection<V> e = a.addEdge(b, Connection.DEFAULT_WEIGHT);
+        Connection<V> e = a.addEdge(b, getDefaultEdgeWeight());
         edgeMap.put(e, e);
         return e;
     }
 
-    Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
+    Connection<V> addConnection(Node<V> a, Node<V> b, WeightFunction<V> weight) {
         Connection<V> e = a.addEdge(b, weight);
         edgeMap.put(e, e);
         return e;
@@ -280,7 +297,7 @@ public abstract class Graph<V> {
      */
     public Edge<V> getEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException();
+        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
         Connection<V> edge = getEdge(a, b);
         if (edge == null) return null;
         return edge;
@@ -294,7 +311,7 @@ public abstract class Graph<V> {
      */
     public boolean edgeExists(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException();
+        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
         return connectionExists(a, b);
     }
 
@@ -356,6 +373,13 @@ public abstract class Graph<V> {
         return internals;
     }
 
+    public WeightFunction<V> getDefaultEdgeWeight() {
+        return defaultEdgeWeight;
+    }
+
+    public void setDefaultEdgeWeight(WeightFunction<V> defaultEdgeWeight) {
+        this.defaultEdgeWeight = defaultEdgeWeight;
+    }
 
     //--------------------
     //  Internal Getters

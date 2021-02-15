@@ -51,8 +51,7 @@ Collection<Edge<Integer>> edges = graph.getEdges();
 Both collections cannot be modified directly - they provide a "read-only" iterable view of the vertices and edges and are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
 
 ```java
-Comparator<V> vertexComparator = ...;
-graph.sortVertices(vertexComparator);
+graph.sortVertices((v1, v2) -> ...);
 ```
 If you want to access elements by index, you need to convert to an array via the `toArray()` methods or add them to a `List` via eg `new ArrayList<>(graph.getVertices())`.
 
@@ -70,20 +69,19 @@ UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree(
 directed.algorithms().topologicalSort();
 ```
 
-Additionally, some algorithms allow a processing step at each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to skip processing that vertex or terminate the algorithm. For example:
+Additionally, search algorithms allow a processing step at each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to skip processing that vertex or terminate the algorithm. For example:
 ```java
 graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing " + step.vertex()));
 
 Graph<Integer> tree = graph.createNew();
-Consumer<AlgorithmStep<V>> processor = (step) -> {
+tree.addVertex(u);
+graph.algorithms().depthFirstSearch(u, step -> {
     if (step.depth() > 4) {
         step.ignore();
     } else {
-        tree.addVertex(step.vertex());
-        if (step.edge() != null) tree.addEdge(step.edge());  
+        tree.addEdge(step.edge());
     }
-};
-graph.algorithms().depthFirstSearch(u, processor);
+});
 ```
 
 ## Technical Considerations

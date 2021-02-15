@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import space.earlygrey.simplegraphs.utils.WeightFunction;
+
 public class Node<V> {
 
     //================================================================================
@@ -70,7 +72,7 @@ public class Node<V> {
         return neighbours.get(v);
     }
 
-    Connection<V> addEdge(Node<V> v, float weight) {
+    Connection<V> addEdge(Node<V> v, WeightFunction<V> weight) {
         Connection<V> edge = neighbours.get(v);
         if (edge == null) {
             edge = graph.obtainEdge();
@@ -78,7 +80,6 @@ public class Node<V> {
             neighbours.put(v, edge);
             outEdges.add(edge);
             if (v.inEdges != null) v.inEdges.add(edge);
-            return edge;
         } else {
             edge.setWeight(weight);
         }

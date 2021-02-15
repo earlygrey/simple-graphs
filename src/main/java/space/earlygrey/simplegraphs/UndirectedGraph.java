@@ -23,9 +23,10 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
-
 import java.util.Collection;
+
+import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
+import space.earlygrey.simplegraphs.utils.WeightFunction;
 
 public class UndirectedGraph<V> extends Graph<V> {
 
@@ -56,7 +57,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Connection<V> addConnection(Node<V> a, Node<V> b, float weight) {
+    Connection<V> addConnection(Node<V> a, Node<V> b, WeightFunction<V> weight) {
         Connection<V> e = a.addEdge(b, weight);
         edgeMap.put(e, e);
         b.addEdge(a, weight);

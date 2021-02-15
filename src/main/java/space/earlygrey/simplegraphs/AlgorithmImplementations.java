@@ -27,13 +27,13 @@ package space.earlygrey.simplegraphs;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import space.earlygrey.simplegraphs.utils.Heuristic;
+import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
 class AlgorithmImplementations<V> {
 
@@ -43,7 +43,7 @@ class AlgorithmImplementations<V> {
 
     private final Graph<V> graph;
     private final BinaryHeap heap;
-    private final ArrayDeque<Node<V>> queue;
+    private final ArrayDeque<Node<V>> arrayDeque;
     private int runID = 0;
 
     //================================================================================
@@ -53,7 +53,7 @@ class AlgorithmImplementations<V> {
     AlgorithmImplementations(Graph<V> graph) {
         this.graph = graph;
         heap = new BinaryHeap();
-        queue = new ArrayDeque<>();
+        arrayDeque = new ArrayDeque<>();
     }
 
     //================================================================================
@@ -76,20 +76,21 @@ class AlgorithmImplementations<V> {
     // Searches
     //================================================================================
 
-    void breadthFirstSearch(final Node<V> vertex, final Consumer<SearchStep<V>> processor) {
+    void breadthFirstSearch(final Node<V> vertex, final SearchProcessor<V> processor) {
         init();
 
         vertex.resetAlgorithmAttribs(runID);
-        ArrayDeque<Node<V>> queue = this.queue;
+        Queue<Node<V>> queue = this.arrayDeque;
         queue.clear();
         queue.add(vertex);
         vertex.seen = true;
+        vertex.distance = 0;
 
         final SearchStep<V> step = processor != null ? new SearchStep<>() : null;
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (processor != null) {
+            if (processor != null && v.i > 0 ) {
                 step.prepare(v);
                 processor.accept(step);
                 if (step.terminate) {
@@ -105,23 +106,24 @@ class AlgorithmImplementations<V> {
                 w.resetAlgorithmAttribs(runID);
                 if (!w.seen) {
                     w.i = v.i + 1;
-                    w.distance = v.distance + e.weight;
+                    w.distance = v.distance + e.getWeight();
                     w.connection = e;
                     w.seen = true;
-                    queue.addLast(w);
+                    queue.add(w);
                 }
             }
         }
     }
 
-    void depthFirstSearch(final Node<V> v, final Consumer<SearchStep<V>> processor) {
+    void depthFirstSearch(final Node<V> v, final SearchProcessor<V> processor) {
         init();
         v.resetAlgorithmAttribs(runID);
+        v.distance = 0;
         recursiveDepthFirstSearch(v, processor, 0, processor != null ? new SearchStep<>() : null);
     }
 
-    boolean recursiveDepthFirstSearch(Node<V> v, Consumer<SearchStep<V>> processor, int depth, SearchStep<V> step) {
-        if (processor != null) {
+    boolean recursiveDepthFirstSearch(Node<V> v, SearchProcessor<V> processor, int depth, SearchStep<V> step) {
+        if (processor != null&& v.i > 0) {
             step.prepare(v);
             processor.accept(step);
             if (step.terminate) return true;
@@ -135,7 +137,7 @@ class AlgorithmImplementations<V> {
             w.resetAlgorithmAttribs(runID);
             if (!w.processed) {
                 w.i = depth + 1;
-                w.distance = v.distance + e.weight;
+                w.distance = v.distance + e.getWeight();
                 w.connection = e;
                 if (recursiveDepthFirstSearch(w, processor, depth + 1, step)) {
                     return true;
@@ -160,7 +162,7 @@ class AlgorithmImplementations<V> {
     }
 
 
-    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, Consumer<SearchStep<V>> processor) {
+    Path<V> findShortestPath(Node<V> start, Node<V> target, final Heuristic<V> heuristic, Path<V> path, SearchProcessor<V> processor) {
         Node<V> end = aStarSearch(start, target, heuristic, processor);
         if (end == null) {
             if (path != null) {
@@ -188,7 +190,7 @@ class AlgorithmImplementations<V> {
      * @param heuristic
      * @return the target Node if reachable, otherwise null
      */
-    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final Consumer<SearchStep<V>> processor) {
+    private Node<V> aStarSearch(final Node<V> start, final Node<V> target, final Heuristic<V> heuristic, final SearchProcessor<V> processor) {
         init();
 
         start.resetAlgorithmAttribs(runID);
@@ -205,7 +207,7 @@ class AlgorithmImplementations<V> {
                 return u;
             }
             if (!u.processed) {
-                if (processor != null) {
+                if (processor != null && u.i > 0) {
                     step.prepare(u);
                     processor.accept(step);
                     if (step.terminate) {
@@ -321,20 +323,6 @@ class AlgorithmImplementations<V> {
     // Minimum spanning trees
     //================================================================================
 
-    final Comparator<Connection<V>> weightComparator = new Comparator<Connection<V>>() {
-        @Override
-        public int compare(Connection<V> o1, Connection<V> o2) {
-            return Float.floatToIntBits(o1.getWeight() - o2.getWeight());
-        }
-    };
-
-    final Comparator<Connection<V>> reverseWeightComparator = new Comparator<Connection<V>>() {
-        @Override
-        public int compare(Connection<V> o1, Connection<V> o2) {
-            return Float.floatToIntBits(o2.getWeight() - o1.getWeight());
-        }
-    };
-
     // adapted from https://www.baeldung.com/java-spanning-trees-kruskal
 
     Graph<V> kruskalsMinimumWeightSpanningTree(boolean minSpanningTree) {
@@ -347,9 +335,9 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.edgeMap.values());
 
         if (minSpanningTree) {
-            Collections.sort(edgeList, weightComparator);
+            Collections.sort(edgeList, (e1, e2) -> Float.floatToIntBits(e1.getWeight() - e2.getWeight()));
         } else {
-            Collections.sort(edgeList, reverseWeightComparator);
+            Collections.sort(edgeList, (e1, e2) -> Float.floatToIntBits(e2.getWeight() - e1.getWeight()));
         }
 
         int totalNodes = graph.size();
@@ -359,7 +347,7 @@ class AlgorithmImplementations<V> {
             if (doesEdgeCreateCycle(edge.a, edge.b)) {
                 continue;
             }
-            spanningTree.addConnection(edge.a, edge.b, edge.getWeight());
+            spanningTree.addConnection(edge.a, edge.b, edge.getWeightFunction());
             edgeCount++;
             if (edgeCount == totalNodes - 1) {
                 break;

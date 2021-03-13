@@ -156,9 +156,11 @@ class Array<T> extends AbstractCollection<T> {
     }
 
     @Override
-    public <T> T[] toArray(T[] var1) {
+    public <U> U[] toArray(U[] var1) {
         if (var1.length < this.size) {
-            return (T[]) Arrays.copyOf(this.items, this.size, var1.getClass());
+            var1 = Arrays.copyOf(var1, this.size);
+            System.arraycopy(this.items, 0, var1, 0, this.size);
+            return var1;
         } else {
             System.arraycopy(this.items, 0, var1, 0, this.size);
             if (var1.length > this.size) {

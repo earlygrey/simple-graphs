@@ -15,7 +15,7 @@ Algorithms implemented are:
 - [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) for directed graphs (performed in-place)
 - [minimum weight spanning tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) for undirected graphs using [Kruskal's algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
 
-Simple graphs uses Java 8 and Java Collections. It has no dependencies, and so should be GWT compatible. It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
+Simple graphs uses Java 8 and Java Collections. It has no dependencies, and is GWT compatible. It uses `float` for floating point values, so should be a little more compatible with libraries that use floats, such as [libgdx](https://github.com/libgdx/libgdx).
 
 If you're looking for a broader, more powerful library and don't care about Java 8, GWT, or including a lot of extra dependencies, I'd recommend [JGraphT](https://jgrapht.org/). It essentially does everything this library does, plus a lot more (though it's not really "simple").
 
@@ -23,6 +23,12 @@ If you're looking for a broader, more powerful library and don't care about Java
 
 ## Installation
 To include Simple Graphs in your project, follow the instructions on the [jitpack website](https://jitpack.io/#space.earlygrey/simple-graphs).
+
+If you use GWT, your .gwt.xml file should inherit simple-graphs using:
+
+```xml
+<inherits name="simple_graphs" />
+```
 
 
 ## Usage

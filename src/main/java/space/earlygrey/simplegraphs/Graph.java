@@ -45,7 +45,7 @@ public abstract class Graph<V> {
 
     final Internals<V> internals = new Internals<>(this);
 
-    private WeightFunction<V> defaultEdgeWeight = edge -> 1;
+    private WeightFunction<V> defaultEdgeWeight = (a, b) -> 1;
 
     //================================================================================
     // Constructors
@@ -147,7 +147,7 @@ public abstract class Graph<V> {
      * @return the edge
      */
     public Connection<V> addEdge(V v, V w) {
-        return addEdge(v, w, getDefaultEdgeWeight());
+        return addEdge(v, w, getDefaultEdgeWeightFunction());
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class Graph<V> {
      * @return the edge
      */
     public Connection<V> addEdge(V v, V w, float weight) {
-        return addEdge(v, w, edge -> weight);
+        return addEdge(v, w, (a, b) -> weight);
     }
 
     /**
@@ -254,7 +254,7 @@ public abstract class Graph<V> {
     //--------------------
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
-        Connection<V> e = a.addEdge(b, getDefaultEdgeWeight());
+        Connection<V> e = a.addEdge(b, getDefaultEdgeWeightFunction());
         edgeMap.put(e, e);
         return e;
     }
@@ -373,12 +373,30 @@ public abstract class Graph<V> {
         return internals;
     }
 
-    public WeightFunction<V> getDefaultEdgeWeight() {
+    /**
+     * Get the current default edge weight function. If none has been set, the default is a function returning the constant value 1f.
+     * @return the current default edge weight function
+     */
+    public WeightFunction<V> getDefaultEdgeWeightFunction() {
         return defaultEdgeWeight;
     }
 
+    /**
+     * Set the default edge weight function, which will be given to every edge for which the edge weight function is not specified.
+     * See {@link WeightFunction}.
+     * @param defaultEdgeWeight the edge weight function
+     */
     public void setDefaultEdgeWeight(WeightFunction<V> defaultEdgeWeight) {
         this.defaultEdgeWeight = defaultEdgeWeight;
+    }
+
+    /**
+     * Sets the default edge weight, which will be given to every edge for which the edge weight is not specified.
+     * Note that this actually sets the default edge weight function to a constant function returning the specified weight.
+     * @param weight the fixed value of the edge weight
+     */
+    public void setDefaultEdgeWeight(float weight) {
+        this.defaultEdgeWeight = (a, b) -> weight;
     }
 
     //--------------------
@@ -403,4 +421,10 @@ public abstract class Graph<V> {
         return edge;
     }
 
+
+    @Override
+    public String toString() {
+        return (isDirected() ? "Directed" : "Undirected") + " graph with " +
+                size() +" vertices and " + getEdgeCount() +" edges";
+    }
 }

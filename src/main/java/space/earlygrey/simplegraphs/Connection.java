@@ -80,12 +80,12 @@ public class Connection<V> extends Edge<V> {
 
     @Override
     public float getWeight() {
-        return weight.getWeight(this);
+        return weight.getWeight(getA(), getB());
     }
 
     @Override
     public void setWeight(float weight) {
-        this.weight = edge -> weight;
+        this.weight = (a, b) -> weight;
     }
 
     @Override

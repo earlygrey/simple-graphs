@@ -251,20 +251,6 @@ class AlgorithmImplementations<V> {
     // Topological sorting
     //================================================================================
 
-   /* boolean topologicalSort(List<V> sortedVertices) {
-        sortedVertices.clear();
-        init();
-        LinkedHashSet<Node<V>> set = new LinkedHashSet<>(graph.getNodes());
-        boolean success = true;
-        while (success && !set.isEmpty()) {
-            success = recursiveTopologicalSort(sortedVertices, set.iterator().next(), set);
-        }
-        if (success) {
-            Collections.reverse(sortedVertices);
-        }
-        return success;
-    }*/
-
     // Keep track of the current position in the linked list,
     // We traverse the graph via DFS, and when we hit a terminal node we move that node
     // to the current cursor position, then move the cursor along one.
@@ -431,27 +417,6 @@ class AlgorithmImplementations<V> {
         recursiveStack.remove(v);
         return false;
     }
-
-    /*List<List<V>> getComponents(Graph<V> graph) {
-        Set<Node<V>> nodeSet = new HashSet();
-        nodeSet.addAll(graph.getNodes());
-        List<List<Node<V>>> components = new ArrayList<>();
-        while(!nodeSet.isEmpty()) {
-            List<Node<V>> nodeList = findComponent(nodeSet.iterator().next());
-            components.add(nodeList);
-            nodeSet.removeAll(nodeList);
-        }
-        List<List<V>> objectComponents = new ArrayList<>(components.size());
-        for (List<Node<V>> component : components) {
-            List<V> objectNodes = new ArrayList<>();
-            for (Node<V> node : component) {
-                objectNodes.add(node.object);
-            }
-            objectComponents.add(objectNodes);
-        }
-        return objectComponents;
-    }*/
-
 
 }
 

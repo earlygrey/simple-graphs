@@ -25,10 +25,7 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import java.lang.reflect.Array;
-import java.util.AbstractCollection;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
@@ -74,7 +71,7 @@ class NodeCollection<V> extends AbstractCollection<Node<V>> {
     @Override
     public <T> T[] toArray(T[] array) {
         if (array.length < nodeMap.size) {
-            array = (T[]) Array.newInstance(array.getClass().getComponentType(), nodeMap.size);
+            array = Arrays.copyOf(array, nodeMap.size);
         }
         int index = 0;
         for (int i = 0; i < nodeMap.table.length; i++) {

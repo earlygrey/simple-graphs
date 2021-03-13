@@ -52,7 +52,7 @@ boolean containsEdge = graph.edgeExists(1, 2)
 
 Edge weights can be assigned a fixed float value, or can be dynamically calculated via a `WeightFunction`.
 
-```Java
+```java
 // fixed value
 graph.addEdge(vertexA, vertexB, 1.5f);
 graph.getEdge(vertexA, vertexB).setWeight(1.5f);

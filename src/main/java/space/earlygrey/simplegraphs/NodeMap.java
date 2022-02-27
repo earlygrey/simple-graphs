@@ -171,7 +171,7 @@ class NodeMap<V> {
         // currentNode should not be null if v is in map
 
         if (currentNode != null && v.equals(currentNode.object)) {
-            table[i] = null;
+            table[i] = currentNode.nextInBucket;
             size--;
             removeFromList(currentNode);
             return currentNode;

@@ -96,12 +96,13 @@ Additionally, search algorithms allow a processing step at each step of the algo
 graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing " + step.vertex()));
 
 Graph<Integer> tree = graph.createNew();
-tree.addVertex(u);
 graph.algorithms().depthFirstSearch(u, step -> {
+    tree.addVertex(step.vertex());
+    if (step.count() > 0) {
+        tree.addEdge(step.edge());
+    }
     if (step.depth() > 4) {
         step.ignore();
-    } else {
-        tree.addEdge(step.edge());
     }
 });
 ```

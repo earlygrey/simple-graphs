@@ -24,7 +24,6 @@ SOFTWARE.
 package space.earlygrey.simplegraphs;
 
 import org.junit.Test;
-import space.earlygrey.simplegraphs.TestUtils.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +32,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import space.earlygrey.simplegraphs.TestUtils.Vector2;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GraphTest {
 

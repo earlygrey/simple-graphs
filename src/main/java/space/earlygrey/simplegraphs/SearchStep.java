@@ -9,7 +9,7 @@ public class SearchStep<V> {
 
     boolean terminate, ignore;
     Node<V> node;
-    int count;
+    int count = -1;
 
     SearchStep() {
 

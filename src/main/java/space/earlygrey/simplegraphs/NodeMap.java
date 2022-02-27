@@ -331,7 +331,8 @@ class NodeMap<V> {
 
         head = mergeSort(head, comparator);
 
-        // reverse list (I could also toggle a flag in the iterator to flip direction instead, would be faster)
+        // the sort only sets references to the next in list for each element,
+        // need to iterate through and set references to previous
         Iterator<Node<V>> iterator = nodeCollection.iterator();
         Node<V> node = null, prev = null;
         while (iterator.hasNext()) {

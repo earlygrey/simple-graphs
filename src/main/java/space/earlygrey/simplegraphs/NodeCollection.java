@@ -24,8 +24,11 @@ SOFTWARE.
 
 package space.earlygrey.simplegraphs;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 

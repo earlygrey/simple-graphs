@@ -61,6 +61,12 @@ public class StructuresTest {
             assertTrue(badGraph.nodeMap.put(new BadHashInteger(i)) != null);
         }
 
+        assertTrue(badGraph.size() == n);
+
+        badGraph.removeVertex(new BadHashInteger(2));
+
+        assertTrue(badGraph.size() == n - 1);
+
         badGraph.nodeMap.clear();
 
         for (int i = 0; i < n; i++) {

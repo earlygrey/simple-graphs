@@ -90,7 +90,7 @@ class AlgorithmImplementations<V> {
 
         while(!queue.isEmpty()) {
             Node<V> v = queue.poll();
-            if (processor != null && v.i > 0 ) {
+            if (processor != null && v.i > 0) {
                 step.prepare(v);
                 processor.accept(step);
                 if (step.terminate) {
@@ -123,7 +123,7 @@ class AlgorithmImplementations<V> {
     }
 
     boolean recursiveDepthFirstSearch(Node<V> v, SearchProcessor<V> processor, int depth, SearchStep<V> step) {
-        if (processor != null&& v.i > 0) {
+        if (processor != null) {
             step.prepare(v);
             processor.accept(step);
             if (step.terminate) return true;

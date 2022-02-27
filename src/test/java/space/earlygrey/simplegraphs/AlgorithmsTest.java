@@ -183,16 +183,18 @@ public class AlgorithmsTest {
         Graph<Integer> graph = createSearchGraph();
         Graph<Integer> tree = graph.createNew();
 
-        SearchProcessor<Integer> processor = (step) -> {
+        SearchProcessor<Integer> processor = step -> {
             if (step.depth() > 4) {
                 step.ignore();
                 return;
             }
             tree.addVertex(step.vertex());
-            tree.addEdge(step.edge().getA(), step.edge().getB());
+            if (step.count > 0) {
+                System.out.println(step.count + " " + step.edge());
+                tree.addEdge(step.edge().getA(), step.edge().getB());
+            }
         };
 
-        tree.addVertex(0);
         graph.algorithms().depthFirstSearch(0, processor);
 
         assertEquals(4, tree.size());

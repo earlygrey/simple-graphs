@@ -160,14 +160,13 @@ class Array<T> extends AbstractCollection<T> {
         if (var1.length < this.size) {
             var1 = Arrays.copyOf(var1, this.size);
             System.arraycopy(this.items, 0, var1, 0, this.size);
-            return var1;
         } else {
             System.arraycopy(this.items, 0, var1, 0, this.size);
             if (var1.length > this.size) {
                 var1[this.size] = null;
             }
-            return var1;
         }
+        return var1;
     }
 
 

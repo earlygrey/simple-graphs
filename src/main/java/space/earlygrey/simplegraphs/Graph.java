@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
@@ -47,6 +48,7 @@ public abstract class Graph<V> {
 
     private WeightFunction<V> defaultEdgeWeight = (a, b) -> 1;
 
+
     //================================================================================
     // Constructors
     //================================================================================
@@ -63,6 +65,11 @@ public abstract class Graph<V> {
         }
     }
 
+    Graph(Graph<V> graph) {
+        this(graph.getVertices());
+        graph.getEdges().forEach(this::addEdge);
+    }
+
     //================================================================================
     // Graph Builders
     //================================================================================
@@ -72,7 +79,9 @@ public abstract class Graph<V> {
     //--------------------
 
     abstract Connection<V> obtainEdge();
+
     abstract Graph<V> createNew();
+
     public abstract Algorithms<V> algorithms();
 
     //--------------------
@@ -81,6 +90,7 @@ public abstract class Graph<V> {
 
     /**
      * Adds a vertex to the graph.
+     *
      * @param v the vertex to be added
      * @return true if the vertex was not already in the graph, false otherwise
      */
@@ -91,6 +101,7 @@ public abstract class Graph<V> {
 
     /**
      * Adds all the vertices in the collection to the graph.
+     *
      * @param vertices a collection of vertices to be added
      */
     public void addVertices(Collection<V> vertices) {
@@ -107,13 +118,14 @@ public abstract class Graph<V> {
 
     /**
      * Removes a vertex from the graph, and any adjacent edges.
+     *
      * @param v the vertex to be removed
      * @return true if the vertex was in the graph, false otherwise
      */
     public boolean removeVertex(V v) {
         Node<V> existing = nodeMap.remove(v);
-        if (existing==null) return false;
-        for (int i = existing.outEdges.size()-1; i >= 0; i--) {
+        if (existing == null) return false;
+        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
             removeConnection(existing.outEdges.get(i).b, existing);
         }
         existing.disconnect();
@@ -122,8 +134,8 @@ public abstract class Graph<V> {
 
     public void disconnect(V v) {
         Node<V> existing = nodeMap.get(v);
-        if (existing==null) Errors.throwVertexNotInGraphVertexException(false);
-        for (int i = existing.outEdges.size()-1; i >= 0; i--) {
+        if (existing == null) Errors.throwVertexNotInGraphVertexException(false);
+        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
             removeConnection(existing.outEdges.get(i).b, existing);
         }
         existing.disconnect();
@@ -131,6 +143,7 @@ public abstract class Graph<V> {
 
     /**
      * Removes all the vertices in the collection from the graph, and any adjacent edges.
+     *
      * @param vertices vertices a collection of vertices to be removed
      */
     public void removeVertices(Collection<V> vertices) {
@@ -142,6 +155,7 @@ public abstract class Graph<V> {
     /**
      * Add an edge to the graph, from v to w. The edge will have a default weight of 1.
      * If there is already an edge between v and w, its weight will be set to 1.
+     *
      * @param v the tail vertex of the edge
      * @param w the head vertex of the edge
      * @return the edge
@@ -154,6 +168,7 @@ public abstract class Graph<V> {
      * Add an edge to the graph, with the same endpoints as the given edge. If the endpoints are not in the graph they
      * will be added.
      * If there is already an edge between v and w, its weight will be set to the weight of given edge.
+     *
      * @param edge an edge (possibly from another graph)
      * @return the edge belonging to this graph
      */
@@ -166,8 +181,9 @@ public abstract class Graph<V> {
     /**
      * Add an edge to the graph, from v to w and with the specified weight.
      * If there is already an edge between v and w, its weight will be set to the specified weight.
-     * @param v the tail vertex of the edge
-     * @param w the head vertex of the edge
+     *
+     * @param v      the tail vertex of the edge
+     * @param w      the head vertex of the edge
      * @param weight the weight of the edge
      * @return the edge
      */
@@ -178,8 +194,9 @@ public abstract class Graph<V> {
     /**
      * Add an edge to the graph, from v to w and with the specified weight.
      * If there is already an edge between v and w, its weight will be set to the specified weight.
-     * @param v the tail vertex of the edge
-     * @param w the head vertex of the edge
+     *
+     * @param v              the tail vertex of the edge
+     * @param w              the head vertex of the edge
      * @param weightFunction a function which will return the weight of the edge
      * @return the edge
      */
@@ -188,19 +205,20 @@ public abstract class Graph<V> {
         if (v.equals(w)) Errors.throwSameVertexException();
         Node<V> a = getNode(v);
         Node<V> b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
+        if (a == null || b == null) Errors.throwVertexNotInGraphVertexException(true);
         return addConnection(a, b, weightFunction);
     }
 
     /**
      * Removes the edge from v to w from the graph.
+     *
      * @param v the tail vertex of the edge
      * @param w the head vertex of the edge
      * @return the edge if there exists an edge from v to w, or null if there is no edge
      */
     public boolean removeEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
+        if (a == null || b == null) Errors.throwVertexNotInGraphVertexException(true);
         return removeConnection(a, b);
     }
 
@@ -229,6 +247,7 @@ public abstract class Graph<V> {
     /**
      * Sort the vertices using the provided comparator. This is reflected in the iteration order of the collection returned
      * by {@link #getVertices()}, as well as algorithms which involve iterating over all vertices.
+     *
      * @param comparator a comparator for comparing vertices
      */
     public void sortVertices(Comparator<V> comparator) {
@@ -238,6 +257,7 @@ public abstract class Graph<V> {
     /**
      * Sort the edges using the provided comparator. This is reflected in the iteration order of the collection returned
      * by {@link #getEdges()}, as well as algorithms which involve iterating over all edges.
+     *
      * @param comparator a comparator for comparing edges
      */
     public void sortEdges(final Comparator<Connection<V>> comparator) {
@@ -282,6 +302,7 @@ public abstract class Graph<V> {
 
     /**
      * Check if the graph contains a vertex.
+     *
      * @param v the vertex with which to check
      * @return true if the graph contains the vertex, false otherwise
      */
@@ -291,13 +312,14 @@ public abstract class Graph<V> {
 
     /**
      * Retrieve the edge which is from v to w.
+     *
      * @param v the tail vertex of the edge
      * @param w the head vertex of the edge
      * @return the edge if it is in the graph, otherwise null
      */
     public Edge<V> getEdge(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
+        if (a == null || b == null) Errors.throwVertexNotInGraphVertexException(true);
         Connection<V> edge = getEdge(a, b);
         if (edge == null) return null;
         return edge;
@@ -305,30 +327,33 @@ public abstract class Graph<V> {
 
     /**
      * Check if the graph contains an edge from v to w.
+     *
      * @param v the tail vertex of the edge
      * @param w the head vertex of the edge
      * @return true if the edge is in the graph, false otherwise
      */
     public boolean edgeExists(V v, V w) {
         Node<V> a = getNode(v), b = getNode(w);
-        if (a == null  || b == null) Errors.throwVertexNotInGraphVertexException(true);
+        if (a == null || b == null) Errors.throwVertexNotInGraphVertexException(true);
         return connectionExists(a, b);
     }
 
     /**
      * Get a collection containing all the edges which have v as a tail.
      * That is, for every edge e in the collection, e = (v, u) for some vertex u.
+     *
      * @param v the vertex which all edges will have as a tail
      * @return an unmodifiable collection of edges
      */
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
-        if (node==null) return null;
+        if (node == null) return null;
         return Collections.unmodifiableCollection(node.outEdges);
     }
 
     /**
      * Get a collection containing all the edges in the graph.
+     *
      * @return an unmodifiable collection of all the edges in the graph
      */
     public Collection<Edge<V>> getEdges() {
@@ -337,6 +362,7 @@ public abstract class Graph<V> {
 
     /**
      * Get a collection containing all the vertices in the graph.
+     *
      * @return an unmodifiable collection of all the vertices in the graph
      */
     public Collection<V> getVertices() {
@@ -346,6 +372,7 @@ public abstract class Graph<V> {
 
     /**
      * Check if the graph is directed, that is whether the edges form an ordered pair or a set.
+     *
      * @return whether the graph is directed
      */
     public boolean isDirected() {
@@ -354,6 +381,7 @@ public abstract class Graph<V> {
 
     /**
      * Get the number of vertices in the graph.
+     *
      * @return the number of vertices
      */
     public int size() {
@@ -362,6 +390,7 @@ public abstract class Graph<V> {
 
     /**
      * Get the number of edges in the graph.
+     *
      * @return the number of edges
      */
     public int getEdgeCount() {
@@ -375,6 +404,7 @@ public abstract class Graph<V> {
 
     /**
      * Get the current default edge weight function. If none has been set, the default is a function returning the constant value 1f.
+     *
      * @return the current default edge weight function
      */
     public WeightFunction<V> getDefaultEdgeWeightFunction() {
@@ -384,6 +414,7 @@ public abstract class Graph<V> {
     /**
      * Set the default edge weight function, which will be given to every edge for which the edge weight function is not specified.
      * See {@link WeightFunction}.
+     *
      * @param defaultEdgeWeight the edge weight function
      */
     public void setDefaultEdgeWeight(WeightFunction<V> defaultEdgeWeight) {
@@ -393,10 +424,21 @@ public abstract class Graph<V> {
     /**
      * Sets the default edge weight, which will be given to every edge for which the edge weight is not specified.
      * Note that this actually sets the default edge weight function to a constant function returning the specified weight.
+     *
      * @param weight the fixed value of the edge weight
      */
     public void setDefaultEdgeWeight(float weight) {
         this.defaultEdgeWeight = (a, b) -> weight;
+    }
+
+    /**
+     * @return whether the graph is connected
+     */
+    public boolean isConnected() {
+        if (size() < 2) return true;
+        AtomicInteger visited = new AtomicInteger(1);
+        algorithms().depthFirstSearch(getVertices().iterator().next(), v -> visited.incrementAndGet());
+        return visited.get() == size();
     }
 
     //--------------------
@@ -425,6 +467,6 @@ public abstract class Graph<V> {
     @Override
     public String toString() {
         return (isDirected() ? "Directed" : "Undirected") + " graph with " +
-                size() +" vertices and " + getEdgeCount() +" edges";
+                size() + " vertices and " + getEdgeCount() + " edges";
     }
 }

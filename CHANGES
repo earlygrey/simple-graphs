@@ -1,3 +1,11 @@
+[4.0.0]
+Breaking changes
+ - SearchProcessor count starts at 0 and includes first vertex
+Fixes
+ - fixed bug when removing vertices, which would result in extra vertices being removed
+New
+ - new constructors for graphs
+
 [3.0.0]
 Breaking changes
  - allow WeightFunction<V> to be used to calculate edge weights

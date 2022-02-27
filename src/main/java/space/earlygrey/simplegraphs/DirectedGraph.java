@@ -23,10 +23,10 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import space.earlygrey.simplegraphs.Connection.DirectedConnection;
-
 import java.util.Collection;
 import java.util.Collections;
+
+import space.earlygrey.simplegraphs.Connection.DirectedConnection;
 
 public class DirectedGraph<V> extends Graph<V> {
 
@@ -46,6 +46,10 @@ public class DirectedGraph<V> extends Graph<V> {
         algorithms = new DirectedGraphAlgorithms<>(this);
     }
 
+    public DirectedGraph(Graph<V> graph) {
+        super(graph);
+        algorithms = new DirectedGraphAlgorithms<>(this);
+    }
 
     //================================================================================
     // Superclass implementations

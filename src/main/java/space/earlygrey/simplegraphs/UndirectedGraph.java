@@ -46,6 +46,11 @@ public class UndirectedGraph<V> extends Graph<V> {
         algorithms = new UndirectedGraphAlgorithms<>(this);
     }
 
+    public UndirectedGraph(Graph<V> graph) {
+        super(graph);
+        algorithms = new UndirectedGraphAlgorithms<>(this);
+    }
+
 
     //================================================================================
     // Graph building

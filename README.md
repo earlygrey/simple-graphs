@@ -70,7 +70,7 @@ You can obtain `Collection<V>`s of the vertices and edges:
 Collection<Integer> vertices = graph.getVertices();
 Collection<Edge<Integer>> edges = graph.getEdges();
 ```
-Both collections cannot be modified directly - they provide a "read-only" iterable view of the vertices and edges and are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
+Neither collection can be modified directly - they provide a "read-only" iterable view of the vertices and edges, and they are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
 
 ```java
 graph.sortVertices((v1, v2) -> ...);

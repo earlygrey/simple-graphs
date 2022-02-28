@@ -386,8 +386,8 @@ public abstract class Graph<V> {
      *
      * <p>Note that for an undirected graph, there is no guarantee on the order of the vertices.
      * For example if there exists and edge between u and v, the returned collection will contain
-     * exactly one edge for which either edge.getA().equals(u) && edge.getB().equals(v), or
-     * edge.getA().equals(v) && edge.getB().equals(u). See {@link Edge#hasEndpoints(Object, Object)}.</p>
+     * exactly one edge for which either edge.getA().equals(u) and edge.getB().equals(v), or
+     * edge.getA().equals(v) and edge.getB().equals(u). See {@link Edge#hasEndpoints(Object, Object)}.</p>
      *
      * @return an unmodifiable collection of all the edges in the graph
      */

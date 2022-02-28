@@ -5,6 +5,8 @@ Fixes
  - fixed bug when removing vertices, which would result in extra vertices being removed
 New
  - new constructors for graphs
+ - new methods removeVertexIf and removeEdgeIf in Graph
+ - new methods hasEndpoint and hasEndpoints in Edge
 
 [3.0.0]
 Breaking changes

@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
@@ -152,6 +154,16 @@ public abstract class Graph<V> {
         }
     }
 
+    public void removeVertexIf(Predicate<V> predicate) {
+        Iterator<Node<V>> iterator = nodeMap.nodeCollection.iterator();
+        while (iterator.hasNext()) {
+            Node<V> node = iterator.next();
+            if (predicate.test(node.object)) {
+                removeVertex(node.object);
+            }
+        }
+    }
+
     /**
      * Add an edge to the graph, from v to w. The edge will have a default weight of 1.
      * If there is already an edge between v and w, its weight will be set to 1.
@@ -226,6 +238,20 @@ public abstract class Graph<V> {
         return removeConnection(edge.getInternalNodeA(), edge.getInternalNodeB());
     }
 
+    public void removeEdgeIf(Predicate<Edge<V>> predicate) {
+        Iterator<Entry<Connection<V>, Connection<V>>> iterator = edgeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Connection<V> e = iterator.next().getValue();
+            if (predicate.test(e)) {
+                if (removeConnection(e.getNodeA(), e.getNodeB(), false)) {
+                    iterator.remove();
+                } else {
+                    throw new IllegalStateException("Expected edge was not in graph");
+                }
+            }
+        }
+    }
+
     /**
      * Removes all edges from the graph.
      */
@@ -286,9 +312,13 @@ public abstract class Graph<V> {
     }
 
     boolean removeConnection(Node<V> a, Node<V> b) {
+        return removeConnection(a, b, true);
+    }
+
+    boolean removeConnection(Node<V> a, Node<V> b, boolean removeFromMap) {
         Connection<V> e = a.removeEdge(b);
         if (e == null) return false;
-        edgeMap.remove(e);
+        if (removeFromMap) edgeMap.remove(e);
         return true;
     }
 
@@ -352,7 +382,12 @@ public abstract class Graph<V> {
     }
 
     /**
-     * Get a collection containing all the edges in the graph.
+     * <p>Get a collection containing all the edges in the graph.</p>
+     *
+     * <p>Note that for an undirected graph, there is no guarantee on the order of the vertices.
+     * For example if there exists and edge between u and v, the returned collection will contain
+     * exactly one edge for which either edge.getA().equals(u) && edge.getB().equals(v), or
+     * edge.getA().equals(v) && edge.getB().equals(u). See {@link Edge#hasEndpoints(Object, Object)}.</p>
      *
      * @return an unmodifiable collection of all the edges in the graph
      */

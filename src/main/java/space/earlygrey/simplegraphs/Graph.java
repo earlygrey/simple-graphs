@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
@@ -155,13 +155,7 @@ public abstract class Graph<V> {
     }
 
     public void removeVertexIf(Predicate<V> predicate) {
-        Iterator<Node<V>> iterator = nodeMap.nodeCollection.iterator();
-        while (iterator.hasNext()) {
-            Node<V> node = iterator.next();
-            if (predicate.test(node.object)) {
-                removeVertex(node.object);
-            }
-        }
+        removeVertices(getVertices().stream().filter(predicate).collect(Collectors.toList()));
     }
 
     /**
@@ -238,18 +232,12 @@ public abstract class Graph<V> {
         return removeConnection(edge.getInternalNodeA(), edge.getInternalNodeB());
     }
 
+    public void removeEdges(Collection<Edge<V>> edges) {
+        edges.forEach(e -> removeConnection(e.getInternalNodeA(), e.getInternalNodeB()));
+    }
+
     public void removeEdgeIf(Predicate<Edge<V>> predicate) {
-        Iterator<Entry<Connection<V>, Connection<V>>> iterator = edgeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Connection<V> e = iterator.next().getValue();
-            if (predicate.test(e)) {
-                if (removeConnection(e.getNodeA(), e.getNodeB(), false)) {
-                    iterator.remove();
-                } else {
-                    throw new IllegalStateException("Expected edge was not in graph");
-                }
-            }
-        }
+        removeEdges(getEdges().stream().filter(predicate).collect(Collectors.toList()));
     }
 
     /**

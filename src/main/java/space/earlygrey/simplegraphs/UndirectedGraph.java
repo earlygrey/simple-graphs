@@ -111,6 +111,9 @@ public class UndirectedGraph<V> extends Graph<V> {
     // Misc
     //================================================================================
 
+    /**
+     * @return the degree of this vertex, or -1 if it is not in the graph
+     */
     public int getDegree(V v) {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getOutDegree();

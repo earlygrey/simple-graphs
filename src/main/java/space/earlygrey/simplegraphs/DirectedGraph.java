@@ -75,11 +75,17 @@ public class DirectedGraph<V> extends Graph<V> {
     // Misc
     //================================================================================
 
+    /**
+     * @return the out degree of this vertex, or -1 if it is not in the graph
+     */
     public int getOutDegree(V v) {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getOutDegree();
     }
 
+    /**
+     * @return the in degree of this vertex, or -1 if it is not in the graph
+     */
     public int getInDegree(V v) {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getInDegree();

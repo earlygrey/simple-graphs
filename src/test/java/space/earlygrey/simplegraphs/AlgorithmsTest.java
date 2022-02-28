@@ -190,7 +190,6 @@ public class AlgorithmsTest {
             }
             tree.addVertex(step.vertex());
             if (step.count > 0) {
-                System.out.println(step.count + " " + step.edge());
                 tree.addEdge(step.edge().getA(), step.edge().getB());
             }
         };

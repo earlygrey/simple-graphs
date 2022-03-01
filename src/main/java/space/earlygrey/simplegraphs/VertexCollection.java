@@ -24,8 +24,11 @@ SOFTWARE.
 
 package space.earlygrey.simplegraphs;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 
 import space.earlygrey.simplegraphs.NodeMap.NodeIterator;
 
@@ -49,7 +52,7 @@ class VertexCollection<V> extends AbstractCollection<V> {
 
     @Override
     public boolean contains(Object o) {
-        return nodeMap.contains((V) o);
+        return o != null && nodeMap.contains(o);
     }
 
     @Override
@@ -61,28 +64,25 @@ class VertexCollection<V> extends AbstractCollection<V> {
     public Object[] toArray() {
         Object[] array = new Object[nodeMap.size];
         int index = 0;
-        for (int i = 0; i < nodeMap.table.length; i++) {
-            Node<V> node = nodeMap.table[i];
-            while (node != null) {
-                array[index++] = node.object;
-                node = node.nextInBucket;
-            }
+        Node<V> node = nodeMap.head;
+        while (node != null) {
+            array[index++] = node.object;
+            node = node.nextInOrder;
         }
         return array;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] array) {
         if (array.length < nodeMap.size) {
             array = Arrays.copyOf(array, nodeMap.size);
         }
         int index = 0;
-        for (int i = 0; i < nodeMap.table.length; i++) {
-            Node<V> node = nodeMap.table[i];
-            while (node != null) {
-                array[index++] = (T) node.object;
-                node = node.nextInBucket;
-            }
+        Node<V> node = nodeMap.head;
+        while (node != null) {
+            array[index++] = (T) node.object;
+            node = node.nextInOrder;
         }
         return array;
     }

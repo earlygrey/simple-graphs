@@ -58,16 +58,33 @@ public class UndirectedGraph<V> extends Graph<V> {
     //================================================================================
 
     @Override
-    protected Connection<V> obtainEdge() {
+    protected UndirectedConnection<V> obtainEdge() {
         return new UndirectedConnection<>();
     }
 
     @Override
     Connection<V> addConnection(Node<V> a, Node<V> b, WeightFunction<V> weight) {
-        Connection<V> e = a.addEdge(b, weight);
-        edgeMap.put(e, e);
-        b.addEdge(a, weight);
+        Connection<V> e = a.getEdge(b);
+        if (e == null) {
+            UndirectedConnection<V> e1 = obtainEdge(), e2 = obtainEdge();
+            e1.link(e2);
+            e2.link(e1);
+            e1.set(a, b, weight);
+            e2.set(b, a, weight);
+            a.addEdge(e1);
+            b.addEdge(e2);
+            edgeMap.put(e1, e1);
+            e = e1;
+        } else {
+            e.setWeight(weight);
+        }
         return e;
+    }
+
+    @Override
+    Connection<V> addConnection(Node<V> a, Node<V> b) {
+        Connection<V> e = a.getEdge(b);
+        return e != null ? edgeMap.get(e) : addConnection(a, b, getDefaultEdgeWeightFunction());
     }
 
     @Override
@@ -82,9 +99,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     @Override
     Connection<V> getEdge(Node<V> a, Node<V> b) {
         Connection<V> edge = a.getEdge(b);
-        if (edge == null) return null;
-        edge = edgeMap.get(edge);
-        return edge;
+        return edge == null ? null : edgeMap.get(edge); // get from map to ensure consistent instance is returned
     }
 
 

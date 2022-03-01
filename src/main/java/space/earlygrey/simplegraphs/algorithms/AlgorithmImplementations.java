@@ -25,13 +25,14 @@ package space.earlygrey.simplegraphs.algorithms;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import space.earlygrey.simplegraphs.Array;
 import space.earlygrey.simplegraphs.Connection;
+import space.earlygrey.simplegraphs.Edge;
 import space.earlygrey.simplegraphs.Graph;
 import space.earlygrey.simplegraphs.Node;
 import space.earlygrey.simplegraphs.Path;
@@ -96,8 +97,6 @@ class AlgorithmImplementations<V> {
         return search.getPath();
     }
 
-
-
     //================================================================================
     // Minimum spanning trees
     //================================================================================
@@ -115,10 +114,11 @@ class AlgorithmImplementations<V> {
         List<Connection<V>> edgeList = new ArrayList<>(graph.internals().getConnections());
 
         if (minSpanningTree) {
-            Collections.sort(edgeList, (e1, e2) -> Float.floatToIntBits(e1.getWeight() - e2.getWeight()));
+            edgeList.sort(Comparator.comparing(Edge<V>::getWeight)); // smallest first
         } else {
-            Collections.sort(edgeList, (e1, e2) -> Float.floatToIntBits(e2.getWeight() - e1.getWeight()));
+            edgeList.sort(Comparator.comparing(Edge<V>::getWeight).reversed());
         }
+        edgeList.forEach(System.out::println);
 
         int totalNodes = graph.size();
         int edgeCount = 0;
@@ -126,9 +126,8 @@ class AlgorithmImplementations<V> {
         for (Connection<V> edge : edgeList) {
             if (doesEdgeCreateCycle(edge.getNodeA(), edge.getNodeB(), runID)) {
                 continue;
-
             }
-            spanningTree.internals().addConnection(edge.getNodeA(), edge.getNodeB(), edge.getWeightFunction());
+            spanningTree.addEdge(edge.getA(), edge.getB(), edge.getWeightFunction());
             edgeCount++;
             if (edgeCount == totalNodes - 1) {
                 break;

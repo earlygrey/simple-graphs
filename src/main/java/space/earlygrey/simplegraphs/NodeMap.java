@@ -97,7 +97,7 @@ class NodeMap<V> {
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
         if (bucketHead == null) {
-            bucketHead = new Node<>(v, graph, objectHash);
+            bucketHead = new Node<>(v, graph.isDirected(), objectHash);
             bucketHead.mapHash = hash;
             table[i] = bucketHead;
             size++;
@@ -113,7 +113,7 @@ class NodeMap<V> {
             currentNode = currentNode.nextInBucket;
         }
 
-        currentNode = new Node<>(v, graph, objectHash);
+        currentNode = new Node<>(v, graph.isDirected(), objectHash);
         currentNode.mapHash = hash;
         previousNode.nextInBucket = currentNode;
         size++;

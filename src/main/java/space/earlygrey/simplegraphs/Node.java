@@ -27,15 +27,12 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import space.earlygrey.simplegraphs.utils.WeightFunction;
-
 public class Node<V> {
 
     //================================================================================
     // Graph structure related members
     //================================================================================
 
-    final Graph<V> graph;
     final int idHash;
     final V object;
 
@@ -56,12 +53,11 @@ public class Node<V> {
     // Constructor
     //================================================================================
 
-    Node(V v, Graph<V> graph, int objectHash) {
+    Node(V v, boolean trackInEdges, int objectHash) {
         this.object = v;
-        this.graph = graph;
         this.objectHash = objectHash;
         idHash = System.identityHashCode(this);
-        if (graph instanceof DirectedGraph) setInEdges(new Array<>());
+        if (trackInEdges) setInEdges(new Array<>());
     }
 
     //================================================================================
@@ -72,18 +68,11 @@ public class Node<V> {
         return neighbours.get(v);
     }
 
-    Connection<V> addEdge(Node<V> v, WeightFunction<V> weight) {
-        Connection<V> edge = neighbours.get(v);
-        if (edge == null) {
-            edge = graph.obtainEdge();
-            edge.set(this, v, weight);
-            neighbours.put(v, edge);
-            getOutEdges().add(edge);
-            if (v.getInEdges() != null) v.getInEdges().add(edge);
-        } else {
-            edge.setWeight(weight);
-        }
-        return edge;
+    void addEdge(Connection<V> edge) {
+        Node<V> to = edge.getNodeB();
+        neighbours.put(to, edge);
+        getOutEdges().add(edge);
+        if (to.getInEdges() != null) to.getInEdges().add(edge);
     }
 
     Connection<V> removeEdge(Node<V> v) {

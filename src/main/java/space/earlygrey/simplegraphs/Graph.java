@@ -45,6 +45,11 @@ public abstract class Graph<V> {
     //================================================================================
 
     final NodeMap<V> nodeMap;
+
+    /**
+     * This is a map so that for undirected graphs, a consistent edge instance can be obtained from
+     * either (u, v) or (v, u)
+     */
     final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
 
     final Internals<V> internals = new Internals<>(this);
@@ -289,14 +294,20 @@ public abstract class Graph<V> {
     //--------------------
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
-        Connection<V> e = a.addEdge(b, getDefaultEdgeWeightFunction());
-        edgeMap.put(e, e);
-        return e;
+        Connection<V> e = a.getEdge(b);
+        return e != null ? e : addConnection(a, b, getDefaultEdgeWeightFunction());
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b, WeightFunction<V> weight) {
-        Connection<V> e = a.addEdge(b, weight);
-        edgeMap.put(e, e);
+        Connection<V> e = a.getEdge(b);
+        if (e == null) {
+            e = obtainEdge();
+            e.set(a, b, weight);
+            a.addEdge(e);
+            edgeMap.put(e, e);
+        } else {
+            e.setWeight(weight);
+        }
         return e;
     }
 
@@ -381,7 +392,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the edges in the graph
      */
     public Collection<Edge<V>> getEdges() {
-        return Collections.unmodifiableCollection(edgeMap.keySet());
+        return Collections.unmodifiableCollection(edgeMap.values());
     }
 
     /**
@@ -482,9 +493,7 @@ public abstract class Graph<V> {
     }
 
     Connection<V> getEdge(Node<V> a, Node<V> b) {
-        Connection<V> edge = a.getEdge(b);
-        if (edge == null) return null;
-        return edge;
+        return a.getEdge(b);
     }
 
 

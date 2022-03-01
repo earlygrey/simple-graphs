@@ -262,16 +262,20 @@ public class AlgorithmsTest {
     @Test
     public void mwstShouldBeTree() {
 
-        int n = 4;
+        int n = 20;
         UndirectedGraph<Integer> graph = new UndirectedGraph<>();
         for (int i = 0; i < n; i++) graph.addVertex(i);
         GraphBuilder.buildCompleteGraph(graph);
 
+        graph.getEdge(0, 1).setWeight(4);
+        graph.getEdge(4, 6).setWeight(0.5f);
+
         Graph<Integer> mwst = graph.algorithms().findMinimumWeightSpanningTree();
 
-        assertEquals(n, mwst.size());
-        assertEquals(n-1, mwst.getEdgeCount());
+        assertEquals("Tree doesn't have correct number of vertices", n, mwst.size());
+        assertEquals("Tree doesn't have correct number of edges", n-1, mwst.getEdgeCount());
+        assertTrue("Tree contains a cycle", !mwst.algorithms().detectCycle());
+        assertEquals("Tree is not minimum weight", n-1 - 0.5f, mwst.getEdges().stream().mapToDouble(e -> e.getWeight()).sum(), 0.0001f);
 
-        assertTrue(!mwst.algorithms().detectCycle());
     }
 }

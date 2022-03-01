@@ -34,14 +34,11 @@ import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
 public class Algorithms<V> {
 
-    final Graph<V> graph;
-    final AlgorithmImplementations<V> implementations;
-
+    protected final Graph<V> graph;
     private AtomicInteger runID = new AtomicInteger();
 
     Algorithms(Graph<V> graph) {
         this.graph = graph;
-        implementations = new AlgorithmImplementations<>(graph);
     }
 
     public int requestRunID() {
@@ -104,8 +101,10 @@ public class Algorithms<V> {
         Node<V> startNode = graph.internals().getNode(start);
         Node<V> targetNode = graph.internals().getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
-        Path<V> path = implementations.findShortestPath(startNode, targetNode, heuristic, processor);
-        return path;
+
+        AStarSearch<V> search = new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, processor);
+        search.finish();
+        return search.getPath();
     }
 
 
@@ -117,7 +116,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target) {
-        return implementations.findMinimumDistance(graph.internals().getNode(start), graph.internals().getNode(target));
+        return findMinimumDistance(start, target, null);
     }
 
     /**
@@ -128,7 +127,14 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target, Heuristic<V> heuristic) {
-        return implementations.findMinimumDistance(graph.internals().getNode(start), graph.internals().getNode(target), heuristic);
+        Node<V> startNode = graph.internals().getNode(start);
+        Node<V> targetNode = graph.internals().getNode(target);
+        if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
+
+        AStarSearch<V> search = new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, null);
+        search.finish();
+        if (search.getEnd() == null) return Float.MAX_VALUE;
+        else return search.getEnd().getDistance();
     }
 
     /**
@@ -138,7 +144,7 @@ public class Algorithms<V> {
      * @return whether there exists a path from the start vertex to target vertex
      */
     public boolean isConnected(V start, V target) {
-        return implementations.findMinimumDistance(graph.internals().getNode(start), graph.internals().getNode(target)) < Float.MAX_VALUE;
+        return findMinimumDistance(start, target) < Float.MAX_VALUE;
     }
 
     //--------------------
@@ -153,7 +159,7 @@ public class Algorithms<V> {
     public void breadthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.internals().getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException(false);
-        implementations.breadthFirstSearch(node, processor);
+        new BreadthFirstSearch<>(requestRunID(), node, processor).finish();
     }
 
 
@@ -165,7 +171,7 @@ public class Algorithms<V> {
     public void depthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.internals().getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException(false);
-        implementations.depthFirstSearch(node, processor);
+        new DepthFirstSearch<>(requestRunID(), node, processor).finish();
     }
 
     //--------------------
@@ -176,8 +182,8 @@ public class Algorithms<V> {
      * Checks whether there are any cycles in the graph using depth first searches.
      * @return true if the graph contains a cycle, false otherwise
      */
-    public boolean detectCycle() {
-        return implementations.containsCycle(graph);
+    public boolean containsCycle() {
+        return new CycleDetector<>(requestRunID(), graph).containsCycle();
     }
 
 }

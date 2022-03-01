@@ -113,7 +113,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    public Graph<V> createNew() {
+    public UndirectedGraph<V> createNew() {
         return new UndirectedGraph<>();
     }
 

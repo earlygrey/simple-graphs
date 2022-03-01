@@ -62,7 +62,7 @@ public class DirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    public Graph<V> createNew() {
+    public DirectedGraph<V> createNew() {
         return new DirectedGraph<>();
     }
 

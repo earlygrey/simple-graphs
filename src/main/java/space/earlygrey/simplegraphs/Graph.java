@@ -470,10 +470,16 @@ public abstract class Graph<V> {
      * @return whether the graph is connected
      */
     public boolean isConnected() {
-        if (size() < 2) return true;
-        AtomicInteger visited = new AtomicInteger(1);
-        algorithms().depthFirstSearch(getVertices().iterator().next(), v -> visited.incrementAndGet());
-        return visited.get() == size();
+        return numberOfComponents() == 1;
+    }
+
+    public int numberOfComponents() {
+        AtomicInteger visited = new AtomicInteger(1), components = new AtomicInteger();
+        while (visited.get() < size()) {
+            components.incrementAndGet();
+            algorithms().depthFirstSearch(getVertices().iterator().next(), v -> visited.incrementAndGet());
+        }
+        return components.get();
     }
 
     //--------------------

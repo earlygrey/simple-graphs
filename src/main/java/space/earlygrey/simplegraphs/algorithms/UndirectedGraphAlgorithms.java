@@ -38,7 +38,9 @@ public class UndirectedGraphAlgorithms<V> extends Algorithms<V> {
      */
     @SuppressWarnings("unchecked")
     public UndirectedGraph<V> findMinimumWeightSpanningTree() {
-        return (UndirectedGraph<V>) implementations.kruskalsMinimumWeightSpanningTree(true);
+        MinimumWeightSpanningTree<V> algorithm = new MinimumWeightSpanningTree<>(requestRunID(), (UndirectedGraph<V>) graph, true);
+        algorithm.finish();
+        return algorithm.getSpanningTree();
     }
 
 

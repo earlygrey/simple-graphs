@@ -112,7 +112,7 @@ public class Path<V> extends Array<V> {
     @Override
     public boolean removeIf(Predicate<? super V> filter) {
         checkFixed();
-        return false;
+        return super.removeIf(filter);
     }
 
     public V getFirst() {

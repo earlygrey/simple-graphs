@@ -114,13 +114,13 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.algorithms().detectCycle());
+        assertTrue(!graph.algorithms().containsCycle());
 
         graph.addEdge(0,2);
-        assertTrue(!graph.algorithms().detectCycle());
+        assertTrue(!graph.algorithms().containsCycle());
 
         graph.addEdge(2,0);
-        assertTrue(graph.algorithms().detectCycle());
+        assertTrue(graph.algorithms().containsCycle());
 
         graph = new UndirectedGraph<>();
 
@@ -130,10 +130,10 @@ public class AlgorithmsTest {
 
         graph.addEdge(0, 1);
         graph.addEdge(1, 2);
-        assertTrue(!graph.algorithms().detectCycle());
+        assertTrue(!graph.algorithms().containsCycle());
 
         graph.addEdge(0,2);
-        assertTrue(graph.algorithms().detectCycle());
+        assertTrue(graph.algorithms().containsCycle());
 
     }
     
@@ -274,7 +274,7 @@ public class AlgorithmsTest {
 
         assertEquals("Tree doesn't have correct number of vertices", n, mwst.size());
         assertEquals("Tree doesn't have correct number of edges", n-1, mwst.getEdgeCount());
-        assertTrue("Tree contains a cycle", !mwst.algorithms().detectCycle());
+        assertTrue("Tree contains a cycle", !mwst.algorithms().containsCycle());
         assertEquals("Tree is not minimum weight", n-1 - 0.5f, mwst.getEdges().stream().mapToDouble(e -> e.getWeight()).sum(), 0.0001f);
 
     }

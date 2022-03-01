@@ -26,6 +26,8 @@ package space.earlygrey.simplegraphs;
 
 import java.util.Collection;
 
+import space.earlygrey.simplegraphs.utils.WeightFunction;
+
 public class Internals<V> {
 
     final Graph<V> graph;
@@ -47,4 +49,7 @@ public class Internals<V> {
     }
 
 
+    public void addConnection(Node<V> a, Node<V> b, WeightFunction<V> weightFunction) {
+        graph.addConnection(a, b, weightFunction);
+    }
 }

@@ -25,20 +25,20 @@ package space.earlygrey.simplegraphs;
 
 public class Errors {
 
-    static void throwNullVertexException() {
+    public static void throwNullVertexException() {
         throw new IllegalArgumentException("Vertices cannot be null");
     }
 
-    static void throwSameVertexException() {
+    public static void throwSameVertexException() {
         throw new IllegalArgumentException("Self loops are not allowed");
     }
 
-    static void throwVertexNotInGraphVertexException(boolean multiple) {
+    public static void throwVertexNotInGraphVertexException(boolean multiple) {
         if (multiple) throw new IllegalArgumentException("At least one vertex is not in the graph");
         else throw new IllegalArgumentException("Vertex is not in the graph");
     }
 
-    static void throwModificationException() {
+    public static void throwModificationException() {
         throw new UnsupportedOperationException("You cannot modify this Collection - use the Graph object.");
     }
 

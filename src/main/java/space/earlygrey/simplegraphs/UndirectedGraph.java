@@ -26,6 +26,7 @@ package space.earlygrey.simplegraphs;
 import java.util.Collection;
 
 import space.earlygrey.simplegraphs.Connection.UndirectedConnection;
+import space.earlygrey.simplegraphs.algorithms.UndirectedGraphAlgorithms;
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
 public class UndirectedGraph<V> extends Graph<V> {
@@ -97,7 +98,7 @@ public class UndirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Graph<V> createNew() {
+    public Graph<V> createNew() {
         return new UndirectedGraph<>();
     }
 

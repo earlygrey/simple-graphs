@@ -391,6 +391,60 @@ class NodeMap<V> {
         return slow;
     }
 
+    //================================================================================
+    // Topological sorting
+    //================================================================================
+
+    // Keep track of the current position in the linked list,
+    // We traverse the graph via DFS, and when we hit a terminal node we move that node
+    // to the current cursor position, then move the cursor along one.
+    Node<V> cursor;
+
+    boolean topologicalSort() {
+        if (size < 2 || graph.getEdgeCount() < 1) return true;
+
+        // start the cursor at the tail and work towards the head,
+        // so the list is sorted from head to tail
+        cursor = tail;
+
+        boolean success = true;
+        while (success && cursor != null) {
+            success = recursiveTopologicalSort(cursor, graph.algorithms().requestRunID());
+        }
+
+        cursor = null;
+        return success;
+    }
+
+    private boolean recursiveTopologicalSort(Node<V> v, int runID) {
+
+        v.resetAlgorithmAttribs(runID);
+
+        if (v.isProcessed()) return true;
+        if (v.isSeen()) return false; // not a DAG
+
+        v.setSeen(true);
+
+        Array<Connection<V>> outEdges = v.getOutEdges();
+        for (Connection<V> e : outEdges) {
+            if (!recursiveTopologicalSort(e.getNodeB(), runID)) return false;
+        }
+
+        v.setSeen(false);
+        v.setProcessed(true);
+
+        if (cursor != v) {
+            // move v from its current position to just after the cursor
+            removeFromList(v);
+            insertIntoListAfter(v, cursor);
+        } else {
+            // v is already in the cursor position, just need to move the cursor along
+            cursor = cursor.prevInOrder;
+        }
+
+        return true;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

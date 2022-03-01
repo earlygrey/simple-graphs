@@ -1,4 +1,8 @@
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.algorithms;
+
+import space.earlygrey.simplegraphs.Edge;
+import space.earlygrey.simplegraphs.Node;
+import space.earlygrey.simplegraphs.Path;
 
 /**
  * An object representing a "step" in a search algorithm. Usually this corresponds to visiting or processing a vertex.
@@ -47,7 +51,7 @@ public class SearchStep<V> {
      * @return the edge from which the current vertex was found. {@link Edge#getB()} is equal to the current vertex.
      */
     public Edge<V> edge() {
-        return node.connection;
+        return node.getConnection();
     }
 
     /**
@@ -55,14 +59,14 @@ public class SearchStep<V> {
      *
      */
     public V previous() {
-        return node.connection.getA();
+        return node.getConnection().getA();
     }
 
     /**
      * @return the number of vertices traversed in order to find the current vertex, not including the initial vertex.
      */
     public int depth() {
-        return node.i;
+        return node.getIndex();
     }
 
     /**
@@ -71,7 +75,7 @@ public class SearchStep<V> {
      * for a breadth or depth first search this is not necessarily true.
      */
     public float distance() {
-        return node.distance;
+        return node.getDistance();
     }
 
     /**
@@ -88,7 +92,7 @@ public class SearchStep<V> {
      * @return a path from the initial vertex to the current
      */
     public Path<V> createPath() {
-        return new Path<>(node);
+        return new AlgorithmPath<>(node);
     }
 
 }

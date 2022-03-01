@@ -94,7 +94,7 @@ public abstract class Connection<V> extends Edge<V> {
     }
 
     @Override
-    WeightFunction<V> getWeightFunction() {
+    public WeightFunction<V> getWeightFunction() {
         return weight;
     }
 

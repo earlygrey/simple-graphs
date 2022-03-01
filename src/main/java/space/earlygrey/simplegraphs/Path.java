@@ -29,6 +29,8 @@ import java.util.function.Predicate;
 
 public class Path<V> extends Array<V> {
 
+    public static final Path EMPTY_PATH = new Path(0, false);
+
     float length = 0;
     boolean fixed = false;
 
@@ -36,9 +38,8 @@ public class Path<V> extends Array<V> {
         super(size, true);
     }
 
-    Path(Node<V> v) {
-        super(v.i + 1, true);
-        setByBacktracking(v);
+    public Path(int size, boolean resize) {
+        super(size, resize);
     }
 
     /**
@@ -48,28 +49,17 @@ public class Path<V> extends Array<V> {
         return length;
     }
 
-    void setFixed(boolean fixed) {
+    protected void setFixed(boolean fixed) {
         this.fixed = fixed;
     }
 
-    void checkFixed() {
+    protected void checkFixed() {
         if (fixed) throw new UnsupportedOperationException("You cannot modify this path.");
     }
 
-    void setByBacktracking(Node<V> node) {
-        int nodeCount = node.i + 1;
-        setFixed(false);
-        if (items.length < nodeCount) strictResize(nodeCount);
-
-        Node<V> v = node;
-        while(v != null) {
-            set(v.i, v.object);
-            v = v.prev;
-        }
-
-        length = node.distance;
+    protected void setLength(float length) {
+        this.length = length;
     }
-
 
     @Override
     public boolean add(V item) {

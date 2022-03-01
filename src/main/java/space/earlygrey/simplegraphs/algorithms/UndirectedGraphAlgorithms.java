@@ -21,11 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.algorithms;
+
+import space.earlygrey.simplegraphs.UndirectedGraph;
 
 public class UndirectedGraphAlgorithms<V> extends Algorithms<V> {
 
-    UndirectedGraphAlgorithms(UndirectedGraph<V> graph) {
+    public UndirectedGraphAlgorithms(UndirectedGraph<V> graph) {
         super(graph);
     }
 

@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import space.earlygrey.simplegraphs.algorithms.Algorithms;
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
 
@@ -82,7 +83,7 @@ public abstract class Graph<V> {
 
     abstract Connection<V> obtainEdge();
 
-    abstract Graph<V> createNew();
+    public abstract Graph<V> createNew();
 
     public abstract Algorithms<V> algorithms();
 
@@ -127,8 +128,8 @@ public abstract class Graph<V> {
     public boolean removeVertex(V v) {
         Node<V> existing = nodeMap.remove(v);
         if (existing == null) return false;
-        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
-            removeConnection(existing.outEdges.get(i).b, existing);
+        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
+            removeConnection(existing.getOutEdges().get(i).b, existing);
         }
         existing.disconnect();
         return true;
@@ -137,8 +138,8 @@ public abstract class Graph<V> {
     public void disconnect(V v) {
         Node<V> existing = nodeMap.get(v);
         if (existing == null) Errors.throwVertexNotInGraphVertexException(false);
-        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
-            removeConnection(existing.outEdges.get(i).b, existing);
+        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
+            removeConnection(existing.getOutEdges().get(i).b, existing);
         }
         existing.disconnect();
     }
@@ -366,7 +367,7 @@ public abstract class Graph<V> {
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node == null) return null;
-        return Collections.unmodifiableCollection(node.outEdges);
+        return Collections.unmodifiableCollection(node.getOutEdges());
     }
 
     /**

@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import space.earlygrey.simplegraphs.algorithms.Algorithms;
 import space.earlygrey.simplegraphs.utils.WeightFunction;
 
 
@@ -44,6 +45,11 @@ public abstract class Graph<V> {
     //================================================================================
 
     final NodeMap<V> nodeMap;
+
+    /**
+     * This is a map so that for undirected graphs, a consistent edge instance can be obtained from
+     * either (u, v) or (v, u)
+     */
     final LinkedHashMap<Connection<V>, Connection<V>> edgeMap;
 
     final Internals<V> internals = new Internals<>(this);
@@ -82,7 +88,7 @@ public abstract class Graph<V> {
 
     abstract Connection<V> obtainEdge();
 
-    abstract Graph<V> createNew();
+    public abstract Graph<V> createNew();
 
     public abstract Algorithms<V> algorithms();
 
@@ -127,8 +133,8 @@ public abstract class Graph<V> {
     public boolean removeVertex(V v) {
         Node<V> existing = nodeMap.remove(v);
         if (existing == null) return false;
-        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
-            removeConnection(existing.outEdges.get(i).b, existing);
+        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
+            removeConnection(existing.getOutEdges().get(i).b, existing);
         }
         existing.disconnect();
         return true;
@@ -137,8 +143,8 @@ public abstract class Graph<V> {
     public void disconnect(V v) {
         Node<V> existing = nodeMap.get(v);
         if (existing == null) Errors.throwVertexNotInGraphVertexException(false);
-        for (int i = existing.outEdges.size() - 1; i >= 0; i--) {
-            removeConnection(existing.outEdges.get(i).b, existing);
+        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
+            removeConnection(existing.getOutEdges().get(i).b, existing);
         }
         existing.disconnect();
     }
@@ -155,13 +161,7 @@ public abstract class Graph<V> {
     }
 
     public void removeVertexIf(Predicate<V> predicate) {
-        Iterator<Node<V>> iterator = nodeMap.nodeCollection.iterator();
-        while (iterator.hasNext()) {
-            Node<V> node = iterator.next();
-            if (predicate.test(node.object)) {
-                removeVertex(node.object);
-            }
-        }
+        removeVertices(getVertices().stream().filter(predicate).collect(Collectors.toList()));
     }
 
     /**
@@ -238,18 +238,12 @@ public abstract class Graph<V> {
         return removeConnection(edge.getInternalNodeA(), edge.getInternalNodeB());
     }
 
+    public void removeEdges(Collection<Edge<V>> edges) {
+        edges.forEach(e -> removeConnection(e.getInternalNodeA(), e.getInternalNodeB()));
+    }
+
     public void removeEdgeIf(Predicate<Edge<V>> predicate) {
-        Iterator<Entry<Connection<V>, Connection<V>>> iterator = edgeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Connection<V> e = iterator.next().getValue();
-            if (predicate.test(e)) {
-                if (removeConnection(e.getNodeA(), e.getNodeB(), false)) {
-                    iterator.remove();
-                } else {
-                    throw new IllegalStateException("Expected edge was not in graph");
-                }
-            }
-        }
+        removeEdges(getEdges().stream().filter(predicate).collect(Collectors.toList()));
     }
 
     /**
@@ -300,14 +294,20 @@ public abstract class Graph<V> {
     //--------------------
 
     Connection<V> addConnection(Node<V> a, Node<V> b) {
-        Connection<V> e = a.addEdge(b, getDefaultEdgeWeightFunction());
-        edgeMap.put(e, e);
-        return e;
+        Connection<V> e = a.getEdge(b);
+        return e != null ? e : addConnection(a, b, getDefaultEdgeWeightFunction());
     }
 
     Connection<V> addConnection(Node<V> a, Node<V> b, WeightFunction<V> weight) {
-        Connection<V> e = a.addEdge(b, weight);
-        edgeMap.put(e, e);
+        Connection<V> e = a.getEdge(b);
+        if (e == null) {
+            e = obtainEdge();
+            e.set(a, b, weight);
+            a.addEdge(e);
+            edgeMap.put(e, e);
+        } else {
+            e.setWeight(weight);
+        }
         return e;
     }
 
@@ -378,7 +378,7 @@ public abstract class Graph<V> {
     public Collection<Edge<V>> getEdges(V v) {
         Node<V> node = getNode(v);
         if (node == null) return null;
-        return Collections.unmodifiableCollection(node.outEdges);
+        return Collections.unmodifiableCollection(node.getOutEdges());
     }
 
     /**
@@ -392,7 +392,7 @@ public abstract class Graph<V> {
      * @return an unmodifiable collection of all the edges in the graph
      */
     public Collection<Edge<V>> getEdges() {
-        return Collections.unmodifiableCollection(edgeMap.keySet());
+        return Collections.unmodifiableCollection(edgeMap.values());
     }
 
     /**
@@ -470,10 +470,16 @@ public abstract class Graph<V> {
      * @return whether the graph is connected
      */
     public boolean isConnected() {
-        if (size() < 2) return true;
-        AtomicInteger visited = new AtomicInteger(1);
-        algorithms().depthFirstSearch(getVertices().iterator().next(), v -> visited.incrementAndGet());
-        return visited.get() == size();
+        return numberOfComponents() == 1;
+    }
+
+    public int numberOfComponents() {
+        AtomicInteger visited = new AtomicInteger(1), components = new AtomicInteger();
+        while (visited.get() < size()) {
+            components.incrementAndGet();
+            algorithms().depthFirstSearch(getVertices().iterator().next(), v -> visited.incrementAndGet());
+        }
+        return components.get();
     }
 
     //--------------------
@@ -493,9 +499,7 @@ public abstract class Graph<V> {
     }
 
     Connection<V> getEdge(Node<V> a, Node<V> b) {
-        Connection<V> edge = a.getEdge(b);
-        if (edge == null) return null;
-        return edge;
+        return a.getEdge(b);
     }
 
 

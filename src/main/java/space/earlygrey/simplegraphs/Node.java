@@ -27,21 +27,18 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import space.earlygrey.simplegraphs.utils.WeightFunction;
-
 public class Node<V> {
 
     //================================================================================
     // Graph structure related members
     //================================================================================
 
-    final Graph<V> graph;
     final int idHash;
     final V object;
 
     Map<Node<V>, Connection<V>> neighbours = new LinkedHashMap<>();
-    Array<Connection<V>> outEdges = new Array<>();
-    Array<Connection<V>> inEdges;
+    private Array<Connection<V>> outEdges = new Array<>();
+    private Array<Connection<V>> inEdges;
 
     //================================================================================
     // Node map fields
@@ -56,12 +53,11 @@ public class Node<V> {
     // Constructor
     //================================================================================
 
-    Node(V v, Graph<V> graph, int objectHash) {
+    Node(V v, boolean trackInEdges, int objectHash) {
         this.object = v;
-        this.graph = graph;
         this.objectHash = objectHash;
         idHash = System.identityHashCode(this);
-        if (graph instanceof DirectedGraph) inEdges = new Array<>();
+        if (trackInEdges) setInEdges(new Array<>());
     }
 
     //================================================================================
@@ -72,32 +68,25 @@ public class Node<V> {
         return neighbours.get(v);
     }
 
-    Connection<V> addEdge(Node<V> v, WeightFunction<V> weight) {
-        Connection<V> edge = neighbours.get(v);
-        if (edge == null) {
-            edge = graph.obtainEdge();
-            edge.set(this, v, weight);
-            neighbours.put(v, edge);
-            outEdges.add(edge);
-            if (v.inEdges != null) v.inEdges.add(edge);
-        } else {
-            edge.setWeight(weight);
-        }
-        return edge;
+    void addEdge(Connection<V> edge) {
+        Node<V> to = edge.getNodeB();
+        neighbours.put(to, edge);
+        getOutEdges().add(edge);
+        if (to.getInEdges() != null) to.getInEdges().add(edge);
     }
 
     Connection<V> removeEdge(Node<V> v) {
         Connection<V> edge = neighbours.remove(v);
         if (edge == null) return null;
-        outEdges.remove(edge);
-        if (v.inEdges != null) v.inEdges.remove(edge);
+        getOutEdges().remove(edge);
+        if (v.getInEdges() != null) v.getInEdges().remove(edge);
         return edge;
     }
 
     void disconnect() {
         neighbours.clear();
-        outEdges.clear();
-        if (inEdges != null) inEdges.clear();
+        getOutEdges().clear();
+        if (getInEdges() != null) getInEdges().clear();
     }
 
     //================================================================================
@@ -105,7 +94,7 @@ public class Node<V> {
     //================================================================================
 
     public Collection<Connection<V>> getConnections() {
-        return outEdges;
+        return getOutEdges();
     }
 
     public V getObject() {
@@ -113,11 +102,11 @@ public class Node<V> {
     }
 
     public int getInDegree() {
-        return inEdges == null ? getOutDegree() : inEdges.size();
+        return getInEdges() == null ? getOutDegree() : getInEdges().size();
     }
 
     public int getOutDegree() {
-        return outEdges.size();
+        return getOutEdges().size();
     }
 
     //================================================================================
@@ -125,24 +114,90 @@ public class Node<V> {
     //================================================================================
 
     // util fields for algorithms, don't store data in them
-    boolean processed, seen;
-    float distance;
-    float estimate;
-    Node<V> prev;
-    Connection<V> connection;
-    int i, lastRunID;
+    private boolean processed;
+    private boolean seen;
+    private float distance;
+    private float estimate;
+    private Node<V> prev;
+    private Connection<V> connection;
+    private int index;
+    private int lastRunID = -1;
 
-    boolean resetAlgorithmAttribs(int runID) {
-        if (runID == this.lastRunID) return false;
-        processed = false;
-        prev = null;
-        connection = null;
-        distance = Float.MAX_VALUE;
-        estimate = 0;
-        i = 0;
-        seen = false;
-        this.lastRunID = runID;
+    public boolean resetAlgorithmAttribs(int runID) {
+        if (runID == this.getLastRunID()) return false;
+        setProcessed(false);
+        setPrev(null);
+        setConnection(null);
+        setDistance(Float.MAX_VALUE);
+        setEstimate(0);
+        setIndex(0);
+        setSeen(false);
+        this.setLastRunID(runID);
         return true;
+    }
+
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public float getEstimate() {
+        return estimate;
+    }
+
+    public void setEstimate(float estimate) {
+        this.estimate = estimate;
+    }
+
+    public Node<V> getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Node<V> prev) {
+        this.prev = prev;
+    }
+
+    public Connection<V> getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection<V> connection) {
+        this.connection = connection;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getLastRunID() {
+        return lastRunID;
+    }
+
+    public void setLastRunID(int lastRunID) {
+        this.lastRunID = lastRunID;
     }
 
 
@@ -172,5 +227,21 @@ public class Node<V> {
     @Override
     public String toString() {
         return "["+object+"]";
+    }
+
+    public Array<Connection<V>> getOutEdges() {
+        return outEdges;
+    }
+
+    public void setOutEdges(Array<Connection<V>> outEdges) {
+        this.outEdges = outEdges;
+    }
+
+    public Array<Connection<V>> getInEdges() {
+        return inEdges;
+    }
+
+    public void setInEdges(Array<Connection<V>> inEdges) {
+        this.inEdges = inEdges;
     }
 }

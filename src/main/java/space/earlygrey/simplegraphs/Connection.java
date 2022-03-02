@@ -51,7 +51,7 @@ public abstract class Connection<V> extends Edge<V> {
     void set(Node<V> a, Node<V> b, WeightFunction<V> weight) {
         this.a = a;
         this.b = b;
-        this.weight = weight;
+        setWeight(weight);
     }
 
     @Override
@@ -85,7 +85,7 @@ public abstract class Connection<V> extends Edge<V> {
 
     @Override
     public void setWeight(float weight) {
-        this.weight = (a, b) -> weight;
+        setWeight((a, b) -> weight);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class Connection<V> extends Edge<V> {
     }
 
     @Override
-    WeightFunction<V> getWeightFunction() {
+    public WeightFunction<V> getWeightFunction() {
         return weight;
     }
 
@@ -128,17 +128,19 @@ public abstract class Connection<V> extends Edge<V> {
 
         @Override
         public int hashCode() {
-            return (int) (a.hashCode() * 0xC13FA9A902A6328FL + b.hashCode() * 0x91E10DA5C79E7B1DL >>> 32);
+            return (int) (a.hashCode() * 0xC13FA9A902A6328FL +(b.hashCode() * 0x91E10DA5C79E7B1DL) >>> 32);
         }
 
         @Override
         public String toString() {
-            return "{" + a + " -> " + b +'}';
+            return "{" + a + " -> " + b + ", " + getWeight() + "}";
         }
 
     }
 
     static class UndirectedConnection<V> extends Connection<V> {
+
+        private UndirectedConnection<V> linked;
 
         @Override
         public boolean hasEndpoints(V u, V v) {
@@ -150,19 +152,27 @@ public abstract class Connection<V> extends Edge<V> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Connection edge = (Connection) o;
-            // this assumes a and b are non-null when equals() is called.
-            return (a.equals(edge.a) && b.equals(edge.b))
-                    || (a.equals(edge.b) && b.equals(edge.a));
+            return (a.equals(edge.a) && b.equals(edge.b)) || (a.equals(edge.b) && b.equals(edge.a));
+        }
+
+        void link(UndirectedConnection<V> linked){
+            this.linked = linked;
+        }
+
+        @Override
+        public void setWeight(WeightFunction<V> weight) {
+            this.weight = weight;
+            linked.weight = this.weight;
         }
 
         @Override
         public int hashCode() {
-            return (int) ((a.hashCode() + b.hashCode()) * 0x9E3779B97F4A7C15L >>> 32);
+            return a.hashCode() ^ (b.hashCode() >>> 32);
         }
 
         @Override
         public String toString() {
-            return "{" + a + " <> " + b +'}';
+            return "{" + a + " <> " + b + ", " + getWeight() +"}";
         }
     }
 

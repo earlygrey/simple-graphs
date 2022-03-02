@@ -21,19 +21,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.algorithms;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import space.earlygrey.simplegraphs.Errors;
+import space.earlygrey.simplegraphs.Graph;
+import space.earlygrey.simplegraphs.Node;
+import space.earlygrey.simplegraphs.Path;
 import space.earlygrey.simplegraphs.utils.Heuristic;
 import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
-public class Algorithms<V> {
+public abstract class Algorithms<V> {
 
-    final Graph<V> graph;
-    final AlgorithmImplementations<V> implementations;
+    protected final Graph<V> graph;
+    private AtomicInteger runID = new AtomicInteger();
 
     Algorithms(Graph<V> graph) {
         this.graph = graph;
-        implementations = new AlgorithmImplementations<>(graph);
+    }
+
+    public int requestRunID() {
+        return runID.getAndIncrement();
     }
 
     //--------------------
@@ -48,7 +57,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target) {
-        return findShortestPath(start, target, null, null, null);
+        return findShortestPath(start, target, null, null);
     }
 
     /**
@@ -60,19 +69,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, SearchProcessor<V> processor) {
-        return findShortestPath(start, target, null, null, processor);
-    }
-
-    /**
-     * Find a shortest path from the start vertex to the target vertex, using Dijkstra's algorithm implemented with a priority queue.
-     * @param start the starting vertex
-     * @param target the target vertex
-     * @param path a path instance to reuse
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
-     * If there is no path from the start vertex to the target vertex, the returned path is empty.
-     */
-    public Path<V> findShortestPath(V start, V target, Path<V> path) {
-        return findShortestPath(start, target, null, path);
+        return findShortestPath(start, target, null, processor);
     }
 
     /**
@@ -86,11 +83,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic) {
-        return findShortestPath(start, target, heuristic, null, null);
-    }
-
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
-        return findShortestPath(start, target, heuristic, null, processor);
+        return findShortestPath(start, target, heuristic, null);
     }
 
     /**
@@ -100,33 +93,32 @@ public class Algorithms<V> {
      * @param start the starting vertex
      * @param target the target vertex
      * @param heuristic a heuristic to guide the search
-     * @param path a path instance to reuse
-     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
-     * If there is no path from the start vertex to the target vertex, the returned path is empty.
-     */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path) {
-        return findShortestPath(start, target, heuristic, path, null);
-    }
-
-    /**
-     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
-     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
-     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
-     * @param start the starting vertex
-     * @param target the target vertex
-     * @param heuristic a heuristic to guide the search
-     * @param path a path instance to reuse
      * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
-    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, Path<V> path, SearchProcessor<V> processor) {
-        Node<V> startNode = graph.getNode(start);
-        Node<V> targetNode = graph.getNode(target);
+    public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
+        AStarSearch<V> search = newAstarSeach(start, target, heuristic, processor);
+        search.finish();
+        return search.getPath();
+    }
+
+    /**
+     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
+     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param heuristic a heuristic to guide the search
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
+     */
+    public AStarSearch<V> newAstarSeach(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
+        Node<V> startNode = graph.internals().getNode(start);
+        Node<V> targetNode = graph.internals().getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
-        path = implementations.findShortestPath(startNode, targetNode, heuristic, path, processor);
-        path.setFixed(true);
-        return path;
+        return new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, processor);
     }
 
 
@@ -138,7 +130,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target) {
-        return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target));
+        return findMinimumDistance(start, target, null);
     }
 
     /**
@@ -149,7 +141,10 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target, Heuristic<V> heuristic) {
-        return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target), heuristic);
+        AStarSearch<V> search = newAstarSeach(start, target, heuristic, null);
+        search.finish();
+        if (search.getEnd() == null) return Float.MAX_VALUE;
+        else return search.getEnd().getDistance();
     }
 
     /**
@@ -159,7 +154,7 @@ public class Algorithms<V> {
      * @return whether there exists a path from the start vertex to target vertex
      */
     public boolean isConnected(V start, V target) {
-        return implementations.findMinimumDistance(graph.getNode(start), graph.getNode(target)) < Float.MAX_VALUE;
+        return findMinimumDistance(start, target) < Float.MAX_VALUE;
     }
 
     //--------------------
@@ -172,9 +167,9 @@ public class Algorithms<V> {
      * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
     public void breadthFirstSearch(V v, SearchProcessor<V> processor) {
-        Node<V> node = graph.getNode(v);
+        Node<V> node = graph.internals().getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException(false);
-        implementations.breadthFirstSearch(node, processor);
+        new BreadthFirstSearch<>(requestRunID(), node, processor).finish();
     }
 
 
@@ -184,9 +179,9 @@ public class Algorithms<V> {
      * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
      */
     public void depthFirstSearch(V v, SearchProcessor<V> processor) {
-        Node<V> node = graph.getNode(v);
+        Node<V> node = graph.internals().getNode(v);
         if (node==null) Errors.throwVertexNotInGraphVertexException(false);
-        implementations.depthFirstSearch(node, processor);
+        new DepthFirstSearch<>(requestRunID(), node, processor).finish();
     }
 
     //--------------------
@@ -197,8 +192,8 @@ public class Algorithms<V> {
      * Checks whether there are any cycles in the graph using depth first searches.
      * @return true if the graph contains a cycle, false otherwise
      */
-    public boolean detectCycle() {
-        return implementations.containsCycle(graph);
+    public boolean containsCycle() {
+        return new CycleDetector<>(requestRunID(), graph).containsCycle();
     }
 
 }

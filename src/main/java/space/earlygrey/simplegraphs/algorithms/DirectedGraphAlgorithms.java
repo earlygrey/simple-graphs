@@ -21,11 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.algorithms;
+
+import space.earlygrey.simplegraphs.DirectedGraph;
+import space.earlygrey.simplegraphs.Graph;
 
 public class DirectedGraphAlgorithms<V> extends Algorithms<V> {
 
-    DirectedGraphAlgorithms(DirectedGraph<V> graph) {
+    public DirectedGraphAlgorithms(DirectedGraph<V> graph) {
         super(graph);
     }
 
@@ -35,9 +38,9 @@ public class DirectedGraphAlgorithms<V> extends Algorithms<V> {
      * Note that the graph cannot contain any cycles for a topological order to exist. If a cycle exists, this method will do nothing.
      * @return true if the sort was successful, false if the graph contains a cycle
      */
-    public boolean topologicalSort() {
+    /*public boolean topologicalSort() {
         return implementations.topologicalSort();
-    }
+    }*/
 
     /**
      * Perform a topological sort on the graph, and puts the sorted vertices in the supplied list.

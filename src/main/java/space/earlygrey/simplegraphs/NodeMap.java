@@ -54,9 +54,10 @@ class NodeMap<V> {
     VertexCollection<V> vertexCollection;
     NodeCollection<V> nodeCollection;
 
+    @SuppressWarnings("unchecked")
     public NodeMap(Graph<V> graph) {
         this.graph = graph;
-        table = new Node[MIN_TABLE_LENGTH];
+        table = (Node<V>[]) new Node[MIN_TABLE_LENGTH];
         vertexCollection = new VertexCollection<>(this);
         nodeCollection = new NodeCollection<>(this);
     }
@@ -64,7 +65,7 @@ class NodeMap<V> {
     /**
      * Return the `Node<V>` to which the vertex v is mapped, or null if not in the map.
      */
-    Node<V> get(V v) {
+    Node<V> get(Object v) {
         int objectHash = v.hashCode(), hash = hash(objectHash);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
@@ -79,7 +80,7 @@ class NodeMap<V> {
         return null;
     }
 
-    boolean contains(V v) {
+    boolean contains(Object v) {
         return get(v) != null;
     }
 
@@ -96,7 +97,7 @@ class NodeMap<V> {
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
         if (bucketHead == null) {
-            bucketHead = new Node<>(v, graph, objectHash);
+            bucketHead = new Node<>(v, graph.isDirected(), objectHash);
             bucketHead.mapHash = hash;
             table[i] = bucketHead;
             size++;
@@ -112,7 +113,7 @@ class NodeMap<V> {
             currentNode = currentNode.nextInBucket;
         }
 
-        currentNode = new Node<>(v, graph, objectHash);
+        currentNode = new Node<>(v, graph.isDirected(), objectHash);
         currentNode.mapHash = hash;
         previousNode.nextInBucket = currentNode;
         size++;
@@ -215,11 +216,12 @@ class NodeMap<V> {
      * and recalculate the indices.
      */
 
+    @SuppressWarnings("unchecked")
     boolean checkLength(int sizeChange) {
         if (size + sizeChange > threshold) {
             occupiedBuckets = 0;
             int newLength = 2 * table.length;
-            Node<V>[] oldTable = table, newTable = new Node[newLength];
+            Node<V>[] oldTable = table, newTable = (Node<V>[]) new Node[newLength];
             for (int i = 0; i < oldTable.length; i++) {
                 if (oldTable[i] != null) {
                     Node<V> tail1 = null, tail2 = null, current = oldTable[i];
@@ -258,8 +260,9 @@ class NodeMap<V> {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     void clear() {
-        table = new Node[table.length];
+        table = (Node<V>[]) new Node[table.length];
         size = 0;
         occupiedBuckets = 0;
         head = null;
@@ -388,21 +391,83 @@ class NodeMap<V> {
         return slow;
     }
 
+    //================================================================================
+    // Topological sorting
+    //================================================================================
+
+    // Keep track of the current position in the linked list,
+    // We traverse the graph via DFS, and when we hit a terminal node we move that node
+    // to the current cursor position, then move the cursor along one.
+    Node<V> cursor;
+
+    boolean topologicalSort() {
+        if (size < 2 || graph.getEdgeCount() < 1) return true;
+
+        // start the cursor at the tail and work towards the head,
+        // so the list is sorted from head to tail
+        cursor = tail;
+
+        boolean success = true;
+        while (success && cursor != null) {
+            success = recursiveTopologicalSort(cursor, graph.algorithms().requestRunID());
+        }
+
+        cursor = null;
+        return success;
+    }
+
+    private boolean recursiveTopologicalSort(Node<V> v, int runID) {
+
+        v.resetAlgorithmAttribs(runID);
+
+        if (v.isProcessed()) return true;
+        if (v.isSeen()) return false; // not a DAG
+
+        v.setSeen(true);
+
+        Array<Connection<V>> outEdges = v.getOutEdges();
+        for (Connection<V> e : outEdges) {
+            if (!recursiveTopologicalSort(e.getNodeB(), runID)) return false;
+        }
+
+        v.setSeen(false);
+        v.setProcessed(true);
+
+        if (cursor != v) {
+            // move v from its current position to just after the cursor
+            removeFromList(v);
+            insertIntoListAfter(v, cursor);
+        } else {
+            // v is already in the cursor position, just need to move the cursor along
+            cursor = cursor.prevInOrder;
+        }
+
+        return true;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("NodeMap - size: "+size+", table length: "+table.length+", occupiedBuckets: "+occupiedBuckets+"\n");
-        sb.append("--------------\n");
+        sb.append("NodeMap - size: ");
+        sb.append(size);
+        sb.append(", table length: ");
+        sb.append(table.length);
+        sb.append(", occupiedBuckets: ");
+        sb.append(occupiedBuckets);
+        sb.append(System.lineSeparator());
+        sb.append("--------------");
+        sb.append(System.lineSeparator());
 
         for (int i = 0; i < table.length; i++) {
-            sb.append(i+"]  ");
+            sb.append(i);
+            sb.append("]  ");
             Node<V> node = table[i];
             while (node != null) {
                 sb.append(node);
                 if (node.nextInBucket != null) sb.append(" -> ");
                 node = node.nextInBucket;
             }
-            sb.append("\n");
+            sb.append(System.lineSeparator());
         }
 
         return sb.append("--------------").toString();

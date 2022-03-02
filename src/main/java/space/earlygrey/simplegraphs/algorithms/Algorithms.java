@@ -32,7 +32,7 @@ import space.earlygrey.simplegraphs.Path;
 import space.earlygrey.simplegraphs.utils.Heuristic;
 import space.earlygrey.simplegraphs.utils.SearchProcessor;
 
-public class Algorithms<V> {
+public abstract class Algorithms<V> {
 
     protected final Graph<V> graph;
     private AtomicInteger runID = new AtomicInteger();
@@ -98,13 +98,27 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, the returned path is empty.
      */
     public Path<V> findShortestPath(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
+        AStarSearch<V> search = newAstarSeach(start, target, heuristic, processor);
+        search.finish();
+        return search.getPath();
+    }
+
+    /**
+     * Find a shortest path from the start vertex to the target vertex, using the A* search algorithm with the provided heuristic, and implemented with a priority queue.
+     * <br>The heuristic is a function, which for any two vertices returns an estimate of the distance between them. Note: the heuristic h
+     * must be admissible, that is, for any two vertices x and y, h(x,y) &#8804; d(x,y), where d(x,y) is the actual distance of a shortest path from x to y.
+     * @param start the starting vertex
+     * @param target the target vertex
+     * @param heuristic a heuristic to guide the search
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
+     * @return a list of vertices from start to target containing the ordered vertices of a shortest path, including both the start and target vertices.
+     * If there is no path from the start vertex to the target vertex, the returned path is empty.
+     */
+    public AStarSearch<V> newAstarSeach(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
         Node<V> startNode = graph.internals().getNode(start);
         Node<V> targetNode = graph.internals().getNode(target);
         if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
-
-        AStarSearch<V> search = new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, processor);
-        search.finish();
-        return search.getPath();
+        return new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, processor);
     }
 
 
@@ -127,11 +141,7 @@ public class Algorithms<V> {
      * If there is no path from the start vertex to the target vertex, {@link Float#MAX_VALUE} is returned.
      */
     public float findMinimumDistance(V start, V target, Heuristic<V> heuristic) {
-        Node<V> startNode = graph.internals().getNode(start);
-        Node<V> targetNode = graph.internals().getNode(target);
-        if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
-
-        AStarSearch<V> search = new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, null);
+        AStarSearch<V> search = newAstarSeach(start, target, heuristic, null);
         search.finish();
         if (search.getEnd() == null) return Float.MAX_VALUE;
         else return search.getEnd().getDistance();

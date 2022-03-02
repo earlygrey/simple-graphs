@@ -36,7 +36,6 @@ public class UndirectedGraphAlgorithms<V> extends Algorithms<V> {
      * @return a Graph object containing a minimum weight spanning tree (if this graph is connected -
      * in general a minimum weight spanning forest)
      */
-    @SuppressWarnings("unchecked")
     public UndirectedGraph<V> findMinimumWeightSpanningTree() {
         MinimumWeightSpanningTree<V> algorithm = new MinimumWeightSpanningTree<>(requestRunID(), (UndirectedGraph<V>) graph, true);
         algorithm.finish();

@@ -1,12 +1,15 @@
 [4.0.0]
 Breaking changes
- - SearchProcessor count starts at 0 and includes first vertex
+ - SearchProcessor count starts at 0 and includes first and last vertices
 Fixes
  - fixed bug when removing vertices, which would result in extra vertices being removed
+ - fixed bug where setting the weight on an undirected edge might not work properly
+ - fixed order of VertexCollection#toArray, so new ArrayList<>(graph.getVertices()) produces a list with the correct order
 New
  - new constructors for graphs
  - new methods removeVertexIf and removeEdgeIf in Graph
  - new methods hasEndpoint and hasEndpoints in Edge
+ - restructure algorithms to be iterative, so the user can update it manually
 
 [3.0.0]
 Breaking changes

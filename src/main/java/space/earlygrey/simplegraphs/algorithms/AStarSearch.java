@@ -34,11 +34,7 @@ public class AStarSearch<V> extends Algorithm<V> {
         if (isFinished()) return true;
 
         u = heap.pop();
-        if (u == target) {
-            heap.clear();
-            end = u;
-            return true;
-        }
+
         if (!u.isProcessed()) {
             if (processor != null && u.getIndex() > 0) {
                 step.prepare(u);
@@ -52,6 +48,13 @@ public class AStarSearch<V> extends Algorithm<V> {
                 }
             }
             u.setProcessed(true);
+
+            if (u == target) {
+                heap.clear();
+                end = u;
+                return true;
+            }
+
             Array<Connection<V>> outEdges = u.getOutEdges();
             for (Connection<V> e : outEdges) {
                 Node<V> v = e.getNodeB();

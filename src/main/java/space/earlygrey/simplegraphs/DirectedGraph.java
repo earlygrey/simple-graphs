@@ -23,10 +23,11 @@ SOFTWARE.
  */
 package space.earlygrey.simplegraphs;
 
-import space.earlygrey.simplegraphs.Connection.DirectedConnection;
-
 import java.util.Collection;
 import java.util.Collections;
+
+import space.earlygrey.simplegraphs.Connection.DirectedConnection;
+import space.earlygrey.simplegraphs.algorithms.DirectedGraphAlgorithms;
 
 public class DirectedGraph<V> extends Graph<V> {
 
@@ -46,6 +47,10 @@ public class DirectedGraph<V> extends Graph<V> {
         algorithms = new DirectedGraphAlgorithms<>(this);
     }
 
+    public DirectedGraph(Graph<V> graph) {
+        super(graph);
+        algorithms = new DirectedGraphAlgorithms<>(this);
+    }
 
     //================================================================================
     // Superclass implementations
@@ -57,7 +62,7 @@ public class DirectedGraph<V> extends Graph<V> {
     }
 
     @Override
-    Graph<V> createNew() {
+    public DirectedGraph<V> createNew() {
         return new DirectedGraph<>();
     }
 
@@ -71,11 +76,17 @@ public class DirectedGraph<V> extends Graph<V> {
     // Misc
     //================================================================================
 
+    /**
+     * @return the out degree of this vertex, or -1 if it is not in the graph
+     */
     public int getOutDegree(V v) {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getOutDegree();
     }
 
+    /**
+     * @return the in degree of this vertex, or -1 if it is not in the graph
+     */
     public int getInDegree(V v) {
         Node<V> node = getNode(v);
         return node == null ? -1 : node.getInDegree();
@@ -90,7 +101,17 @@ public class DirectedGraph<V> extends Graph<V> {
     public Collection<Edge<V>> getInEdges(V v) {
         Node<V> node = getNode(v);
         if (node==null) return null;
-        return Collections.unmodifiableCollection(node.inEdges);
+        return Collections.unmodifiableCollection(node.getInEdges());
+    }
+
+    /**
+     * Sort the vertices of this graph in topological order. That is, for every edge from vertex u to vertex v, u comes before v in the ordering.
+     * This is reflected in the iteration order of the collection returned by {@link Graph#getVertices()}.
+     * Note that the graph cannot contain any cycles for a topological order to exist. If a cycle exists, this method will do nothing.
+     * @return true if the sort was successful, false if the graph contains a cycle
+     */
+    public boolean topologicalSort() {
+        return nodeMap.topologicalSort();
     }
 
 

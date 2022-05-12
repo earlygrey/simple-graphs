@@ -1,10 +1,24 @@
+[4.0.0]
+Breaking changes
+ - SearchProcessor count starts at 0 and includes first and last vertices
+Fixes
+ - fixed bug when removing vertices, which would result in extra vertices being removed
+ - fixed bug where setting the weight on an undirected edge might not work properly
+ - fixed order of VertexCollection#toArray, so new ArrayList<>(graph.getVertices()) produces a list with the correct order
+New
+ - new constructors for graphs
+ - new methods removeVertexIf and removeEdgeIf in Graph
+ - new methods hasEndpoint and hasEndpoints in Edge
+ - restructure algorithms to be iterative, so the user can update it manually
+
 [3.0.0]
 Breaking changes
  - allow WeightFunction<V> to be used to calculate edge weights
  - BFS and DFS take a SearchProcessor<V> extends Consumer<SearchStep<V>> instead of Consumer<SearchStep<V>>
- - search processor is not called on starting vertex
+ - search processor is not called on starting vertex (so SearchStep#edge() will always return a non-null value)
 Fixes
  - fixed SearchStep#distance() in BFS and DFS
+ - works with GWT
 
 [2.0.0]
 Breaking changes

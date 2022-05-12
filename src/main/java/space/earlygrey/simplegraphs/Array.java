@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class Array<T> extends AbstractCollection<T> {
+public class Array<T> extends AbstractCollection<T> {
 
     public Object[] items;
     public int size;
@@ -115,7 +115,7 @@ class Array<T> extends AbstractCollection<T> {
         }
     }
 
-    void strictResize(int newSize) {
+    protected void strictResize(int newSize) {
         items = Arrays.copyOf(items, newSize);
     }
 
@@ -160,14 +160,13 @@ class Array<T> extends AbstractCollection<T> {
         if (var1.length < this.size) {
             var1 = Arrays.copyOf(var1, this.size);
             System.arraycopy(this.items, 0, var1, 0, this.size);
-            return var1;
         } else {
             System.arraycopy(this.items, 0, var1, 0, this.size);
             if (var1.length > this.size) {
                 var1[this.size] = null;
             }
-            return var1;
         }
+        return var1;
     }
 
 

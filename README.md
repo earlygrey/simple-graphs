@@ -48,13 +48,29 @@ graph.addEdge(1, 2);
 boolean containsEdge = graph.edgeExists(1, 2)
 ```
 
+### Edge Weights
+
+Edge weights can be assigned a fixed float value, or can be dynamically calculated via a `WeightFunction`.
+
+```java
+// fixed value
+graph.addEdge(vertexA, vertexB, 1.5f);
+graph.getEdge(vertexA, vertexB).setWeight(1.5f);
+graph.setDefaultEdgeWeight(1.5f);
+
+// weight functions (assuming vertex class implements a distance method dst())
+graph.addEdge(vertexA, vertexB, (a, b) -> a.dst(b));
+graph.getEdge(vertexA, vertexB).setWeight((a, b) -> a.dst(b));
+graph.setDefaultEdgeWeight((a, b) -> a.dst(b);
+```
+
 ### Collections
 You can obtain `Collection<V>`s of the vertices and edges:
 ```java
 Collection<Integer> vertices = graph.getVertices();
 Collection<Edge<Integer>> edges = graph.getEdges();
 ```
-Both collections cannot be modified directly - they provide a "read-only" iterable view of the vertices and edges and are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
+Neither collection can be modified directly - they provide a "read-only" iterable view of the vertices and edges, and they are subject to the same restrictions as a `Collection` returned by `Collections#unmodifiableCollection()`. The iteration order is guaranteed to be consistent for both collections (default order is insertion order) and both are sortable, though you need to sort using the graph object and not directly on the collection. Something like:
 
 ```java
 graph.sortVertices((v1, v2) -> ...);
@@ -67,12 +83,12 @@ To access algorithms, use `Graph#algorithms()`. You need to have a specific refe
 ```java
 V u, v;
 Graph<V> graph;
-UndirectedGraph<V> undirected;
-DirectedGraph<V> directed;
+UndirectedGraph<V> undirectedGraph;
+DirectedGraph<V> directedGraph;
 
 Path<V> path = graph.algorithms().findShortestPath(u, v);
-UndirectedGraph<V> tree = undirected.algorithms().findMinimumWeightSpanningTree();
-directed.algorithms().topologicalSort();
+UndirectedGraph<V> tree = undirectedGraph.algorithms().findMinimumWeightSpanningTree();
+directedGraph.algorithms().topologicalSort();
 ```
 
 Additionally, search algorithms allow a processing step at each step of the algorithm. These can be used for side effects (for example to construct another graph as the algorithm runs), or for deciding whether to skip processing that vertex or terminate the algorithm. For example:
@@ -80,12 +96,13 @@ Additionally, search algorithms allow a processing step at each step of the algo
 graph.algorithms().breadthFirstSearch(u, step -> System.out.println("processing " + step.vertex()));
 
 Graph<Integer> tree = graph.createNew();
-tree.addVertex(u);
 graph.algorithms().depthFirstSearch(u, step -> {
+    tree.addVertex(step.vertex());
+    if (step.count() > 0) {
+        tree.addEdge(step.edge());
+    }
     if (step.depth() > 4) {
         step.ignore();
-    } else {
-        tree.addEdge(step.edge());
     }
 });
 ```

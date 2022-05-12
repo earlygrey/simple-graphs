@@ -21,11 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-package space.earlygrey.simplegraphs;
+package space.earlygrey.simplegraphs.algorithms;
+
+import space.earlygrey.simplegraphs.UndirectedGraph;
 
 public class UndirectedGraphAlgorithms<V> extends Algorithms<V> {
 
-    UndirectedGraphAlgorithms(UndirectedGraph<V> graph) {
+    public UndirectedGraphAlgorithms(UndirectedGraph<V> graph) {
         super(graph);
     }
 
@@ -34,9 +36,10 @@ public class UndirectedGraphAlgorithms<V> extends Algorithms<V> {
      * @return a Graph object containing a minimum weight spanning tree (if this graph is connected -
      * in general a minimum weight spanning forest)
      */
-    @SuppressWarnings("unchecked")
     public UndirectedGraph<V> findMinimumWeightSpanningTree() {
-        return (UndirectedGraph<V>) implementations.kruskalsMinimumWeightSpanningTree(true);
+        MinimumWeightSpanningTree<V> algorithm = new MinimumWeightSpanningTree<>(requestRunID(), (UndirectedGraph<V>) graph, true);
+        algorithm.finish();
+        return algorithm.getSpanningTree();
     }
 
 

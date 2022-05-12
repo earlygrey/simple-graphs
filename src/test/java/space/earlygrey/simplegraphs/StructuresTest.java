@@ -5,38 +5,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import space.earlygrey.simplegraphs.utils.BadHashInteger;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
 public class StructuresTest {
-
-    static class BadHashInteger {
-
-        int i;
-
-        public BadHashInteger(int i) {
-            this.i = i;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            BadHashInteger that = (BadHashInteger) o;
-            return i == that.i;
-        }
-
-        @Override
-        public int hashCode() {
-            return 1;
-        }
-
-        @Override
-        public String toString() {
-            return i+"";
-        }
-    }
 
     @Test
     public void nodeMapShouldWork() {
@@ -52,14 +27,26 @@ public class StructuresTest {
             list.add(i);
         }
 
-        assertTrue(nodeMap.put(NodeMap.MIN_TABLE_LENGTH) != null);
-        assertTrue(nodeMap.contains(NodeMap.MIN_TABLE_LENGTH));
-        assertEquals(threshold+1, nodeMap.size);
+        assertTrue("Put did not return a node", nodeMap.put(NodeMap.MIN_TABLE_LENGTH) != null);
+        assertTrue("Object not contained in map", nodeMap.contains(NodeMap.MIN_TABLE_LENGTH));
+        assertEquals("Map is not correct size", threshold+1, nodeMap.size);
 
+
+        Node<Integer> removed = nodeMap.remove(2);
+        assertTrue("Removal did not return node", removed != null);
+
+
+        // test via graph object
         Graph<BadHashInteger> badGraph = new UndirectedGraph<>();
         for (int i = 0; i < n; i++) {
-            assertTrue(badGraph.nodeMap.put(new BadHashInteger(i)) != null);
+            assertTrue("Put did not return a node", badGraph.nodeMap.put(new BadHashInteger(i)) != null);
         }
+
+        assertTrue("Graph is not correct size", badGraph.size() == n);
+
+        badGraph.removeVertex(new BadHashInteger(2));
+
+        assertTrue(badGraph.size() == n - 1);
 
         badGraph.nodeMap.clear();
 

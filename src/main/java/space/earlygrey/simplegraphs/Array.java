@@ -63,7 +63,7 @@ public class Array<T> extends AbstractCollection<T> {
 
     @Override
     public boolean remove(Object item) {
-        return remove(indexOf(item)) != null;
+        return item != null && remove(indexOf(item)) != null;
     }
 
 
@@ -86,10 +86,21 @@ public class Array<T> extends AbstractCollection<T> {
         }
     }
 
+    /**
+     * Gets the index of the first occurrence of {@code item} in this Array, or -1 if the argument is not present.
+     * Because {@code null} is used to indicate empty space, you cannot search for a "null item" with this -- it will
+     * throw an {@link IllegalArgumentException} if you do.
+     * @param item a non-null Object that could be in this Array (typically a T)
+     * @return the index of the first occurrence of {@code item} in this Array, or -1 if not present
+     */
     public int indexOf(Object item) {
-        for (int i = size-1; i >= 0; i--) {
-            if (item == items[i]) {
-                return i;
+        if(item == null) {
+            Errors.throwNullItemException();
+        } else {
+            for (int i = size - 1; i >= 0; i--) {
+                if (item.equals(items[i])) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -142,7 +153,7 @@ public class Array<T> extends AbstractCollection<T> {
 
     @Override
     public boolean contains(Object o) {
-        return indexOf(o) >= 0;
+        return o != null && indexOf(o) >= 0;
     }
 
     @Override

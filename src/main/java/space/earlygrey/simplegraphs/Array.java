@@ -79,9 +79,10 @@ public class Array<T> extends AbstractCollection<T> {
         if (numNew == 0) {
             return false;
         } else {
-            resize(numNew);
+            resize(size + numNew);
             Object[] collectionArray = collection.toArray();
             System.arraycopy(collectionArray, 0, items, size, numNew);
+            size += numNew;
             return true;
         }
     }

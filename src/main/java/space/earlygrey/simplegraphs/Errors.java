@@ -29,6 +29,10 @@ public class Errors {
         throw new IllegalArgumentException("Vertices cannot be null");
     }
 
+    public static void throwNullItemException() {
+        throw new IllegalArgumentException("No item can be null");
+    }
+
     public static void throwSameVertexException() {
         throw new IllegalArgumentException("Self loops are not allowed");
     }

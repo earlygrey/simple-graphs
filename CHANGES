@@ -1,3 +1,10 @@
+[5.0.0]
+Breaking changes
+ - update gradle to 7.4.2
+Fixes
+ - fixed Path object using reference equality instead of equals()
+ - fixed resizing bugs in Array
+
 [4.0.0]
 Breaking changes
  - SearchProcessor count starts at 0 and includes first and last vertices

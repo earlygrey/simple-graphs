@@ -117,7 +117,7 @@ public abstract class Algorithms<V> {
     public AStarSearch<V> newAstarSeach(V start, V target, Heuristic<V> heuristic, SearchProcessor<V> processor) {
         Node<V> startNode = graph.internals().getNode(start);
         Node<V> targetNode = graph.internals().getNode(target);
-        if (startNode==null || targetNode==null) Errors.throwVertexNotInGraphVertexException(true);
+        if (startNode == null || targetNode == null) Errors.throwVertexNotInGraphVertexException(true);
         return new AStarSearch<>(requestRunID(), startNode, targetNode, heuristic, processor);
     }
 
@@ -168,7 +168,7 @@ public abstract class Algorithms<V> {
      */
     public void breadthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.internals().getNode(v);
-        if (node==null) Errors.throwVertexNotInGraphVertexException(false);
+        if (node == null) Errors.throwVertexNotInGraphVertexException(false);
         new BreadthFirstSearch<>(requestRunID(), node, processor).finish();
     }
 
@@ -180,9 +180,22 @@ public abstract class Algorithms<V> {
      */
     public void depthFirstSearch(V v, SearchProcessor<V> processor) {
         Node<V> node = graph.internals().getNode(v);
-        if (node==null) Errors.throwVertexNotInGraphVertexException(false);
+        if (node == null) Errors.throwVertexNotInGraphVertexException(false);
         new DepthFirstSearch<>(requestRunID(), node, processor).finish();
     }
+
+
+    /**
+     * Perform a search using Dijkstra's algorithm starting from the specified vertex.
+     * @param v the vertex at which to start the search
+     * @param processor a consumer which is called immediately before processing each vertex. See {@link SearchStep}.
+     */
+    public void dijkstraSearch(V v, SearchProcessor<V> processor) {
+        Node<V> node = graph.internals().getNode(v);
+        if (node == null) Errors.throwVertexNotInGraphVertexException(false);
+        new AStarSearch<>(requestRunID(), node, null, null, processor).finish();
+    }
+
 
     //--------------------
     //  Structures

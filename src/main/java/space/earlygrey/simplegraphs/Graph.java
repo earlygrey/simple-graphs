@@ -133,20 +133,26 @@ public abstract class Graph<V> {
     public boolean removeVertex(V v) {
         Node<V> existing = nodeMap.remove(v);
         if (existing == null) return false;
-        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
-            removeConnection(existing.getOutEdges().get(i).b, existing);
-        }
-        existing.disconnect();
+        disconnect(existing);
         return true;
     }
 
     public void disconnect(V v) {
         Node<V> existing = nodeMap.get(v);
         if (existing == null) Errors.throwVertexNotInGraphVertexException(false);
-        for (int i = existing.getOutEdges().size() - 1; i >= 0; i--) {
-            removeConnection(existing.getOutEdges().get(i).b, existing);
+        disconnect(existing);
+    }
+
+    protected void disconnect(Node<V> node) {
+        for (int i = node.getOutEdges().size() - 1; i >= 0; i--) {
+            removeConnection(node, node.getOutEdges().get(i).b);
         }
-        existing.disconnect();
+        if (node.getInEdges() != null) {
+            for (int i = node.getInEdges().size() - 1; i >= 0; i--) {
+                removeConnection(node.getInEdges().get(i).a, node);
+            }
+        }
+        node.disconnect();
     }
 
     /**

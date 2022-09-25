@@ -128,6 +128,52 @@ public class GraphTest {
     }
 
     @Test
+    public void vertexanBeRemovedFromDirectedGraph() {
+        DirectedGraph<Integer> graph = new DirectedGraph<>();
+
+        int n = 10;
+
+        for (int i = 0; i < n; i++) {
+            graph.addVertex(i);
+        }
+
+        for (int i = 0; i < n-1; i++) {
+            graph.addEdge(i, i+1);
+        }
+
+        assertEquals(n, graph.size());
+        assertEquals(n-1, graph.getEdgeCount());
+
+        graph.removeVertex(n/2);
+
+        assertEquals(n-1, graph.size());
+        assertEquals(n-3, graph.getEdgeCount());
+    }
+
+    @Test
+    public void vertexCanBeDisconnectedFromDirectedGraph() {
+        DirectedGraph<Integer> graph = new DirectedGraph<>();
+
+        int n = 10;
+
+        for (int i = 0; i < n; i++) {
+            graph.addVertex(i);
+        }
+
+        for (int i = 0; i < n-1; i++) {
+            graph.addEdge(i, i+1);
+        }
+
+        assertEquals(n, graph.size());
+        assertEquals(n-1, graph.getEdgeCount());
+
+        graph.disconnect(n/2);
+
+        assertEquals(n, graph.size());
+        assertEquals(n-3, graph.getEdgeCount());
+    }
+
+    @Test
     public void edgesCanBeAddedAndRemoved() {
         int n = 5;
         Graph<Vector2> undirectedGraph = TestUtils.makeGridGraph(new UndirectedGraph<>(), n);

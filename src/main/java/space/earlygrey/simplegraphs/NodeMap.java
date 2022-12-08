@@ -456,9 +456,9 @@ class NodeMap<V> {
         sb.append(table.length);
         sb.append(", occupiedBuckets: ");
         sb.append(occupiedBuckets);
-        sb.append(System.lineSeparator());
+        sb.append("\n");
         sb.append("--------------");
-        sb.append(System.lineSeparator());
+        sb.append("\n");
 
         for (int i = 0; i < table.length; i++) {
             sb.append(i);
@@ -469,7 +469,7 @@ class NodeMap<V> {
                 if (node.nextInBucket != null) sb.append(" -> ");
                 node = node.nextInBucket;
             }
-            sb.append(System.lineSeparator());
+            sb.append("\n");
         }
 
         return sb.append("--------------").toString();

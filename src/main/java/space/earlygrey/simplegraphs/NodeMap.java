@@ -66,7 +66,7 @@ class NodeMap<V> {
      * Return the `Node<V>` to which the vertex v is mapped, or null if not in the map.
      */
     Node<V> get(Object v) {
-        int objectHash = v.hashCode(), hash = hash(objectHash);
+        int hash = hash(v);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
         if (bucketHead == null) return null;
@@ -93,11 +93,12 @@ class NodeMap<V> {
         // but it will only be off by one
         checkLength(1);
 
-        int objectHash = v.hashCode(), hash = hash(objectHash);
+        int hash = hash(v);
         int i = getIndex(hash);
         Node<V> bucketHead = table[i];
         if (bucketHead == null) {
-            bucketHead = new Node<>(v, graph.isDirected(), objectHash);
+            // first in bucket
+            bucketHead = new Node<>(v, graph.isDirected(), hash);
             bucketHead.mapHash = hash;
             table[i] = bucketHead;
             size++;
@@ -106,6 +107,7 @@ class NodeMap<V> {
             return bucketHead;
         }
 
+        // find last in bucket
         Node<V> currentNode = bucketHead, previousNode = null;
         while (currentNode != null) {
             if (v.equals(currentNode.object)) return null;
@@ -113,7 +115,7 @@ class NodeMap<V> {
             currentNode = currentNode.nextInBucket;
         }
 
-        currentNode = new Node<>(v, graph.isDirected(), objectHash);
+        currentNode = new Node<>(v, graph.isDirected(), hash);
         currentNode.mapHash = hash;
         previousNode.nextInBucket = currentNode;
         size++;
@@ -165,12 +167,11 @@ class NodeMap<V> {
      * @return the `Node<V>` that v was associated with, or null if v is not in the map.
      */
     Node<V> remove(V v) {
-        int objectHash = v.hashCode(), hash = hash(objectHash);
+        int hash = hash(v);
         int i = getIndex(hash);
         Node<V> currentNode = table[i];
 
-        // currentNode should not be null if v is in map
-
+        // node is first in bucket
         if (currentNode != null && v.equals(currentNode.object)) {
             table[i] = currentNode.nextInBucket;
             size--;
@@ -178,6 +179,7 @@ class NodeMap<V> {
             return currentNode;
         }
 
+        // find node
         Node<V> previousNode = null;
         while (currentNode != null) {
             if (v.equals(currentNode.object)) {
